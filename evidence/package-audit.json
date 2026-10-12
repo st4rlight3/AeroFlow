@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-12",
+  "required_components_checked": 44,
+  "python_files_parsed": 22,
+  "javascript_syntax": "passed",
+  "sql_files": [
+    "01_create_database.sql",
+    "02_create_tables.sql",
+    "03_constraints_indexes.sql",
+    "04_seed_data.sql",
+    "05_views.sql",
+    "06_functions.sql",
+    "07_stored_procedures.sql",
+    "08_triggers.sql",
+    "09_business_queries.sql",
+    "10_test_cases.sql"
+  ],
+  "backend_procedures_exist_in_sql": [
+    "sp_CancelBooking",
+    "sp_ConfirmPayment",
+    "sp_CreateBooking",
+    "sp_ExpireFlightHolds",
+    "sp_GetAvailableSeats",
+    "sp_GetRevenueReport",
+    "sp_SaveFare",
+    "sp_SaveFlight",
+    "sp_UpdateFlightStatus"
+  ],
+  "pytest": {
+    "passed": 39,
+    "failed": 0,
+    "skipped": 0,
+    "source": "evidence/pytest-results.xml",
+    "database": "SQL Server 2022 Express"
+  },
+  "schema_table_count": 16,
+  "report_pdf_pages": 25,
+  "slides": 12,
+  "slide_notes": 12,
+  "pptx_package_and_layout": "passed; no native PowerPoint execution",
+  "visual_review": "All 25 report pages inspected via renders/contact sheets; all 12 slide renders inspected. Customer desktop/mobile flow inspected.",
+  "secrets_and_runtime_excluded": true,
+  "unverified": "See TESTING.md: full admin visual QA, production security/load, native PowerPoint and physical printing."
+}

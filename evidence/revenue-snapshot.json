@@ -1,0 +1,18 @@
+[
+  {
+    "Year": 2026,
+    "Month": 9,
+    "GrossRevenue": "22220000.00",
+    "Refunds": "4136000.00",
+    "NetRevenue": "18084000.00",
+    "PaidBookings": 15
+  },
+  {
+    "Year": 2026,
+    "Month": 10,
+    "GrossRevenue": "26565000.00",
+    "Refunds": "8184000.00",
+    "NetRevenue": "18381000.00",
+    "PaidBookings": 18
+  }
+]

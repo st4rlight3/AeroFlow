@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-12",
+  "browser": "Codex in-app browser",
+  "database": "Microsoft SQL Server 2022 Express, AeroFlow_Final_20261012",
+  "desktop_viewport": [1366, 900],
+  "mobile_viewport": [390, 844],
+  "observed_passed": [
+    "Customer registration and login",
+    "Search HAN-SGN, choose FLEX and seat A1",
+    "Create booking 41, PNR 02C06863, amount 1595000 VND",
+    "Failed simulated payment followed by successful payment",
+    "Electronic ticket VALID on desktop and mobile",
+    "Cancellation before cutoff; ticket VOID, refund 1276000 VND",
+    "Save customer profile; success notification displayed",
+    "Booking history shows cancelled PNR 02C06863",
+    "Logout; success notification and login link displayed"
+  ],
+  "last_console_error_or_warning_entries_returned": 0,
+  "scope_limit": "Customer flow only. Admin APIs were tested by pytest; admin browser UI not fully inspected. No real money or real passenger identities.",
+  "preview_cleanup": "Agent-owned preview server stopped and temporary viewport reset after checks."
+}

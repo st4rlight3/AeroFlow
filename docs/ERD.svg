@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1840" height="1610" viewBox="0 0 1840 1610">
+<defs><marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#568b80"/></marker></defs>
+<rect width="1840" height="1610" fill="#f5f8f7"/>
+<text x="55" y="54" font-family="Arial" font-size="30" font-weight="bold" fill="#123d36">AeroFlow / ERD vật lý</text>
+<text x="55" y="82" font-family="Arial" font-size="17" fill="#526d66">16 bảng · PK khóa chính · FK khóa ngoại · mũi tên từ FK đến bảng tham chiếu · nét đứt: quan hệ chéo</text>
+<path d="M675,420 C640,380 640,253 675,213" fill="none" stroke="#81a89d" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow)" opacity="0.8"/>
+<path d="M1375,797 C1340.0,797 1340.0,487 1305,487" fill="none" stroke="#81a89d" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow)" opacity="0.8"/>
+<path d="M1375,819 C1120.0,819 1120.0,819 865,819" fill="none" stroke="#81a89d" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow)" opacity="0.8"/>
+<path d="M235,1040 C200,1000 200,701 235,661" fill="none" stroke="#81a89d" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow)" opacity="0.8"/>
+<path d="M1115,730 C1080,690 1080,678 1115,638" fill="none" stroke="#81a89d" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow)" opacity="0.8"/>
+<path d="M935,885 C680.0,885 680.0,465 425,465" fill="none" stroke="#81a89d" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow)" opacity="0.8"/>
+<path d="M1115,1040 C1080,1000 1080,965 1115,925" fill="none" stroke="#81a89d" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow)" opacity="0.8"/>
+<path d="M1305,1107 C1340.0,1107 1340.0,199 1375,199" fill="none" stroke="#81a89d" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow)" opacity="0.8"/>
+<path d="M935,1129 C680.0,1129 680.0,841 425,841" fill="none" stroke="#81a89d" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow)" opacity="0.8"/>
+<path d="M1555,420 C1520,380 1520,322 1555,282" fill="none" stroke="#81a89d" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow)" opacity="0.8"/>
+<path d="M1375,553 C1340.0,553 1340.0,465 1305,465" fill="none" stroke="#81a89d" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow)" opacity="0.8"/>
+<path d="M935,575 C900.0,575 900.0,487 865,487" fill="none" stroke="#81a89d" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow)" opacity="0.8"/>
+<path d="M1115,420 C1080,380 1080,299 1115,259" fill="none" stroke="#81a89d" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow)" opacity="0.8"/>
+<path d="M1115,420 C1080,380 1080,299 1115,259" fill="none" stroke="#81a89d" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow)" opacity="0.8"/>
+<path d="M865,1129 C900.0,1129 900.0,863 935,863" fill="none" stroke="#81a89d" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow)" opacity="0.8"/>
+<path d="M675,730 C640,690 640,609 675,569" fill="none" stroke="#81a89d" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow)" opacity="0.8"/>
+<path d="M1555,1040 C1520,1000 1520,896 1555,856" fill="none" stroke="#81a89d" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow)" opacity="0.8"/>
+<path d="M1375,1195 C1340.0,1195 1340.0,1129 1305,1129" fill="none" stroke="#81a89d" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow)" opacity="0.8"/>
+<path d="M235,420 C200,380 200,230 235,190" fill="none" stroke="#81a89d" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrow)" opacity="0.8"/>
+<rect x="55" y="110" width="370" height="90" rx="8" fill="white" stroke="#b8cfc7"/>
+<path d="M63,110 H417 Q425,110 425,118 V142 H55 V118 Q55,110 63,110" fill="#0b7163"/>
+<text x="67" y="133" font-family="Arial" font-size="18" font-weight="bold" fill="white">Roles</text>
+<text x="67" y="163" font-family="Arial" font-size="14" fill="#183c34">PK RoleID</text><text x="297" y="163" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="67" y="186" font-family="Arial" font-size="14" fill="#183c34">Name</text><text x="297" y="186" font-family="Arial" font-size="13" fill="#61766e">varchar(20)</text>
+<rect x="495" y="110" width="370" height="113" rx="8" fill="white" stroke="#b8cfc7"/>
+<path d="M503,110 H857 Q865,110 865,118 V142 H495 V118 Q495,110 503,110" fill="#0b7163"/>
+<text x="507" y="133" font-family="Arial" font-size="18" font-weight="bold" fill="white">Airlines</text>
+<text x="507" y="163" font-family="Arial" font-size="14" fill="#183c34">PK AirlineID</text><text x="737" y="163" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="507" y="186" font-family="Arial" font-size="14" fill="#183c34">Code</text><text x="737" y="186" font-family="Arial" font-size="13" fill="#61766e">char(2)</text>
+<text x="507" y="209" font-family="Arial" font-size="14" fill="#183c34">Name</text><text x="737" y="209" font-family="Arial" font-size="13" fill="#61766e">nvarchar(100)</text>
+<rect x="935" y="110" width="370" height="159" rx="8" fill="white" stroke="#b8cfc7"/>
+<path d="M943,110 H1297 Q1305,110 1305,118 V142 H935 V118 Q935,110 943,110" fill="#0b7163"/>
+<text x="947" y="133" font-family="Arial" font-size="18" font-weight="bold" fill="white">Airports</text>
+<text x="947" y="163" font-family="Arial" font-size="14" fill="#183c34">PK AirportID</text><text x="1177" y="163" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="947" y="186" font-family="Arial" font-size="14" fill="#183c34">Code</text><text x="1177" y="186" font-family="Arial" font-size="13" fill="#61766e">char(3)</text>
+<text x="947" y="209" font-family="Arial" font-size="14" fill="#183c34">Name</text><text x="1177" y="209" font-family="Arial" font-size="13" fill="#61766e">nvarchar(120)</text>
+<text x="947" y="232" font-family="Arial" font-size="14" fill="#183c34">City</text><text x="1177" y="232" font-family="Arial" font-size="13" fill="#61766e">nvarchar(80)</text>
+<text x="947" y="255" font-family="Arial" font-size="14" fill="#183c34">IsActive</text><text x="1177" y="255" font-family="Arial" font-size="13" fill="#61766e">bit</text>
+<rect x="1375" y="110" width="370" height="182" rx="8" fill="white" stroke="#b8cfc7"/>
+<path d="M1383,110 H1737 Q1745,110 1745,118 V142 H1375 V118 Q1375,110 1383,110" fill="#0b7163"/>
+<text x="1387" y="133" font-family="Arial" font-size="18" font-weight="bold" fill="white">FareClasses</text>
+<text x="1387" y="163" font-family="Arial" font-size="14" fill="#183c34">PK FareClassID</text><text x="1617" y="163" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="1387" y="186" font-family="Arial" font-size="14" fill="#183c34">Code</text><text x="1617" y="186" font-family="Arial" font-size="13" fill="#61766e">varchar(10)</text>
+<text x="1387" y="209" font-family="Arial" font-size="14" fill="#183c34">Name</text><text x="1617" y="209" font-family="Arial" font-size="13" fill="#61766e">nvarchar(60)</text>
+<text x="1387" y="232" font-family="Arial" font-size="14" fill="#183c34">Cabin</text><text x="1617" y="232" font-family="Arial" font-size="13" fill="#61766e">varchar(12)</text>
+<text x="1387" y="255" font-family="Arial" font-size="14" fill="#183c34">BaggageKg</text><text x="1617" y="255" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="1387" y="278" font-family="Arial" font-size="14" fill="#183c34">RefundPercent</text><text x="1617" y="278" font-family="Arial" font-size="13" fill="#61766e">decimal(5,2)</text>
+<rect x="55" y="420" width="370" height="251" rx="8" fill="white" stroke="#b8cfc7"/>
+<path d="M63,420 H417 Q425,420 425,428 V452 H55 V428 Q55,420 63,420" fill="#0b7163"/>
+<text x="67" y="443" font-family="Arial" font-size="18" font-weight="bold" fill="white">Users</text>
+<text x="67" y="473" font-family="Arial" font-size="14" fill="#183c34">PK UserID</text><text x="297" y="473" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="67" y="496" font-family="Arial" font-size="14" fill="#183c34">FK RoleID</text><text x="297" y="496" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="67" y="519" font-family="Arial" font-size="14" fill="#183c34">Email</text><text x="297" y="519" font-family="Arial" font-size="13" fill="#61766e">nvarchar(254)</text>
+<text x="67" y="542" font-family="Arial" font-size="14" fill="#183c34">FullName</text><text x="297" y="542" font-family="Arial" font-size="13" fill="#61766e">nvarchar(120)</text>
+<text x="67" y="565" font-family="Arial" font-size="14" fill="#183c34">PasswordHash</text><text x="297" y="565" font-family="Arial" font-size="13" fill="#61766e">varchar(256)</text>
+<text x="67" y="588" font-family="Arial" font-size="14" fill="#183c34">Phone</text><text x="297" y="588" font-family="Arial" font-size="13" fill="#61766e">varchar(20)</text>
+<text x="67" y="611" font-family="Arial" font-size="14" fill="#183c34">IsActive</text><text x="297" y="611" font-family="Arial" font-size="13" fill="#61766e">bit</text>
+<text x="67" y="634" font-family="Arial" font-size="14" fill="#183c34">SessionVersion</text><text x="297" y="634" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="67" y="657" font-family="Arial" font-size="14" fill="#183c34">CreatedAt</text><text x="297" y="657" font-family="Arial" font-size="13" fill="#61766e">datetime2(0)</text>
+<rect x="495" y="420" width="370" height="159" rx="8" fill="white" stroke="#b8cfc7"/>
+<path d="M503,420 H857 Q865,420 865,428 V452 H495 V428 Q495,420 503,420" fill="#0b7163"/>
+<text x="507" y="443" font-family="Arial" font-size="18" font-weight="bold" fill="white">Aircraft</text>
+<text x="507" y="473" font-family="Arial" font-size="14" fill="#183c34">PK AircraftID</text><text x="737" y="473" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="507" y="496" font-family="Arial" font-size="14" fill="#183c34">FK AirlineID</text><text x="737" y="496" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="507" y="519" font-family="Arial" font-size="14" fill="#183c34">Registration</text><text x="737" y="519" font-family="Arial" font-size="13" fill="#61766e">varchar(20)</text>
+<text x="507" y="542" font-family="Arial" font-size="14" fill="#183c34">Model</text><text x="737" y="542" font-family="Arial" font-size="13" fill="#61766e">nvarchar(80)</text>
+<text x="507" y="565" font-family="Arial" font-size="14" fill="#183c34">IsActive</text><text x="737" y="565" font-family="Arial" font-size="13" fill="#61766e">bit</text>
+<rect x="935" y="420" width="370" height="228" rx="8" fill="white" stroke="#b8cfc7"/>
+<path d="M943,420 H1297 Q1305,420 1305,428 V452 H935 V428 Q935,420 943,420" fill="#0b7163"/>
+<text x="947" y="443" font-family="Arial" font-size="18" font-weight="bold" fill="white">Flights</text>
+<text x="947" y="473" font-family="Arial" font-size="14" fill="#183c34">PK FlightID</text><text x="1177" y="473" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="947" y="496" font-family="Arial" font-size="14" fill="#183c34">FlightNumber</text><text x="1177" y="496" font-family="Arial" font-size="13" fill="#61766e">varchar(8)</text>
+<text x="947" y="519" font-family="Arial" font-size="14" fill="#183c34">FK AircraftID</text><text x="1177" y="519" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="947" y="542" font-family="Arial" font-size="14" fill="#183c34">FK OriginID</text><text x="1177" y="542" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="947" y="565" font-family="Arial" font-size="14" fill="#183c34">FK DestinationID</text><text x="1177" y="565" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="947" y="588" font-family="Arial" font-size="14" fill="#183c34">DepartureTime</text><text x="1177" y="588" font-family="Arial" font-size="13" fill="#61766e">datetime2(0)</text>
+<text x="947" y="611" font-family="Arial" font-size="14" fill="#183c34">ArrivalTime</text><text x="1177" y="611" font-family="Arial" font-size="13" fill="#61766e">datetime2(0)</text>
+<text x="947" y="634" font-family="Arial" font-size="14" fill="#183c34">Status</text><text x="1177" y="634" font-family="Arial" font-size="13" fill="#61766e">varchar(12)</text>
+<rect x="1375" y="420" width="370" height="136" rx="8" fill="white" stroke="#b8cfc7"/>
+<path d="M1383,420 H1737 Q1745,420 1745,428 V452 H1375 V428 Q1375,420 1383,420" fill="#0b7163"/>
+<text x="1387" y="443" font-family="Arial" font-size="18" font-weight="bold" fill="white">FlightFares</text>
+<text x="1387" y="473" font-family="Arial" font-size="14" fill="#183c34">PK FK FlightID</text><text x="1617" y="473" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="1387" y="496" font-family="Arial" font-size="14" fill="#183c34">PK FK FareClassID</text><text x="1617" y="496" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="1387" y="519" font-family="Arial" font-size="14" fill="#183c34">BasePrice</text><text x="1617" y="519" font-family="Arial" font-size="13" fill="#61766e">decimal(14,2)</text>
+<text x="1387" y="542" font-family="Arial" font-size="14" fill="#183c34">TaxRate</text><text x="1617" y="542" font-family="Arial" font-size="13" fill="#61766e">decimal(5,4)</text>
+<rect x="55" y="730" width="370" height="136" rx="8" fill="white" stroke="#b8cfc7"/>
+<path d="M63,730 H417 Q425,730 425,738 V762 H55 V738 Q55,730 63,730" fill="#0b7163"/>
+<text x="67" y="753" font-family="Arial" font-size="18" font-weight="bold" fill="white">Passengers</text>
+<text x="67" y="783" font-family="Arial" font-size="14" fill="#183c34">PK PassengerID</text><text x="297" y="783" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="67" y="806" font-family="Arial" font-size="14" fill="#183c34">FullName</text><text x="297" y="806" font-family="Arial" font-size="13" fill="#61766e">nvarchar(120)</text>
+<text x="67" y="829" font-family="Arial" font-size="14" fill="#183c34">DateOfBirth</text><text x="297" y="829" font-family="Arial" font-size="13" fill="#61766e">date</text>
+<text x="67" y="852" font-family="Arial" font-size="14" fill="#183c34">DocumentNumber</text><text x="297" y="852" font-family="Arial" font-size="13" fill="#61766e">nvarchar(30)</text>
+<rect x="495" y="730" width="370" height="205" rx="8" fill="white" stroke="#b8cfc7"/>
+<path d="M503,730 H857 Q865,730 865,738 V762 H495 V738 Q495,730 503,730" fill="#0b7163"/>
+<text x="507" y="753" font-family="Arial" font-size="18" font-weight="bold" fill="white">AircraftSeats</text>
+<text x="507" y="783" font-family="Arial" font-size="14" fill="#183c34">PK SeatID</text><text x="737" y="783" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="507" y="806" font-family="Arial" font-size="14" fill="#183c34">FK AircraftID</text><text x="737" y="806" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="507" y="829" font-family="Arial" font-size="14" fill="#183c34">SeatNumber</text><text x="737" y="829" font-family="Arial" font-size="13" fill="#61766e">varchar(5)</text>
+<text x="507" y="852" font-family="Arial" font-size="14" fill="#183c34">RowNumber</text><text x="737" y="852" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="507" y="875" font-family="Arial" font-size="14" fill="#183c34">ColumnLetter</text><text x="737" y="875" font-family="Arial" font-size="13" fill="#61766e">char(1)</text>
+<text x="507" y="898" font-family="Arial" font-size="14" fill="#183c34">Cabin</text><text x="737" y="898" font-family="Arial" font-size="13" fill="#61766e">varchar(12)</text>
+<text x="507" y="921" font-family="Arial" font-size="14" fill="#183c34">IsActive</text><text x="737" y="921" font-family="Arial" font-size="13" fill="#61766e">bit</text>
+<rect x="935" y="730" width="370" height="205" rx="8" fill="white" stroke="#b8cfc7"/>
+<path d="M943,730 H1297 Q1305,730 1305,738 V762 H935 V738 Q935,730 943,730" fill="#0b7163"/>
+<text x="947" y="753" font-family="Arial" font-size="18" font-weight="bold" fill="white">Bookings</text>
+<text x="947" y="783" font-family="Arial" font-size="14" fill="#183c34">PK BookingID</text><text x="1177" y="783" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="947" y="806" font-family="Arial" font-size="14" fill="#183c34">PNR</text><text x="1177" y="806" font-family="Arial" font-size="13" fill="#61766e">char(8)</text>
+<text x="947" y="829" font-family="Arial" font-size="14" fill="#183c34">FK UserID</text><text x="1177" y="829" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="947" y="852" font-family="Arial" font-size="14" fill="#183c34">FK FlightID</text><text x="1177" y="852" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="947" y="875" font-family="Arial" font-size="14" fill="#183c34">Status</text><text x="1177" y="875" font-family="Arial" font-size="13" fill="#61766e">varchar(12)</text>
+<text x="947" y="898" font-family="Arial" font-size="14" fill="#183c34">CreatedAt</text><text x="1177" y="898" font-family="Arial" font-size="13" fill="#61766e">datetime2(0)</text>
+<text x="947" y="921" font-family="Arial" font-size="14" fill="#183c34">ExpiresAt</text><text x="1177" y="921" font-family="Arial" font-size="13" fill="#61766e">datetime2(0)</text>
+<rect x="1375" y="730" width="370" height="136" rx="8" fill="white" stroke="#b8cfc7"/>
+<path d="M1383,730 H1737 Q1745,730 1745,738 V762 H1375 V738 Q1375,730 1383,730" fill="#0b7163"/>
+<text x="1387" y="753" font-family="Arial" font-size="18" font-weight="bold" fill="white">FlightSeatAssignments</text>
+<text x="1387" y="783" font-family="Arial" font-size="14" fill="#183c34">PK AssignmentID</text><text x="1617" y="783" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="1387" y="806" font-family="Arial" font-size="14" fill="#183c34">FK FlightID</text><text x="1617" y="806" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="1387" y="829" font-family="Arial" font-size="14" fill="#183c34">FK SeatID</text><text x="1617" y="829" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="1387" y="852" font-family="Arial" font-size="14" fill="#183c34">IsActive</text><text x="1617" y="852" font-family="Arial" font-size="13" fill="#61766e">bit</text>
+<rect x="55" y="1040" width="370" height="205" rx="8" fill="white" stroke="#b8cfc7"/>
+<path d="M63,1040 H417 Q425,1040 425,1048 V1072 H55 V1048 Q55,1040 63,1040" fill="#0b7163"/>
+<text x="67" y="1063" font-family="Arial" font-size="18" font-weight="bold" fill="white">AuditLogs</text>
+<text x="67" y="1093" font-family="Arial" font-size="14" fill="#183c34">PK AuditID</text><text x="297" y="1093" font-family="Arial" font-size="13" fill="#61766e">bigint</text>
+<text x="67" y="1116" font-family="Arial" font-size="14" fill="#183c34">FK ActorID</text><text x="297" y="1116" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="67" y="1139" font-family="Arial" font-size="14" fill="#183c34">Entity</text><text x="297" y="1139" font-family="Arial" font-size="13" fill="#61766e">varchar(40)</text>
+<text x="67" y="1162" font-family="Arial" font-size="14" fill="#183c34">EntityID</text><text x="297" y="1162" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="67" y="1185" font-family="Arial" font-size="14" fill="#183c34">Action</text><text x="297" y="1185" font-family="Arial" font-size="13" fill="#61766e">varchar(40)</text>
+<text x="67" y="1208" font-family="Arial" font-size="14" fill="#183c34">Details</text><text x="297" y="1208" font-family="Arial" font-size="13" fill="#61766e">nvarchar(1000)</text>
+<text x="67" y="1231" font-family="Arial" font-size="14" fill="#183c34">CreatedAt</text><text x="297" y="1231" font-family="Arial" font-size="13" fill="#61766e">datetime2(0)</text>
+<rect x="495" y="1040" width="370" height="205" rx="8" fill="white" stroke="#b8cfc7"/>
+<path d="M503,1040 H857 Q865,1040 865,1048 V1072 H495 V1048 Q495,1040 503,1040" fill="#0b7163"/>
+<text x="507" y="1063" font-family="Arial" font-size="18" font-weight="bold" fill="white">Payments</text>
+<text x="507" y="1093" font-family="Arial" font-size="14" fill="#183c34">PK PaymentID</text><text x="737" y="1093" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="507" y="1116" font-family="Arial" font-size="14" fill="#183c34">FK BookingID</text><text x="737" y="1116" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="507" y="1139" font-family="Arial" font-size="14" fill="#183c34">IdempotencyKey</text><text x="737" y="1139" font-family="Arial" font-size="13" fill="#61766e">varchar(80)</text>
+<text x="507" y="1162" font-family="Arial" font-size="14" fill="#183c34">Amount</text><text x="737" y="1162" font-family="Arial" font-size="13" fill="#61766e">decimal(14,2)</text>
+<text x="507" y="1185" font-family="Arial" font-size="14" fill="#183c34">Kind</text><text x="737" y="1185" font-family="Arial" font-size="13" fill="#61766e">varchar(10)</text>
+<text x="507" y="1208" font-family="Arial" font-size="14" fill="#183c34">Status</text><text x="737" y="1208" font-family="Arial" font-size="13" fill="#61766e">varchar(10)</text>
+<text x="507" y="1231" font-family="Arial" font-size="14" fill="#183c34">CreatedAt</text><text x="737" y="1231" font-family="Arial" font-size="13" fill="#61766e">datetime2(0)</text>
+<rect x="935" y="1040" width="370" height="136" rx="8" fill="white" stroke="#b8cfc7"/>
+<path d="M943,1040 H1297 Q1305,1040 1305,1048 V1072 H935 V1048 Q935,1040 943,1040" fill="#0b7163"/>
+<text x="947" y="1063" font-family="Arial" font-size="18" font-weight="bold" fill="white">BookingPassengers</text>
+<text x="947" y="1093" font-family="Arial" font-size="14" fill="#183c34">PK BookingPassengerID</text><text x="1177" y="1093" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="947" y="1116" font-family="Arial" font-size="14" fill="#183c34">FK BookingID</text><text x="1177" y="1116" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="947" y="1139" font-family="Arial" font-size="14" fill="#183c34">FK PassengerID</text><text x="1177" y="1139" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="947" y="1162" font-family="Arial" font-size="14" fill="#183c34">FK FareClassID</text><text x="1177" y="1162" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<rect x="1375" y="1040" width="370" height="205" rx="8" fill="white" stroke="#b8cfc7"/>
+<path d="M1383,1040 H1737 Q1745,1040 1745,1048 V1072 H1375 V1048 Q1375,1040 1383,1040" fill="#0b7163"/>
+<text x="1387" y="1063" font-family="Arial" font-size="18" font-weight="bold" fill="white">Tickets</text>
+<text x="1387" y="1093" font-family="Arial" font-size="14" fill="#183c34">PK TicketID</text><text x="1617" y="1093" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="1387" y="1116" font-family="Arial" font-size="14" fill="#183c34">FK AssignmentID</text><text x="1617" y="1116" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="1387" y="1139" font-family="Arial" font-size="14" fill="#183c34">TicketNumber</text><text x="1617" y="1139" font-family="Arial" font-size="13" fill="#61766e">varchar(20)</text>
+<text x="1387" y="1162" font-family="Arial" font-size="14" fill="#183c34">FK BookingPassengerID</text><text x="1617" y="1162" font-family="Arial" font-size="13" fill="#61766e">int</text>
+<text x="1387" y="1185" font-family="Arial" font-size="14" fill="#183c34">Amount</text><text x="1617" y="1185" font-family="Arial" font-size="13" fill="#61766e">decimal(14,2)</text>
+<text x="1387" y="1208" font-family="Arial" font-size="14" fill="#183c34">RefundPercent</text><text x="1617" y="1208" font-family="Arial" font-size="13" fill="#61766e">decimal(5,2)</text>
+<text x="1387" y="1231" font-family="Arial" font-size="14" fill="#183c34">Status</text><text x="1617" y="1231" font-family="Arial" font-size="13" fill="#61766e">varchar(12)</text>
+<text x="55" y="1380" font-family="Arial" font-size="20" font-weight="bold" fill="#123d36">Quan hệ FK (bảng con.cột → bảng cha)</text>
+<text x="55" y="1410" font-family="Arial" font-size="14" fill="#38584d">Aircraft.AirlineID → Airlines</text>
+<text x="55" y="1435" font-family="Arial" font-size="14" fill="#38584d">FlightSeatAssignments.FlightID → Flights</text>
+<text x="55" y="1460" font-family="Arial" font-size="14" fill="#38584d">FlightSeatAssignments.SeatID → AircraftSeats</text>
+<text x="55" y="1485" font-family="Arial" font-size="14" fill="#38584d">AuditLogs.ActorID → Users</text>
+<text x="55" y="1510" font-family="Arial" font-size="14" fill="#38584d">Bookings.FlightID → Flights</text>
+<text x="55" y="1535" font-family="Arial" font-size="14" fill="#38584d">Bookings.UserID → Users</text>
+<text x="55" y="1560" font-family="Arial" font-size="14" fill="#38584d">BookingPassengers.BookingID → Bookings</text>
+<text x="630" y="1410" font-family="Arial" font-size="14" fill="#38584d">BookingPassengers.FareClassID → FareClasses</text>
+<text x="630" y="1435" font-family="Arial" font-size="14" fill="#38584d">BookingPassengers.PassengerID → Passengers</text>
+<text x="630" y="1460" font-family="Arial" font-size="14" fill="#38584d">FlightFares.FareClassID → FareClasses</text>
+<text x="630" y="1485" font-family="Arial" font-size="14" fill="#38584d">FlightFares.FlightID → Flights</text>
+<text x="630" y="1510" font-family="Arial" font-size="14" fill="#38584d">Flights.AircraftID → Aircraft</text>
+<text x="630" y="1535" font-family="Arial" font-size="14" fill="#38584d">Flights.DestinationID → Airports</text>
+<text x="630" y="1560" font-family="Arial" font-size="14" fill="#38584d">Flights.OriginID → Airports</text>
+<text x="1205" y="1410" font-family="Arial" font-size="14" fill="#38584d">Payments.BookingID → Bookings</text>
+<text x="1205" y="1435" font-family="Arial" font-size="14" fill="#38584d">AircraftSeats.AircraftID → Aircraft</text>
+<text x="1205" y="1460" font-family="Arial" font-size="14" fill="#38584d">Tickets.AssignmentID → FlightSeatAssignments</text>
+<text x="1205" y="1485" font-family="Arial" font-size="14" fill="#38584d">Tickets.BookingPassengerID → BookingPassengers</text>
+<text x="1205" y="1510" font-family="Arial" font-size="14" fill="#38584d">Users.RoleID → Roles</text>
+</svg>

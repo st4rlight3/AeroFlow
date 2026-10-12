@@ -1,0 +1,72 @@
+{
+  "tables": {
+    "Aircraft": 6,
+    "AircraftSeats": 396,
+    "Airlines": 3,
+    "Airports": 10,
+    "AuditLogs": 248,
+    "BookingPassengers": 40,
+    "Bookings": 40,
+    "FareClasses": 3,
+    "FlightFares": 360,
+    "Flights": 120,
+    "FlightSeatAssignments": 40,
+    "Passengers": 40,
+    "Payments": 48,
+    "Roles": 2,
+    "Tickets": 40,
+    "Users": 40
+  },
+  "objects": [
+    {
+      "type_desc": "CHECK_CONSTRAINT",
+      "N": 27
+    },
+    {
+      "type_desc": "DEFAULT_CONSTRAINT",
+      "N": 14
+    },
+    {
+      "type_desc": "FOREIGN_KEY_CONSTRAINT",
+      "N": 19
+    },
+    {
+      "type_desc": "PRIMARY_KEY_CONSTRAINT",
+      "N": 16
+    },
+    {
+      "type_desc": "SQL_SCALAR_FUNCTION",
+      "N": 2
+    },
+    {
+      "type_desc": "SQL_STORED_PROCEDURE",
+      "N": 10
+    },
+    {
+      "type_desc": "SQL_TRIGGER",
+      "N": 6
+    },
+    {
+      "type_desc": "UNIQUE_CONSTRAINT",
+      "N": 19
+    },
+    {
+      "type_desc": "USER_TABLE",
+      "N": 16
+    },
+    {
+      "type_desc": "VIEW",
+      "N": 4
+    }
+  ],
+  "checks": [
+    [
+      "09_business_queries.sql",
+      "executed_without_error"
+    ],
+    [
+      "10_test_cases.sql",
+      "executed_without_error"
+    ]
+  ]
+}

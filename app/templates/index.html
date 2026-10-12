@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="vi">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+ <meta name="description" content="AeroFlow - tìm chuyến bay, chọn ghế và quản lý hành trình của bạn.">
+ <title>AeroFlow • Hành trình trong tầm tay</title>
+ <link rel="icon" href="/static/logo.svg" type="image/svg+xml">
+ <link rel="stylesheet" href="/static/style.css">
+ <script src="/static/app.js" defer></script>
+</head>
+<body>
+ <a class="skip" href="#main">Đến nội dung chính</a>
+ <header class="header"><div class="header-inner">
+  <a href="#home" class="brand" aria-label="AeroFlow trang chủ"><img src="/static/logo.svg" alt="" width="36" height="36">Aero<span>Flow</span></a>
+  <nav aria-label="Điều hướng chính"><a href="#home">Tìm chuyến bay</a><a href="#bookings">Chuyến đi của tôi</a><a href="#admin" id="admin-link" hidden>Quản trị</a></nav>
+  <div id="account-nav"><a class="button small secondary" href="#login">Đăng nhập</a></div>
+ </div></header>
+ <main id="main" tabindex="-1"><div class="loading" role="status">Đang chuẩn bị hành trình…</div></main>
+ <footer><div><strong>AeroFlow</strong><p>Hành trình của bạn, trong tầm tay.</p></div><p>Ứng dụng học tập DBMS<br>Thanh toán mô phỏng • Không nhập thông tin thẻ thật</p><span>© 2026 AeroFlow</span></footer>
+ <div id="toast" role="status" aria-live="polite"></div>
+ <dialog id="modal"><div class="modal-top"><h2 id="modal-title"></h2><button id="modal-close" class="icon-button" aria-label="Đóng">×</button></div><div id="modal-body"></div></dialog>
+</body>
+</html>
