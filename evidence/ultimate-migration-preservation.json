@@ -1,0 +1,139 @@
+{
+  "database": "AeroFlow_Test_Ultimate_Baseline_20261013",
+  "applied": [
+    "001_booking_segments.sql"
+  ],
+  "legacy_rows_unchanged": true,
+  "before": {
+    "Aircraft": {
+      "count": 25,
+      "sha256": "502574982af64d79836931e327a365215f771cab3cdd3a825ba9dc5d10c585f4"
+    },
+    "AircraftSeats": {
+      "count": 630,
+      "sha256": "66d189f7d807d254c835ab38bc024eea8934ab47c928603363be0cfb5e54463f"
+    },
+    "Airlines": {
+      "count": 3,
+      "sha256": "748f91b3a6bba4cc1d1e7a7ff72a8877dc7ff126aa2f1cae9257cacb1b2a700c"
+    },
+    "Airports": {
+      "count": 10,
+      "sha256": "069fd1b9e944b1edb0fe7ba03d7c750f0945914185b7f515dd9fd4d9e5524307"
+    },
+    "AuditLogs": {
+      "count": 308,
+      "sha256": "9d3c4fadb704ed82456e1c96e046d2577449fd6a43648f70f62f14f65b1f7375"
+    },
+    "BookingPassengers": {
+      "count": 56,
+      "sha256": "d867d6fed5e3550d8d225514ed97119392c4d3bf7717d469194631035119a06d"
+    },
+    "Bookings": {
+      "count": 55,
+      "sha256": "1985a7aa0beaddcf0d0530b00a49baedf1be665483c7788d4521a567b4baed04"
+    },
+    "FareClasses": {
+      "count": 3,
+      "sha256": "8d529f3c015d5f629b856662b48ecce03ca81ef6375c7fb5fb7f133426a2d0e4"
+    },
+    "FlightFares": {
+      "count": 378,
+      "sha256": "39a742facf7f3f4c2c04c5c6f75e92c1a97ce4bbf43b739d778844cfc7e7cadd"
+    },
+    "Flights": {
+      "count": 139,
+      "sha256": "68d16c775ea5bbd77613ec4cc644170e9021924aceb363b0f6e026bc922ab52b"
+    },
+    "FlightSeatAssignments": {
+      "count": 56,
+      "sha256": "71105ff8ca5fcee1b84cb4f8987456f2a917f6f38532d7781efa269c0d2919e3"
+    },
+    "Passengers": {
+      "count": 56,
+      "sha256": "0f27c07fb4478ece51fc628026218525e597c6685916fec16d07f0ec024e332e"
+    },
+    "Payments": {
+      "count": 59,
+      "sha256": "5bc48b13466669081a61a6466ce4a9fc3cf3648ba6ad95942a9572be51bd8fa4"
+    },
+    "Roles": {
+      "count": 2,
+      "sha256": "d1b58918a0d1ee5b1bc6f15ba94f09602f2032a3042ea037453c7db6dfb5325f"
+    },
+    "Tickets": {
+      "count": 56,
+      "sha256": "fcda2a3fa8f5fb4c91e4f6a79cc6b7b17e79431fcb343fca0a8371ad799c2593"
+    },
+    "Users": {
+      "count": 98,
+      "sha256": "a415f42c06975db1af1be12be1bc3db8f712df479fc256d04879ff5d2f4c8015"
+    }
+  },
+  "after": {
+    "Aircraft": {
+      "count": 25,
+      "sha256": "502574982af64d79836931e327a365215f771cab3cdd3a825ba9dc5d10c585f4"
+    },
+    "AircraftSeats": {
+      "count": 630,
+      "sha256": "66d189f7d807d254c835ab38bc024eea8934ab47c928603363be0cfb5e54463f"
+    },
+    "Airlines": {
+      "count": 3,
+      "sha256": "748f91b3a6bba4cc1d1e7a7ff72a8877dc7ff126aa2f1cae9257cacb1b2a700c"
+    },
+    "Airports": {
+      "count": 10,
+      "sha256": "069fd1b9e944b1edb0fe7ba03d7c750f0945914185b7f515dd9fd4d9e5524307"
+    },
+    "AuditLogs": {
+      "count": 308,
+      "sha256": "9d3c4fadb704ed82456e1c96e046d2577449fd6a43648f70f62f14f65b1f7375"
+    },
+    "BookingPassengers": {
+      "count": 56,
+      "sha256": "d867d6fed5e3550d8d225514ed97119392c4d3bf7717d469194631035119a06d"
+    },
+    "Bookings": {
+      "count": 55,
+      "sha256": "1985a7aa0beaddcf0d0530b00a49baedf1be665483c7788d4521a567b4baed04"
+    },
+    "FareClasses": {
+      "count": 3,
+      "sha256": "8d529f3c015d5f629b856662b48ecce03ca81ef6375c7fb5fb7f133426a2d0e4"
+    },
+    "FlightFares": {
+      "count": 378,
+      "sha256": "39a742facf7f3f4c2c04c5c6f75e92c1a97ce4bbf43b739d778844cfc7e7cadd"
+    },
+    "Flights": {
+      "count": 139,
+      "sha256": "68d16c775ea5bbd77613ec4cc644170e9021924aceb363b0f6e026bc922ab52b"
+    },
+    "FlightSeatAssignments": {
+      "count": 56,
+      "sha256": "71105ff8ca5fcee1b84cb4f8987456f2a917f6f38532d7781efa269c0d2919e3"
+    },
+    "Passengers": {
+      "count": 56,
+      "sha256": "0f27c07fb4478ece51fc628026218525e597c6685916fec16d07f0ec024e332e"
+    },
+    "Payments": {
+      "count": 59,
+      "sha256": "5bc48b13466669081a61a6466ce4a9fc3cf3648ba6ad95942a9572be51bd8fa4"
+    },
+    "Roles": {
+      "count": 2,
+      "sha256": "d1b58918a0d1ee5b1bc6f15ba94f09602f2032a3042ea037453c7db6dfb5325f"
+    },
+    "Tickets": {
+      "count": 56,
+      "sha256": "fcda2a3fa8f5fb4c91e4f6a79cc6b7b17e79431fcb343fca0a8371ad799c2593"
+    },
+    "Users": {
+      "count": 98,
+      "sha256": "a415f42c06975db1af1be12be1bc3db8f712df479fc256d04879ff5d2f4c8015"
+    }
+  }
+}

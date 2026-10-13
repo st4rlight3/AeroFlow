@@ -16,6 +16,12 @@ def main():
         raise SystemExit('Use an isolated database named AeroFlow or AeroFlow_<suffix>.')
     root = Path(__file__).resolve().parents[1]
     with pyodbc.connect(connection_string('master'), autocommit=True, timeout=10) as conn:
+        if conn.execute('SELECT DB_ID(?)', name).fetchone()[0] is not None:
+            conn.execute(f'USE [{name}]')
+            if conn.execute("SELECT OBJECT_ID('dbo.SchemaMigrations')").fetchone()[0] is not None:
+                if conn.execute('SELECT COUNT(*) FROM dbo.SchemaMigrations').fetchone()[0]:
+                    raise SystemExit('Database has Ultimate migrations. Use scripts/migrate.py; do not replay baseline SQL objects.')
+            conn.execute('USE master')
         for filename in ORDER:
             sql = (root/'sql'/filename).read_text(encoding='utf-8')
             # Only the fixed database-name token is substituted, never arbitrary user SQL.
