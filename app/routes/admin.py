@@ -10,12 +10,18 @@ bp = Blueprint('admin', __name__, url_prefix='/api/admin')
 
 # Identifiers come exclusively from this allowlist, never from client SQL fragments.
 CATALOGS = {
+ 'routes': ('Routes','RouteID',{'OriginID':('int',0),'DestinationID':('int',0),'IsActive':('bool',0)}),
+ 'loyalty-tiers': ('LoyaltyTiers','LoyaltyTierID',{'TierCode':('text',10),'Name':('text',50),'MinimumPoints':('int0',10000000)}),
+ 'services': ('Services','ServiceID',{'Code':('text',20),'Name':('text',100),'Category':('text',12),'UnitPrice':('decimal',10000000),'MaxQuantity':('int',5),'RefundPercent':('decimal',100),'IsActive':('bool',0)}),
  'airports': ('Airports', 'AirportID', {'Code': ('text', 3), 'Name': ('text', 120), 'City': ('text', 80), 'IsActive': ('bool', 0)}),
  'airlines': ('Airlines', 'AirlineID', {'Code': ('text', 2), 'Name': ('text', 100)}),
  'aircraft': ('Aircraft', 'AircraftID', {'AirlineID': ('int', 0), 'Registration': ('text', 20), 'Model': ('text', 80), 'IsActive': ('bool', 0)}),
  'seats': ('AircraftSeats', 'SeatID', {'AircraftID': ('int', 0), 'RowNumber': ('int', 80), 'ColumnLetter': ('text', 1), 'Cabin': ('text', 12), 'IsActive': ('bool', 0)}),
  'fare-classes': ('FareClasses', 'FareClassID', {'Code': ('text', 10), 'Name': ('text', 60), 'Cabin': ('text', 12), 'BaggageKg': ('int0', 60), 'RefundPercent': ('decimal', 100)})
 }
+CATALOGS['seats'][2].update(SeatFee=('decimal',5000000),IsPriority=('bool',0))
+CATALOGS['fare-classes'][2].update(Bundle=('text',10),ChangeAllowed=('bool',0),ChangeFee=('decimal',10000000),CabinBaggageKg=('int0',30))
+OPTIONAL_FIELDS={'SeatFee','IsPriority','Bundle','ChangeAllowed','ChangeFee','CabinBaggageKg'}
 
 @bp.get('/overview')
 @authenticated(admin=True)
@@ -68,6 +74,8 @@ def save_catalog(entity, item_id=None):
     table, pk, fields = CATALOGS[entity]
     d, values = body(), {}
     for key, (kind, limit) in fields.items():
+        if key in OPTIONAL_FIELDS and key not in d:
+            continue
         if kind == 'text':
             values[key] = text(d, key, 1, limit)
         elif kind == 'bool':
@@ -80,13 +88,14 @@ def save_catalog(entity, item_id=None):
             values[key] = decimal_value(d, key, 0, limit)
     if 'Code' in values:
         values['Code'] = values['Code'].upper()
-    if 'Cabin' in values and values['Cabin'] not in ('ECONOMY', 'BUSINESS'):
-        raise ApiError('Cabin cần là ECONOMY hoặc BUSINESS.')
+    if 'Cabin' in values and values['Cabin'] not in ('ECONOMY','PREMIUM','BUSINESS','FIRST'):
+        raise ApiError('Khoang không hợp lệ.')
     if entity == 'seats':
         values['ColumnLetter'] = values['ColumnLetter'].upper()
         values['SeatNumber'] = f"{values['ColumnLetter']}{values['RowNumber']}"
     with connection() as conn:
         conn.execute('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE')
+        conn.execute('EXEC dbo.sp_LockFlight 0')
         if item_id:
             existing = conn.execute(f'SELECT {pk} FROM dbo.{table} WITH(UPDLOCK,HOLDLOCK) WHERE {pk}=?', item_id).fetchone()
             if not existing:
@@ -97,6 +106,10 @@ def save_catalog(entity, item_id=None):
                 current = conn.execute('SELECT Cabin FROM dbo.FareClasses WHERE FareClassID=?', item_id).fetchone()[0]
                 if values['Cabin']!=current and conn.execute('SELECT 1 FROM dbo.FlightFares WHERE FareClassID=?', item_id).fetchone():
                     raise ApiError('Không đổi khoang của hạng vé đã được mở bán. Hãy tạo hạng vé mới.', 409)
+            if entity=='routes' and conn.execute('SELECT 1 FROM dbo.Routes r JOIN dbo.Flights f ON f.OriginID=r.OriginID AND f.DestinationID=r.DestinationID WHERE r.RouteID=? AND (r.OriginID<>? OR r.DestinationID<>?)',item_id,values['OriginID'],values['DestinationID']).fetchone():
+                raise ApiError('Đường bay đã có chuyến. Chỉ đổi trạng thái hoặc tạo đường bay mới.',409)
+            if entity=='loyalty-tiers' and conn.execute('SELECT 1 FROM dbo.LoyaltyTiers WHERE LoyaltyTierID=? AND MinimumPoints=0',item_id).fetchone() and values['MinimumPoints']!=0:
+                raise ApiError('Cần giữ hạng cơ sở ở mức 0 điểm.',400)
             conn.execute(f"UPDATE dbo.{table} SET {','.join(k+'=?' for k in values)} WHERE {pk}=?", tuple(values.values())+(item_id,))
         else:
             cursor = conn.execute(f"SET NOCOUNT ON; INSERT dbo.{table}({','.join(values)}) VALUES({','.join('?' for _ in values)}); SELECT CONVERT(int,SCOPE_IDENTITY()) NewID;", tuple(values.values()))

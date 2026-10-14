@@ -1,5 +1,6 @@
 """Read-only inventory plus rollback-only SQL constraint tests. Save truthful evidence."""
 from datetime import datetime, timezone
+import argparse
 import json
 from pathlib import Path
 import re
@@ -7,6 +8,8 @@ import sys
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from app.db import query,connection
 
+parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--prefix',default='');args=parser.parse_args()
+if not re.fullmatch('[a-z0-9-]*',args.prefix): parser.error('Prefix must contain lowercase letters, digits or hyphens.')
 root=Path(__file__).resolve().parents[1]
 tables=query("SELECT name FROM sys.tables WHERE schema_id=SCHEMA_ID('dbo') ORDER BY name")
 snapshot={'checked_at_utc':datetime.now(timezone.utc).isoformat(),
@@ -30,6 +33,6 @@ for filename in ('09_business_queries.sql','10_test_cases.sql'):
                 if not c.nextset():break
     checks.append({'script':filename,'result':'executed_without_error','result_sets':rowsets})
 (root/'evidence').mkdir(exist_ok=True)
-(root/'evidence/database-inventory.json').write_text(json.dumps(snapshot,ensure_ascii=False,indent=2,default=str),encoding='utf-8')
-(root/'evidence/sql-checks.json').write_text(json.dumps(checks,ensure_ascii=False,indent=2),encoding='utf-8')
+(root/'evidence'/(args.prefix+'database-inventory.json')).write_text(json.dumps(snapshot,ensure_ascii=False,indent=2,default=str),encoding='utf-8')
+(root/'evidence'/(args.prefix+'sql-checks.json')).write_text(json.dumps(checks,ensure_ascii=False,indent=2),encoding='utf-8')
 print(json.dumps({'tables':snapshot['tables'],'objects':snapshot['objects'],'checks':[(x['script'],x['result']) for x in checks]},ensure_ascii=False,indent=2))

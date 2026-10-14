@@ -44,7 +44,7 @@ def migrated():
     applied=apply(conn,migration_files(),test_database=True)
     _,after=snapshot(conn,cols)
     assert before==after
-    assert conn.execute('SELECT COUNT(*) FROM dbo.Bookings b LEFT JOIN dbo.BookingSegments s ON s.BookingID=b.BookingID AND s.SegmentOrder=1 WHERE s.BookingSegmentID IS NULL OR s.FlightID<>b.FlightID').fetchone()[0]==0
+    assert conn.execute('SELECT COUNT(*) FROM dbo.Bookings b WHERE NOT EXISTS(SELECT 1 FROM dbo.BookingSegments s WHERE s.BookingID=b.BookingID AND s.SegmentOrder=1 AND s.FlightID=b.FlightID)').fetchone()[0]==0
     evidence={'database':os.environ['SQL_DATABASE'],'applied':applied,'legacy_rows_unchanged':True,'before':before,'after':after}
     (Path(__file__).resolve().parents[1]/'evidence/ultimate-migration-preservation.json').write_text(json.dumps(evidence,indent=2),encoding='utf-8')
     yield conn

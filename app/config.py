@@ -9,7 +9,7 @@ def settings():
     secret = os.getenv('SECRET_KEY', '')
     if len(secret) < 32 or secret.startswith('REPLACE_'):
         raise RuntimeError('Run python scripts/configure.py to generate SECRET_KEY in .env.')
-    return dict(SECRET_KEY=secret, SESSION_COOKIE_HTTPONLY=True,
+    return dict(SECRET_KEY=secret, SESSION_COOKIE_NAME=os.getenv('SESSION_COOKIE_NAME', 'aeroflow_ultimate'), SESSION_COOKIE_HTTPONLY=True,
                 SESSION_COOKIE_SAMESITE='Lax', SESSION_COOKIE_SECURE=os.getenv('SESSION_COOKIE_SECURE', 'false').lower() == 'true',
                 PERMANENT_SESSION_LIFETIME=3600, MAX_CONTENT_LENGTH=32768,
                 JSON_SORT_KEYS=False, LOGIN_LIMIT=10)

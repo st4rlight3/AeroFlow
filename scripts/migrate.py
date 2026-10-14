@@ -64,6 +64,9 @@ def apply(conn, files, backup_file=None, test_database=False):
             path = Path(backup_file)
             if not path.is_absolute() or path.exists():
                 raise ValueError('Backup must use a new absolute file path; existing files are never overwritten.')
+            server_exists=conn.execute('SELECT file_exists,file_is_a_directory FROM sys.dm_os_file_exists(?)',str(path)).fetchone()
+            if server_exists and (server_exists[0] or server_exists[1]):
+                raise ValueError('Backup path already exists on the SQL Server host; use a new filename.')
             drain(conn.execute(f'BACKUP DATABASE [{name}] TO DISK=? WITH COPY_ONLY,CHECKSUM,NOINIT', str(path)))
             drain(conn.execute('RESTORE VERIFYONLY FROM DISK=? WITH CHECKSUM', str(path)))
         if not exists:

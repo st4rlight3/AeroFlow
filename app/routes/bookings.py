@@ -1,7 +1,7 @@
 from flask import Blueprint, g, jsonify
 from ..db import query
 from ..security import authenticated
-from ..validation import body, text
+from ..validation import body, text, decimal_value
 from ..errors import ApiError
 from ..services.booking_service import create_booking, owned_booking
 
@@ -25,7 +25,7 @@ def history():
 @authenticated()
 def detail(booking_id):
     b = owned_booking(booking_id, g.user)
-    tickets = query('SELECT t.TicketID,t.TicketNumber,t.Amount,t.Status,t.RefundPercent,p.FullName,p.DateOfBirth,RIGHT(p.DocumentNumber,4) DocumentLast4,c.Name FareName,c.BaggageKg,s.SeatNumber FROM dbo.BookingPassengers bp JOIN dbo.Passengers p ON p.PassengerID=bp.PassengerID JOIN dbo.Tickets t ON t.BookingPassengerID=bp.BookingPassengerID JOIN dbo.FareClasses c ON c.FareClassID=bp.FareClassID JOIN dbo.FlightSeatAssignments a ON a.AssignmentID=t.AssignmentID JOIN dbo.AircraftSeats s ON s.SeatID=a.SeatID WHERE bp.BookingID=? ORDER BY t.TicketID', (booking_id,))
+    tickets = query('SELECT f.FlightNumber,f.OriginCode,f.DestinationCode,f.DepartureTime,f.ArrivalTime,t.TicketID,t.TicketNumber,t.Amount,t.Status,t.RefundPercent,p.FullName,p.DateOfBirth,RIGHT(p.DocumentNumber,4) DocumentLast4,c.Name FareName,COALESCE(tr.BaggageKg,c.BaggageKg) BaggageKg,s.SeatNumber FROM dbo.BookingPassengers bp JOIN dbo.Passengers p ON p.PassengerID=bp.PassengerID JOIN dbo.Tickets t ON t.BookingPassengerID=bp.BookingPassengerID LEFT JOIN dbo.TicketRules tr ON tr.TicketID=t.TicketID JOIN dbo.FareClasses c ON c.FareClassID=COALESCE(t.FareClassID,bp.FareClassID) JOIN dbo.FlightSeatAssignments a ON a.AssignmentID=t.AssignmentID JOIN dbo.AircraftSeats s ON s.SeatID=a.SeatID JOIN dbo.vw_FlightAvailability f ON f.FlightID=a.FlightID WHERE bp.BookingID=? ORDER BY t.TicketID', (booking_id,))
     payments = query('SELECT PaymentID,Amount,Kind,Status,CreatedAt FROM dbo.Payments WHERE BookingID=? ORDER BY PaymentID', (booking_id,))
     return jsonify(booking=b, tickets=tickets, payments=payments)
 
@@ -36,7 +36,10 @@ def pay(booking_id):
     d = body()
     if type(d.get('Success')) is not bool:
         raise ApiError('Success phải là true hoặc false cho thanh toán giả lập.')
-    return jsonify(payment=query('EXEC dbo.sp_ConfirmPayment ?,?,?,?', (g.user['UserID'], booking_id, text(d, 'IdempotencyKey', 16, 80), d['Success']), one=True))
+    method=d.get('Method','MOCK')
+    if method not in ('MOCK','CREDIT'): raise ApiError('Phương thức thanh toán không hợp lệ.')
+    expected=decimal_value(d,'ExpectedAmount',0,10000000000) if 'ExpectedAmount' in d else None
+    return jsonify(payment=query('EXEC dbo.sp_ConfirmPayment ?,?,?,?,?,?', (g.user['UserID'], booking_id, text(d, 'IdempotencyKey', 16, 80), d['Success'],method,expected), one=True))
 
 @bp.post('/<int:booking_id>/cancel')
 @authenticated()

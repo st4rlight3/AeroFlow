@@ -1,29 +1,14 @@
-# AeroFlow — Intelligent Airline Reservation & Management System
+# AeroFlow Ultimate
 
-Ứng dụng bài tập lớn DBMS, giao diện tiếng Việt, HTML/CSS/JavaScript + Flask + pyodbc + Microsoft SQL Server. **Không có chế độ SQLite, dữ liệu giả trong frontend hoặc thanh toán ngân hàng thật.**
+Website hàng không mô phỏng: HTML/CSS/JavaScript ↔ Flask ↔ pyodbc ↔ Microsoft SQL Server. Nâng cấp từ AeroFlow trên nhánh `feature/ultimate-upgrade`. Không có SQLite hoặc dữ liệu nghiệp vụ thay thế trong frontend.
 
-## Trạng thái bàn giao
+Bản bàn giao 14/10/2026. Kết quả và giới hạn: **PROGRESS.md**. Các tài liệu học thuật/slide cũ được giữ nguyên nhưng chưa cập nhật cho Ultimate theo yêu cầu tạm hoãn của người dùng. Ưu tiên README này và MIGRATION_GUIDE.md khi vận hành.
 
-- Đã tạo và chạy trên SQL Server 2022 Express 16.0.1000.6, Python 3.12, ODBC Driver 18, Windows.
-- 16 bảng (15 bảng nghiệp vụ + AuditLogs), 4 view, 2 function, 10 procedure, 6 trigger.
-- Bộ seed: 120 chuyến, 396 ghế, 40 khách mẫu, 40 booking, 40 hành khách, 40 vé, 48 giao dịch.
-- Kết quả kiểm thử thực tế và giới hạn: xem `TESTING.md`, `evidence/pytest-results.xml`, `evidence/sql-checks.json`.
-- `docs/BAO_CAO.pdf` để in; `docs/AeroFlow_Slides.pptx` để thuyết trình; `DEMO.md` cho demo 10–15 phút.
-- Tài khoản mẫu đều bị khóa. Không có mật khẩu quản trị mặc định. Người cài tự tạo tài khoản.
+## Chạy trên Windows
 
-## 1. Điều kiện trên Windows
+Cần Python 3.11+, SQL Server Express (đã thử bản 2022), Microsoft ODBC Driver 18 cùng kiến trúc Python. Không cần Docker. SSMS hữu ích để xem dữ liệu. Windows account cần quyền tạo database và backup khi cài/nâng cấp.
 
-1. Python 3.11 trở lên và Python Launcher (`py`). Bản kiểm thử dùng Python 3.12.
-2. Microsoft SQL Server 2019+ hoặc 2022 Express, dịch vụ `SQL Server (SQLEXPRESS)` đang chạy. SQL Server 2022 Express là bản đã kiểm chứng.
-3. Microsoft ODBC Driver 18 for SQL Server đúng kiến trúc với Python (khuyến nghị cả hai 64-bit).
-4. SSMS để quan sát DB và chạy các truy vấn trong demo. SSMS không bắt buộc để ứng dụng chạy.
-5. Windows account có quyền tạo database cho bước khởi tạo. Phần mềm không tự cài hoặc đổi cấu hình SQL Server.
-
-Liên kết chính thức: [Python Windows](https://www.python.org/downloads/windows/), [SQL Server Express](https://www.microsoft.com/en-us/sql-server/sql-server-downloads), [ODBC Driver](https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server), [SSMS](https://learn.microsoft.com/en-us/ssms/install/install).
-
-## 2. Cài đặt và chạy
-
-Giải nén ZIP. Mở PowerShell tại thư mục `AeroFlow` có `run.py`:
+Giải nén **AeroFlow_Ultimate_Complete.zip**, mở PowerShell trong **AeroFlow-Ultimate** có `run.py`:
 
 ```powershell
 py -3 -m venv .venv
@@ -32,9 +17,7 @@ py -3 -m venv .venv
 notepad .env
 ```
 
-Không cần kích hoạt môi trường ảo hoặc đổi ExecutionPolicy. Có thể dùng `scripts/setup.ps1` nếu máy cho phép chạy PowerShell script; các lệnh trên có tác dụng tương đương.
-
-Trong `.env`, kiểm tra ít nhất:
+Không cần kích hoạt venv hoặc đổi ExecutionPolicy. `configure.py` sinh SECRET_KEY ngẫu nhiên và không ghi đè `.env` đã có. Kiểm tra:
 
 ```dotenv
 SQL_SERVER=.\SQLEXPRESS
@@ -43,108 +26,87 @@ SQL_DRIVER=ODBC Driver 18 for SQL Server
 SQL_TRUSTED_CONNECTION=yes
 SQL_ENCRYPT=no
 SQL_TRUST_SERVER_CERTIFICATE=yes
+HOST=127.0.0.1
+PORT=5000
 ```
 
-`configure.py` sinh SECRET_KEY ngẫu nhiên. Giữ `.env` riêng trên máy, không commit hoặc gửi cùng ZIP. Dùng SQL Authentication thì đặt `SQL_TRUSTED_CONNECTION=no`, điền `SQL_USERNAME` và `SQL_PASSWORD`. Tên instance phải đúng máy cài, ví dụ `localhost` cho default instance. Cấu hình TLS trên dành cho demo cục bộ; xem `SECURITY.md` nếu triển khai ngoài localhost.
+Cấu hình trên dành cho demo cục bộ. SQL Authentication: đặt `SQL_TRUSTED_CONNECTION=no`, điền username/password riêng trong `.env`. Không commit/gửi `.env`. Khi triển khai HTTPS cần chứng chỉ đáng tin cậy và `SESSION_COOKIE_SECURE=true`. Cookie mặc định `aeroflow_ultimate`; dùng tên khác nhau khi chạy nhiều bản trên cùng hostname.
+
+**Database mới:** chạy bước sau. **Database đã có dữ liệu AeroFlow:** bỏ qua bước này.
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\init_db.py
+```
+
+**Cả cài mới và nâng cấp đều cần migrations trước khi chạy website:** dừng ứng dụng/tác vụ nền, chọn đường dẫn backup mới rồi chạy:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\migrate.py
+.\.venv\Scripts\python.exe scripts\migrate.py --apply --backup-file "C:\SQLBackups\AeroFlow_before_ultimate_20261014.bak"
+.\.venv\Scripts\python.exe scripts\seed_ultimate.py --apply
 .\.venv\Scripts\python.exe scripts\create_user.py --role ADMIN --email admin@example.com --name "Quan tri AeroFlow"
 .\.venv\Scripts\python.exe run.py
 ```
 
-Nhập mật khẩu quản trị từ 12 ký tự khi được hỏi; công cụ không hiển thị mật khẩu. Mở **http://127.0.0.1:5000**. Tạo tài khoản Customer ở trang Đăng ký hoặc dùng `create_user.py --role CUSTOMER`. Email trong lệnh là ví dụ do người cài lựa chọn, không phải thông tin đăng nhập có sẵn.
+Backup path là ví dụ: thư mục phải tồn tại trên **máy SQL Server**, tài khoản dịch vụ SQL Server có quyền ghi, file chưa tồn tại. Có thể dùng thư mục Backup mặc định của instance. Lỗi backup sẽ dừng migration; không cấp quyền rộng cho toàn ổ đĩa. Runner dùng COPY_ONLY/CHECKSUM và VERIFYONLY trước migration. Xem MIGRATION_GUIDE.md.
 
-Trang chủ tự đọc ngày bay đầu tiên và các tuyến đang mở bán từ SQL Server. Bộ seed sinh chuyến từ ngày UTC hiện tại + 2 đến + 31. Sau hơn 30 ngày, dùng quản trị tạo lịch mới hoặc tạo một database demo mới để sinh lịch mới. Không tự động xóa dữ liệu cũ.
+`seed_ultimate.py` là bước tùy chọn cho demo: thêm hai máy bay, bốn khoang, 12 hạng Basic/Standard/Flexible, 84 chuyến trong 14 ngày từ ngày UTC hiện tại + 2. Có HAN–SGN–HAN và HAN–DAD–SGN nối 90 phút. Chạy lại cùng ngày không nhân đôi; ngày sau chỉ thêm lịch còn thiếu. Không ghi đè dữ liệu cũ. Chạy khi website đã dừng.
 
-## 3. Trình tự script SQL
+Nhập mật khẩu Admin kín, 12–128 ký tự; **không có mật khẩu mặc định**. Mở **http://127.0.0.1:5000/#ultimate**. Khách đăng ký qua web. Admin đăng nhập → Quản trị. `/api/health` kiểm tra SQL Server. Không chạy `init_db.py` hoặc baseline 02–08 để ghi đè database đã nâng cấp.
 
-Chạy tự động bằng `scripts/init_db.py` hoặc trong SSMS theo đúng thứ tự sau:
+## Chức năng và quy tắc mô phỏng
 
-1. `01_create_database.sql`
-2. `02_create_tables.sql`
-3. `03_constraints_indexes.sql`
-4. `05_views.sql`
-5. `06_functions.sql`
-6. `07_stored_procedures.sql`
-7. `08_triggers.sql`
-8. `04_seed_data.sql`
-9. `09_business_queries.sql` để xem truy vấn
-10. `10_test_cases.sql` để kiểm tra CHECK, UNIQUE, FK, ROLLBACK và các bất biến
+- Một chiều, khứ hồi, nhiều thành phố; tìm tối đa một điểm nối mỗi nhóm. Lịch giá ±3 ngày, lọc hãng/ngân sách/điểm dừng, sắp xếp giá/thời lượng/khởi hành, bốn khoang, so sánh điều kiện vé.
+- Một PNR nhiều chặng, tối đa 9 khách; cần người lớn, mỗi người lớn tối đa một em bé. Tuổi xác minh theo ngày bay; em bé có ghế riêng. Nối cùng sân bay 60 phút–8 giờ; tối đa 6 nhóm/12 chặng; đóng bán trước giờ lịch 2 giờ.
+- Hành khách lưu sẵn, hỗ trợ đặc biệt, chọn ghế từng người/từng chặng hoặc tự xếp. Ghế ưu tiên có phí. Chọn trên màn hình chưa giữ ghế; xác nhận đặt chỗ giữ 10 phút theo đồng hồ SQL Server.
+- Hành lý/suất ăn/ưu tiên/phòng chờ. Mỗi vé một loại suất ăn. Một promo/voucher hoặc điểm, không cộng dồn. Điểm đổi 1.000 VND/điểm, tối đa 50% đơn; điểm được giữ cùng đơn HELD. Giá/thuế/phí/giảm giá do server tính.
+- Thanh toán thất bại/thử lại/thành công hoặc travel credit đều mô phỏng. Idempotency key chống xử lý lặp. Chỉ chủ PNR hoặc Admin được đọc đặt chỗ.
+- Đổi ngày/chuyến/nâng khoang cho toàn bộ khách của một chặng còn đủ vé hợp lệ, cùng đường bay, trước giờ lịch ít nhất 24 giờ, chưa check-in và hạng cũ cho đổi. Thu/hoàn chênh lệch MOCK, tự xếp ghế mới, giữ vé cũ VOID và lịch sử. Không chia PNR hoặc tự đổi sân bay; chênh lệch không tự chuyển sang credit.
+- Hủy riêng vé hoặc cả đơn trước giờ lịch ít nhất 24 giờ; hoàn theo snapshot vé/dịch vụ sau phân bổ giảm giá. Hủy riêng cho chọn credit. Hãng hủy một chặng thì hủy toàn PNR và hoàn số đã thu trừ đã hoàn, không hoàn trùng. Phí đổi không hoàn khi khách tự hủy.
+- Điểm mới: 1 điểm/10.000 VND thanh toán; hoàn tiền điều chỉnh điểm; số khả dụng tối thiểu 0. Không cộng hồi tố trước nâng cấp. Hạng thành viên theo điểm tích lũy ròng, độc lập điểm đã dùng.
+- Check-in từng vé/chặng từ 24 giờ đến 1 giờ trước giờ dự kiến. QR DEMO chứa tham chiếu ngẫu nhiên. Admin nhập tham chiếu để xác minh và ghi nhận lên máy bay khi chuyến BOARDING. PDF vé, boarding pass, biên nhận và báo cáo vận hành có nhãn mô phỏng.
+- Admin quản lý danh mục/đường bay/lịch/ghế/giá/dịch vụ/ưu đãi/hạng thành viên, khách/booking/giao dịch/refund, check-in/cửa/chậm chuyến, audit và báo cáo CSV/PDF. Biểu đồ đọc SQL Server. Báo cáo theo UTC; lịch bay hiển thị UTC+7.
 
-**Lý do 04 chạy sau 08:** seed thật sự gọi procedure đặt vé/thanh toán/hủy, sử dụng function/view và tạo log qua trigger. File 05 không phụ thuộc function; file 06 có function đọc view. Không chạy theo thứ tự tên file một cách máy móc.
+SQL dùng DECIMAL(14,2); API trả tiền bằng chuỗi, giao diện VND làm tròn đến đồng. Tổng booking sau thanh toán thể hiện tổng các lần thu; khoản hoàn xem trong lịch sử. PDF vé gồm dịch vụ/ưu đãi của vé; phí đổi riêng ở biên nhận. Snapshot hành lý và điều kiện đổi giữ nguyên khi sửa danh mục.
 
-Khởi tạo không DROP DATABASE, không DROP TABLE. DDL bỏ qua schema đã có; indexes kiểm tra tồn tại; objects dùng CREATE OR ALTER; seed dùng marker `seed001@aeroflow.example` và transaction toàn bộ. Chạy lại trên cùng phiên bản không nhân đôi dữ liệu. Đây không phải hệ thống migration cho schema đã bị sửa hoặc phiên bản cũ: nếu schema khác, tạo database mới `AeroFlow_<suffix>` và cập nhật `.env`. `init_db.py` chỉ nhận tên `AeroFlow` hoặc `AeroFlow_<letters_digits_underscores>`.
+## Tác vụ bổ sung
 
-Scripts SSMS mặc định `USE AeroFlow`. Runner tự thay tên DB đã kiểm tra hợp lệ. Không tự sửa script thành một database đang phục vụ hệ thống khác.
+- PDF dùng `C:/Windows/Fonts/arial.ttf`; nếu thiếu đặt `PDF_FONT_PATH` tới TTF Unicode. PDF đã tải không tự cập nhật sau đổi/hủy: tra lại website.
+- `python scripts/expire_holds.py`: dọn giữ ghế; có thể chạy mỗi phút bằng Windows Task Scheduler, đúng venv/thư mục dự án/Windows account. Các API ghế/đặt/thanh toán cũng dọn hết hạn; không cần SQL Server Agent.
+- Admin → Khai thác & check-in → tạo nhắc chuyến, chống trùng. Cửa/delay do Admin nhập, không kết nối dữ liệu hàng không thật.
+- Email: khách bật tùy chọn; cấu hình SMTP trong `.env`. `python scripts/send_notifications.py` chỉ dry run. Người vận hành chủ động chạy `python scripts/send_notifications.py --send --limit 20` để gửi STARTTLS; tối đa 5 lần thử, trạng thái lưu SQL. Chưa kiểm chứng SMTP thật; có thể gửi lặp nếu crash sau gửi nhưng trước ghi nhận SQL, không bảo đảm exactly-once email.
+- Reset mật khẩu: người vận hành xác minh chủ tài khoản rồi chạy `python scripts/issue_reset_token.py --email <email>`. Token một lần, hạn 15 phút, chỉ lưu SHA-256; nhập tại `/#reset-password`. Chưa có email reset tự động. Đổi/reset kết thúc phiên cũ.
 
-## 4. Chức năng
+## SQL và kiểm thử
 
-Khách hàng: đăng ký/đăng nhập/đăng xuất, tìm chuyến theo tuyến/ngày/số khách, chi tiết và hạng vé, sơ đồ ghế theo máy bay, nhập hành khách, xác nhận/giữ ghế, mô phỏng thanh toán thành công/thất bại, in vé điện tử, lịch sử đặt vé/giao dịch, hồ sơ, hủy cả booking.
+Baseline: **01 → 02 → 03 → 05 → 06 → 07 → 08 → 04**, vì seed gọi procedure/function/trigger thực. Sau đó migrations **001 → 014** bằng runner ledger/checksum. `09_business_queries.sql` có 18 truy vấn; `10_test_cases.sql` kiểm tra ràng buộc/rollback. SSMS scripts mặc định `USE AeroFlow`; kiểm tra database trước khi chạy. Runner kiểm tra và thay tên database hợp lệ.
 
-Quản trị: dashboard từ view và function, tạo/sửa chuyến chưa có lịch sử booking, cập nhật trạng thái, giá từng hạng, quản lý sân bay/hãng bay/máy bay/sơ đồ ghế/hạng vé, tra cứu booking, khóa/kích hoạt khách hàng, doanh thu theo ngày và CSV, giao dịch, nhật ký. Tạo máy bay tự sinh sơ đồ 6 cột A–F, số hàng do admin nhập. Sơ đồ đã có chuyến bay không được sửa để bảo toàn lịch sử.
-
-Quy tắc: một chiều, tối đa 9 khách/booking, mọi khách có ghế riêng, đóng bán trước 2 giờ, giữ ghế 10 phút theo thời gian SQL Server UTC, hủy sau thanh toán trước khởi hành ít nhất 24 giờ, hoàn theo điều kiện chốt trên vé. Khi hãng hủy chuyến, hoàn đủ giá vé đã thanh toán. Không hỗ trợ đổi vé, khứ hồi/nối chuyến, infant-on-lap hoặc tiền tệ khác VND trong phạm vi này.
-
-Giá hiển thị là giá đã gồm thuế. Backend không sử dụng giá tiền do client gửi. Điểm dữ liệu duy nhất là SQL Server. Mất DB trả lỗi 503, không thay bằng bộ dữ liệu frontend.
-
-## 5. Giữ ghế và tác vụ định kỳ
-
-Truy vấn ghế, chi tiết/lịch sử booking, đặt vé và thanh toán đều dọn giữ ghế hết hạn bằng procedure chung. Chạy thêm tác vụ sau mỗi phút qua Windows Task Scheduler nếu muốn giải phóng ngay cả khi không có truy cập:
+Tạo database test riêng, không dùng dữ liệu thật:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts\expire_holds.py
-```
-
-Task Scheduler: Program là đường dẫn tuyệt đối tới `.venv\Scripts\python.exe`; Arguments là đường dẫn `scripts\expire_holds.py`; Start in là thư mục dự án. Dùng account Windows có quyền kết nối DB. Không cần SQL Server Agent (Express không có Agent chạy lịch).
-
-## 6. Kiểm thử lại
-
-```powershell
-.\.venv\Scripts\python.exe -m pytest tests\test_unit.py -q
 $env:SQL_DATABASE="AeroFlow_Test_Local"
 .\.venv\Scripts\python.exe scripts\init_db.py
+.\.venv\Scripts\python.exe scripts\migrate.py --apply --test-database
 $env:RUN_SQL_TESTS="1"
-.\.venv\Scripts\python.exe -m pytest -q --junitxml=evidence\pytest-results.xml
+.\.venv\Scripts\python.exe -m pytest -q --junitxml=evidence\local-tests.xml
+.\.venv\Scripts\python.exe scripts\verify_database.py --prefix local-
 Remove-Item Env:RUN_SQL_TESTS
 Remove-Item Env:SQL_DATABASE
-.\.venv\Scripts\python.exe scripts\verify_database.py
 ```
 
-Integration suite tạo thêm dữ liệu và trigger lỗi tạm thời trong DB test, tự gỡ trigger ở `finally`. Không chạy suite này trên DB demo/production. Biến `SQL_DATABASE` trong phiên shell ưu tiên `.env`; đóng shell hoặc gỡ biến sau kiểm thử. DB test chỉ chấp nhận tên bắt đầu `AeroFlow_Test_`. Giữ database test để kiểm tra bằng chứng hoặc tự xóa sau khi không còn cần.
+`--test-database` chỉ cho `AeroFlow_Test_*`. Tests cố tình gây lỗi/tạo tài khoản và chuyến thử, giữ dữ liệu chứng minh trong DB đó. `python scripts/verify_upgrade.py --run` tạo các database tên riêng, kiểm tra baseline → migrate → no-op → backup/restore và hash cột cũ; cần quyền tạo/backup/restore và không tự xóa DB sau chạy.
 
-## 7. Tổ chức mã nguồn
+Inventory dùng applock Exclusive cấp transaction chung + unique filtered index ghế hiệu lực. Bảo vệ toàn hành trình, rollback nhất quán; giới hạn thông lượng, chưa kiểm thử tải lớn. Queries có tham số, hash scrypt, backend kiểm tra quyền/CSRF/session. Chưa pentest độc lập.
 
-```text
-AeroFlow/
-  app/                 Flask factory, configuration, security, validation, database
-    routes/            auth, flights, bookings, admin
-    services/          booking orchestration and ownership
-    templates/         HTML shell
-    static/            CSS, JavaScript and original SVG logo
-  sql/                 10 required T-SQL scripts
-  scripts/             configure, init_db, create_user, expire_holds, verify_database
-  tests/               unit/security and real SQL integration tests
-  docs/                source assignment, report PDF/source, ERD, slide PPTX
-  evidence/            actual test results, SQL inventory, browser evidence
-  .env.example         configuration template, no real secrets
-  requirements.txt
-  run.py               Waitress localhost entrypoint
-```
+## Demo nhanh và Git
 
-`SOURCE_MANIFEST.sha256` đối chiếu các file được đóng gói. Git snapshot/history đi kèm trong `source-history.bundle`, không chứa `.env`, deps, dữ liệu runtime hoặc tài khoản thử. Có thể khôi phục bằng `git clone source-history.bundle AeroFlow-history`, hoặc `git init` ngay trong thư mục giải nén để phát triển tiếp.
+1. Seed Ultimate, tìm HAN → SGN ngày có UA100. Chọn Flexible và A6 có phí hoặc tự xếp miễn phí. Có thể chọn khứ hồi hoặc nối qua DAD.
+2. Đặt vé, thêm hành lý, mã `ULTIMATE10` hoặc `DEMO100K` khi còn hiệu lực; thử thanh toán thất bại rồi thành công. Mở SSMS xem Bookings/BookingSegments/Tickets/Payments.
+3. `pytest tests/test_itineraries.py -q` chứng minh tranh chấp ghế chặng dùng chung; chỉ một khách thành công.
+4. Đổi ngày/nâng khoang, xem giá chênh lệch/vé cũ VOID; hủy riêng hoàn credit. `tests/test_exchange_wallet.py` kiểm tra chi tiêu credit đồng thời.
+5. Admin mở dashboard, doanh thu, danh mục và khai thác. Demo check-in cần chuyến trong cửa sổ 24–1 giờ; dùng fixture test tạo lịch riêng, không sửa trực tiếp chuyến đã bán của người dùng.
+6. `tests/test_migrations.py`, `sql/10_test_cases.sql` và integration tests minh chứng rollback/ràng buộc. Kết quả mới ở `evidence/ultimate-*`.
 
-## 8. Khắc phục lỗi
+Chưa push/merge main. Dùng ZIP cập nhật repo đã clone: chuyển nhánh `feature/ultimate-upgrade`, sao lưu thay đổi chưa commit, chép nội dung **bên trong AeroFlow-Ultimate** vào repo (không chép `.git`, không đè `.env`), xem diff, cài requirements, backup/migrate và test. Người dùng tự tạo PR/merge.
 
-| Hiện tượng | Kiểm tra |
-|---|---|
-| ODBC driver not found | Cài ODBC Driver 18 64-bit, Python 64-bit; kiểm tra tên SQL_DRIVER |
-| Không kết nối database / 503 | Kiểm tra dịch vụ SQL Server, đúng instance, `.env`, Windows login có quyền DB |
-| Login failed for user | Kiểm tra Windows Authentication hoặc SQL user; không đưa mật khẩu vào lỗi API |
-| Certificate verify failed | Demo localhost có thể dùng TrustServerCertificate=yes; triển khai thật dùng chứng chỉ tin cậy |
-| SECRET_KEY chưa cấu hình | Chạy configure.py, không dùng placeholder trong .env.example |
-| Không có chuyến | Kiểm tra ngày, tuyến, giá vé và số ghế; seed chỉ có cửa sổ 30 ngày từ lúc khởi tạo |
-| Không sửa được sơ đồ/lịch | Dữ liệu đã có lịch sử: tạo máy bay/chuyến mới theo quy tắc bảo toàn vé |
-| Ghế vừa bị giữ | Tải lại sơ đồ. SQL Server quyết định quyền sở hữu ghế, giao diện chỉ tham khảo |
-
-Không in mật khẩu, chuỗi kết nối hoặc stack trace trong phản hồi. Mã request có trong thông báo lỗi để đối chiếu log an toàn.
+Đóng gói lại: `python scripts/package_release.py --output <đường-dẫn>\AeroFlow_Ultimate_Complete.zip`. ZIP chứa MANIFEST.sha256, kiểm tra CRC/từng byte; loại `.env`, venv, Git metadata, cache và backup DB.

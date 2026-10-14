@@ -1,11 +1,11 @@
 # Tiếp tục AeroFlow Ultimate
 
-Đọc PROGRESS.md, CHANGELOG.md và trạng thái Git. Nhánh được phép: feature/ultimate-upgrade. Repository gốc C:\AeroFlow-Git, không sửa/push/merge main và không clone lại.
+Đọc PROGRESS.md, README.md, CHANGELOG.md và Git status trước khi sửa. Nhánh duy nhất được phép: feature/ultimate-upgrade; repo gốc C:\AeroFlow-Git; worktree work/AeroFlow-Ultimate trong workspace Codex. Không clone lại, sửa/push/merge main. Không tạo slide/báo cáo học thuật; giữ docs cũ.
 
-Worktree phát triển nằm tại thư mục `work/AeroFlow-Ultimate` trong workspace Codex hiện tại. Yêu cầu mới nhất: tập trung website/API/SQL/migration/tests; không tạo slide hoặc báo cáo học thuật. Giữ các tài liệu cũ.
+Đã triển khai unified itinerary, bốn khoang, dịch vụ/mã/điểm, đổi chặng/nâng khoang, hoàn riêng/credit, PDF/check-in/boarding, loyalty/thông báo/SMTP worker opt-in, quản trị mở rộng. Full suite 76 PASS; xem XML/evidence mới. Đã chạy backup/restore và hash bảo toàn dữ liệu qua 14 migrations.
 
-Database hồi quy riêng: AeroFlow_Test_Ultimate_Baseline_20261013. Không dùng database demo hoặc database người dùng cho destructive/fault-injection tests. Chạy migration bằng scripts/migrate.py; chỉ dùng --test-database với AeroFlow_Test_*.
+SQL Server .\SQLEXPRESS Windows auth. DB hồi quy riêng AeroFlow_Test_Ultimate_Baseline_20261013. Không dùng database người dùng để gây lỗi. DB mới init + migrate, DB đã nâng cấp chỉ migrate. Không sửa 001–014 đã áp dụng; sửa schema bằng 015 trở lên và kiểm chứng fresh upgrade lại.
 
-Nguồn chuẩn: yêu cầu Ultimate đính kèm của người dùng và 3 trang docs/assignment.pdf. Phải hỗ trợ unified itinerary, round-trip, multi-city, connection validation, hành khách/ghế từng chặng, dịch vụ/giảm giá, thanh toán idempotent, đổi/hủy/hoàn, PDF vé/boarding pass DEMO, check-in, loyalty, thông báo và admin. Chỉ công bố tính năng sau khi đã triển khai và kiểm thử.
+Nếu mở rộng: SMTP qua mailbox thử được người dùng cho phép; đo tải/giảm phạm vi applock kèm test deadlock; browser matrix; QR camera hoặc chia PNR khi được yêu cầu. Không tự gửi email hay kết nối thanh toán thật.
 
-Đầu ra cuối: AeroFlow_Ultimate_Complete.zip. Checkpoint phải có toàn bộ nguồn và trạng thái chính xác, không có .env, .venv, __pycache__ hoặc thông tin đăng nhập.
+ZIP: AeroFlow_Ultimate_Complete.zip qua scripts/package_release.py; kiểm CRC/manifest/thành phần; loại .env/venv/Git/backup/QA secrets. Docs/ERD/slide cũ thuộc baseline; PROGRESS là trạng thái hiện tại.

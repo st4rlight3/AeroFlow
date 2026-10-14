@@ -139,7 +139,9 @@ def test_admin_catalog_fares_and_status(app,users,flight):
     assert d['payments'][-1]['Amount']=='1100000.00'
     assert send(a,f'/api/admin/flights/{fid}/status',{'Status':'SCHEDULED'},'PUT').status_code==409
     seat=flight['Seats'][0];payload={k:seat[k] for k in ('RowNumber','ColumnLetter','Cabin')};payload.update(AircraftID=flight['AircraftID'],IsActive=True)
-    assert send(a,f"/api/admin/catalog/seats/{seat['SeatID']}",payload,'PUT').status_code==409
+    # Ultimate permits no-op saves and fee changes, but never historical geometry changes.
+    assert send(a,f"/api/admin/catalog/seats/{seat['SeatID']}",payload,'PUT').status_code==200
+    assert send(a,f"/api/admin/catalog/seats/{seat['SeatID']}",{**payload,'RowNumber':10},'PUT').status_code==409
 
 def test_admin_creates_aircraft_flight_and_seat(app,users,flight):
     a=sign_in(app,users[2]);airline=query('SELECT TOP(1) AirlineID FROM dbo.Airlines',one=True)['AirlineID']
