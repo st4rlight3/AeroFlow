@@ -1,5 +1,9 @@
 # Frontend refresh — 23/10/2026
 
+- Bổ sung nền bầu trời SVG local (1.608 bytes) cho toàn bộ trang, mây trôi/đường bay nhẹ, nền tiêu đề và footer sáng. Lớp trang trí không nhận thao tác và được ẩn khỏi trình đọc màn hình, bản in; tuân theo nút tắt chuyển động và prefers-reduced-motion.
+- Khai báo color-scheme light/only light để ngăn Chromium tự đổi nền sáng thành tối. Extension ép màu của trình duyệt vẫn có thể ghi đè; chưa kiểm chứng trực tiếp Cốc Cốc.
+- Kiểm tra browser trang chủ/tìm hành trình ở 1440×900 và 390×844, tìm HAN–SGN 26/10 trả 4 phương án, tắt hiệu ứng dừng cả mây/đường bay. Bằng chứng `evidence/sky-*`. Không cần migration SQL.
+
 - `app/static/app.js`: trang chủ/tìm nhanh mới, điểm đến theo dữ liệu SQL, vòng đời chuyển trang/focus/progress/title.
 - `app/static/frontend.css`: theme xanh ngọc/nền sáng, responsive, form/seat/ticket/admin, hover/reveal/mây/đường bay, giảm chuyển động và print.
 - `app/static/frontend.js`: SVG icons local, điều hướng active, lựa chọn khứ hồi/multi-city từ trang chủ, hiệu ứng theo viewport, tắt/nhớ chuyển động, dọn observer, tạm dừng tab ẩn, về đầu trang.

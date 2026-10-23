@@ -1,5 +1,7 @@
 # Frontend refresh — 23/10/2026
 
+Cập nhật nền: bầu trời/mây/đường bay local SVG cho các khoảng trống trên toàn website; tiêu đề và footer có nền sáng, khai báo only light. Đã thử thao tác tìm chuyến (4 phương án HAN–SGN 26/10), desktop/mobile không tràn ngang và nút dừng chuyển động; xem `evidence/sky-browser-checks.json` và ảnh `sky-*.png`. Chưa thử cơ chế ép màu tối của Cốc Cốc. Bản cập nhật nền chỉ có HTML/CSS/SVG; không chạy lại bộ 76 test nghiệp vụ (kết quả bên dưới thuộc lần chạy trước).
+
 Nhánh `feature/frontend-refresh` từ Ultimate `648139e`. Phiên này chỉ sửa frontend và tài liệu vận hành/bằng chứng. Các mục Ultimate bên dưới là lịch sử; nhánh tiếp tục hiện tại là frontend-refresh.
 
 - Trang chủ mới có ảnh hàng không và 3 ảnh điểm đến minh họa AI, WebP local (tổng 637.084 bytes), các tuyến/giá/lịch truy vấn API thật.

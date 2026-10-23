@@ -4,11 +4,12 @@
  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
  <meta name="description" content="AeroFlow - tìm chuyến bay, chọn ghế và quản lý hành trình của bạn.">
  <meta name="theme-color" content="#087d68">
+ <meta name="color-scheme" content="light">
  <title>AeroFlow Ultimate • Bầu trời mở lối</title>
  <link rel="icon" href="/static/logo.svg" type="image/svg+xml">
  <link rel="stylesheet" href="/static/style.css">
  <link rel="stylesheet" href="/static/ultimate.css">
- <link rel="stylesheet" href="/static/frontend.css">
+ <link rel="stylesheet" href="/static/frontend.css?v=sky-20261023">
  <script src="/static/app.js" defer></script>
  <script src="/static/ultimate.js" defer></script>
  <script src="/static/customer.js" defer></script>
@@ -17,6 +18,13 @@
  <script src="/static/frontend.js" defer></script>
 </head>
 <body>
+ <div class="af-sky" aria-hidden="true">
+  <span class="af-sky-cloud af-sky-cloud-one"></span><span class="af-sky-cloud af-sky-cloud-two"></span>
+  <svg class="af-sky-routes" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" focusable="false">
+   <g fill="none" stroke="currentColor" stroke-width="1.5"><path class="af-sky-route" d="M-80 680C240 640 40 180 400 245S1110 80 1680 310"/><path class="af-sky-route" d="M-80 900C230 600 1100 1100 1680 580"/><circle cx="95" cy="494" r="6"/><circle cx="1470" cy="258" r="6"/><circle cx="1500" cy="715" r="6"/></g>
+   <path class="af-sky-plane" d="m1420 219 24-9-8 24-5-10Z" fill="currentColor"/>
+  </svg>
+ </div>
  <div id="route-progress" aria-hidden="true"></div>
  <a class="skip" href="#main">Đến nội dung chính</a>
  <header class="header"><div class="header-inner">
