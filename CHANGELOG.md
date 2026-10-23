@@ -1,3 +1,15 @@
+# Frontend refresh — 23/10/2026
+
+- `app/static/app.js`: trang chủ/tìm nhanh mới, điểm đến theo dữ liệu SQL, vòng đời chuyển trang/focus/progress/title.
+- `app/static/frontend.css`: theme xanh ngọc/nền sáng, responsive, form/seat/ticket/admin, hover/reveal/mây/đường bay, giảm chuyển động và print.
+- `app/static/frontend.js`: SVG icons local, điều hướng active, lựa chọn khứ hồi/multi-city từ trang chủ, hiệu ứng theo viewport, tắt/nhớ chuyển động, dọn observer, tạm dừng tab ẩn, về đầu trang.
+- `app/static/images/aviation-hero.webp`, `hanoi.webp`, `danang.webp`, `saigon.webp`: ảnh minh họa AI được tối ưu; không có số liệu/giá hard-code.
+- `app/templates/index.html`: nạp CSS/JS mới, title/theme-color, progress, footer và điều khiển chuyển động.
+- README/PROGRESS/RESUME_INSTRUCTIONS cập nhật cách clone/chạy và giới hạn xác minh; evidence/frontend-* ghi hồi quy, asset manifest và ảnh browser. Các file học thuật cũ không sửa.
+- Tương thích toàn bộ backend và SQL 001–014 hiện có; không thêm dependency, không cần migration mới.
+
+---
+
 # Changelog — AeroFlow Ultimate, 14/10/2026
 
 Nâng cấp AeroFlow từ base 5c16bed trên feature/ultimate-upgrade. Không thay stack, không tạo repository mới hoặc sửa main.

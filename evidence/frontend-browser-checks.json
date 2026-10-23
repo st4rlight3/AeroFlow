@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-23",
+  "branch": "feature/frontend-refresh",
+  "base": "648139e4c59da84df31cbcfdc9202c57a56d1bbb",
+  "database": "AeroFlow_Test_Frontend_20261023",
+  "automated_regression": "76 PASS",
+  "javascript_syntax": "PASS",
+  "browser": {
+    "hero_images_loaded": "PASS (4/4)",
+    "motion_pause_persistence_resume": "PASS",
+    "round_trip_home_tab": "PASS",
+    "round_trip_seat_payment": "PASS (PNR C9FDB683, two tickets, 3380000 VND)",
+    "mobile_home_search_seats_booking_admin_no_overflow": "PASS (390x844)",
+    "admin_widths_360_768_1280": "PASS",
+    "route_focus_active_nav_progress": "PASS",
+    "back_to_top_scrollY_zero": "PASS",
+    "console_errors_warnings": "NONE OBSERVED"
+  },
+  "not_tested": [
+    "OS reduced-motion preference forced on",
+    "Safari and physical mobile devices",
+    "full WCAG or Lighthouse audit",
+    "every page at every viewport"
+  ]
+}

@@ -1,3 +1,20 @@
+# Giao diện mới — feature/frontend-refresh
+
+Bản 23/10/2026, phát triển từ Ultimate commit 648139e. Trang chủ ảnh hàng không/điểm đến, bố cục mới, hiệu ứng chuyển trang/cuộn/hover, sơ đồ ghế và Dashboard đồng bộ. Frontend vẫn gọi Flask/SQL Server hiện có; không cần migration mới nếu đã cài Ultimate 001–014.
+
+```powershell
+git clone --branch feature/frontend-refresh --single-branch https://github.com/st4rlight3/AeroFlow.git AeroFlow-Frontend
+cd AeroFlow-Frontend
+```
+
+Sau clone, cài Python/SQL Server/ODBC và cấu hình/chạy theo hướng dẫn bên dưới. GitHub lưu mã nguồn, không tự chạy Flask hoặc cung cấp SQL Server cho máy người clone.
+
+Nút **Tắt chuyển động** ở cuối trang ghi nhớ lựa chọn trên trình duyệt; hỗ trợ `prefers-reduced-motion`, tạm dừng hiệu ứng khi tab ẩn. Ảnh minh họa AI lưu local dạng WebP, khoảng 637 KB cho cả bốn ảnh; không cần thư viện JavaScript hoặc font từ CDN. Nội dung giá/lịch/khả dụng vẫn từ SQL Server.
+
+Kiểm chứng frontend: 76 tests hồi quy PASS trên database thử nghiệm riêng; browser desktop/mobile kiểm tra khứ hồi → đăng nhập → ghế A6 → thanh toán, Dashboard, nút chuyển động và nhớ lựa chọn sau tải lại. Chi tiết trong PROGRESS.md và evidence/frontend-*. Chưa kiểm tra mọi trình duyệt hoặc thiết bị thực; cài đặt giảm chuyển động của hệ điều hành chưa được ép bật trong phiên QA (nút tắt trong ứng dụng đã thử).
+
+---
+
 # AeroFlow Ultimate
 
 Website hàng không mô phỏng: HTML/CSS/JavaScript ↔ Flask ↔ pyodbc ↔ Microsoft SQL Server. Nâng cấp từ AeroFlow trên nhánh `feature/ultimate-upgrade`. Không có SQLite hoặc dữ liệu nghiệp vụ thay thế trong frontend.

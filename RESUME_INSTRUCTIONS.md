@@ -1,3 +1,7 @@
+# Tiếp tục frontend refresh
+
+Nhánh hiện tại được người dùng yêu cầu: `feature/frontend-refresh`, base Ultimate `648139e`; worktree phát triển `work/AeroFlow-Frontend`. Không làm việc tiếp trong nhánh Ultimate cũ cho yêu cầu giao diện này. Đọc phần đầu PROGRESS/README. Nguồn mới: frontend.css/frontend.js, home/search trong app.js, index.html và images/*.webp. Không có migration mới. Database QA riêng AeroFlow_Test_Frontend_20261023. Giữ nguyên các nghiệp vụ/API, không tự sửa hoặc merge main. Không tạo báo cáo/slide.
+
 # Tiếp tục AeroFlow Ultimate
 
 Đọc PROGRESS.md, README.md, CHANGELOG.md và Git status trước khi sửa. Nhánh duy nhất được phép: feature/ultimate-upgrade; repo gốc C:\AeroFlow-Git; worktree work/AeroFlow-Ultimate trong workspace Codex. Không clone lại, sửa/push/merge main. Không tạo slide/báo cáo học thuật; giữ docs cũ.

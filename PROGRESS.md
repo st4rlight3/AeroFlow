@@ -1,3 +1,19 @@
+# Frontend refresh — 23/10/2026
+
+Nhánh `feature/frontend-refresh` từ Ultimate `648139e`. Phiên này chỉ sửa frontend và tài liệu vận hành/bằng chứng. Các mục Ultimate bên dưới là lịch sử; nhánh tiếp tục hiện tại là frontend-refresh.
+
+- Trang chủ mới có ảnh hàng không và 3 ảnh điểm đến minh họa AI, WebP local (tổng 637.084 bytes), các tuyến/giá/lịch truy vấn API thật.
+- Giao diện đồng bộ cho tìm kiếm, so sánh giá, ghế, thông tin hành khách, vé, tài khoản và Admin. Không thêm dependency runtime, không sửa backend/schema SQL.
+- Hiệu ứng vào trang, reveal khi cuộn, hover/nút/modal/toast, mây/đường bay/thẻ gợi ý. Nút tắt chuyển động nhớ lựa chọn, CSS prefers-reduced-motion, tạm dừng khi tab ẩn, unobserve phần tử đã bỏ để tránh giữ tham chiếu khi chuyển nhiều trang.
+- Header chỉ báo trang hiện tại, progress khi tải, aria-busy vùng nội dung, focus về nội dung sau chuyển trang. Khứ hồi trên trang chủ chọn đúng loại hành trình; nút lên đầu trang đã thử về scrollY=0.
+- **76 PASS, 0 FAIL, 0 SKIP (173.26s)** trên AeroFlow_Test_Frontend_20261023; evidence/frontend-regression.xml. Node --check toàn bộ JS PASS.
+- Browser thật: khứ hồi HAN–SGN 26/10, SGN–HAN 29/10, Flexible/A6 (phí 80.000), một PNR C9FDB683 với 2 vé, trả mô phỏng 3.380.000 thành công; ảnh frontend-booking-mobile/seats-mobile.
+- Desktop và mobile 390×844: trang chủ, tìm khứ hồi, ghế, booking và Dashboard không tràn ngang trang; bảng/lịch giá có vùng cuộn riêng. Dashboard còn kiểm tra viewport 360, 768, 1280. Ảnh frontend-home/admin-*. Tất cả 4 ảnh tải thành công; console không có lỗi trong các luồng đã thử.
+- Nút tắt chuyển động, reload nhớ trạng thái và bật lại đã thử: animationName=none khi tắt, af-float/af-page-in khi bật. Giảm chuyển động theo OS được triển khai nhưng chưa ép bật cài đặt OS để thử; chưa thử Safari/iPhone/Android thật hoặc mọi trang/tổ hợp dữ liệu. Chưa chạy audit WCAG/Lighthouse độc lập.
+- Chưa triển khai website lên host công cộng; đầu ra là nhánh mã nguồn GitHub. Không thay đổi main.
+
+---
+
 # AeroFlow Ultimate — trạng thái bàn giao
 
 Ngày 14/10/2026, Asia/Saigon. Nhánh feature/ultimate-upgrade, base 5c16bed. Không sửa/push/merge main. ZIP mục tiêu: AeroFlow_Ultimate_Complete.zip.
