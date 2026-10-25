@@ -1,0 +1,443 @@
+{
+  "checked_at": "2026-10-25",
+  "database": "AeroFlow_Test_Presentation_20261025",
+  "plan": {
+    "mode": "PREVIEW_ONLY",
+    "days": 62,
+    "planned_flights": 2232,
+    "planned_aircraft": 9,
+    "airport_codes": [
+      "CXR",
+      "DAD",
+      "DLI",
+      "HAN",
+      "HPH",
+      "HUI",
+      "PQC",
+      "SGN",
+      "VCA",
+      "VII"
+    ],
+    "airline_codes": [
+      "AF",
+      "LS",
+      "BA"
+    ],
+    "fare_classes_per_flight": 12,
+    "planned_fare_rows": 26784,
+    "seats_per_aircraft": 150,
+    "local_first_date": "2026-12-01",
+    "local_last_date": "2027-01-31",
+    "economy_basic_total_vnd": {
+      "min": "1060400.00",
+      "max": "2170300.00"
+    },
+    "han_sgn_economy_basic_total_vnd": {
+      "min": "1809500.00",
+      "max": "2170300.00"
+    },
+    "minimum_turnaround_minutes": 60,
+    "note": "Fictional AeroFlow training timetable and reference-based demo fares; not live airline offers."
+  },
+  "sql_summary": [
+    {
+      "ManagedFlights": 2232,
+      "ManagedAircraft": 9,
+      "FirstVietnamDate": "2026-12-01",
+      "LastVietnamDate": "2027-01-31"
+    }
+  ],
+  "route_prices": [
+    {
+      "Origin": "CXR",
+      "Destination": "DAD",
+      "Flights": 27,
+      "LowestAdultTotal": "1219900.00",
+      "HighestAdultTotal": "1410200.00"
+    },
+    {
+      "Origin": "CXR",
+      "Destination": "HAN",
+      "Flights": 26,
+      "LowestAdultTotal": "1679700.00",
+      "HighestAdultTotal": "2009700.00"
+    },
+    {
+      "Origin": "CXR",
+      "Destination": "SGN",
+      "Flights": 27,
+      "LowestAdultTotal": "1109900.00",
+      "HighestAdultTotal": "1329900.00"
+    },
+    {
+      "Origin": "DAD",
+      "Destination": "CXR",
+      "Flights": 27,
+      "LowestAdultTotal": "1219900.00",
+      "HighestAdultTotal": "1410200.00"
+    },
+    {
+      "Origin": "DAD",
+      "Destination": "DLI",
+      "Flights": 27,
+      "LowestAdultTotal": "1259500.00",
+      "HighestAdultTotal": "1479500.00"
+    },
+    {
+      "Origin": "DAD",
+      "Destination": "HAN",
+      "Flights": 213,
+      "LowestAdultTotal": "1339800.00",
+      "HighestAdultTotal": "1610400.00"
+    },
+    {
+      "Origin": "DAD",
+      "Destination": "HPH",
+      "Flights": 26,
+      "LowestAdultTotal": "1310100.00",
+      "HighestAdultTotal": "1449800.00"
+    },
+    {
+      "Origin": "DAD",
+      "Destination": "PQC",
+      "Flights": 27,
+      "LowestAdultTotal": "1469600.00",
+      "HighestAdultTotal": "1760000.00"
+    },
+    {
+      "Origin": "DAD",
+      "Destination": "SGN",
+      "Flights": 212,
+      "LowestAdultTotal": "1329900.00",
+      "HighestAdultTotal": "1589500.00"
+    },
+    {
+      "Origin": "DAD",
+      "Destination": "VCA",
+      "Flights": 26,
+      "LowestAdultTotal": "1410200.00",
+      "HighestAdultTotal": "1689600.00"
+    },
+    {
+      "Origin": "DAD",
+      "Destination": "VII",
+      "Flights": 27,
+      "LowestAdultTotal": "1200100.00",
+      "HighestAdultTotal": "1329900.00"
+    },
+    {
+      "Origin": "DLI",
+      "Destination": "DAD",
+      "Flights": 27,
+      "LowestAdultTotal": "1259500.00",
+      "HighestAdultTotal": "1479500.00"
+    },
+    {
+      "Origin": "DLI",
+      "Destination": "HAN",
+      "Flights": 26,
+      "LowestAdultTotal": "1679700.00",
+      "HighestAdultTotal": "1940400.00"
+    },
+    {
+      "Origin": "DLI",
+      "Destination": "SGN",
+      "Flights": 26,
+      "LowestAdultTotal": "1060400.00",
+      "HighestAdultTotal": "1170400.00"
+    },
+    {
+      "Origin": "HAN",
+      "Destination": "CXR",
+      "Flights": 26,
+      "LowestAdultTotal": "1679700.00",
+      "HighestAdultTotal": "2009700.00"
+    },
+    {
+      "Origin": "HAN",
+      "Destination": "DAD",
+      "Flights": 213,
+      "LowestAdultTotal": "1339800.00",
+      "HighestAdultTotal": "1610400.00"
+    },
+    {
+      "Origin": "HAN",
+      "Destination": "DLI",
+      "Flights": 26,
+      "LowestAdultTotal": "1679700.00",
+      "HighestAdultTotal": "1940400.00"
+    },
+    {
+      "Origin": "HAN",
+      "Destination": "HUI",
+      "Flights": 27,
+      "LowestAdultTotal": "1329900.00",
+      "HighestAdultTotal": "1469600.00"
+    },
+    {
+      "Origin": "HAN",
+      "Destination": "PQC",
+      "Flights": 27,
+      "LowestAdultTotal": "1830400.00",
+      "HighestAdultTotal": "2150500.00"
+    },
+    {
+      "Origin": "HAN",
+      "Destination": "SGN",
+      "Flights": 213,
+      "LowestAdultTotal": "1809500.00",
+      "HighestAdultTotal": "2170300.00"
+    },
+    {
+      "Origin": "HAN",
+      "Destination": "VCA",
+      "Flights": 26,
+      "LowestAdultTotal": "1830400.00",
+      "HighestAdultTotal": "2019600.00"
+    },
+    {
+      "Origin": "HAN",
+      "Destination": "VII",
+      "Flights": 27,
+      "LowestAdultTotal": "1090100.00",
+      "HighestAdultTotal": "1249600.00"
+    },
+    {
+      "Origin": "HPH",
+      "Destination": "DAD",
+      "Flights": 26,
+      "LowestAdultTotal": "1310100.00",
+      "HighestAdultTotal": "1449800.00"
+    },
+    {
+      "Origin": "HPH",
+      "Destination": "SGN",
+      "Flights": 27,
+      "LowestAdultTotal": "1730300.00",
+      "HighestAdultTotal": "1919500.00"
+    },
+    {
+      "Origin": "HUI",
+      "Destination": "HAN",
+      "Flights": 27,
+      "LowestAdultTotal": "1329900.00",
+      "HighestAdultTotal": "1469600.00"
+    },
+    {
+      "Origin": "HUI",
+      "Destination": "SGN",
+      "Flights": 27,
+      "LowestAdultTotal": "1369500.00",
+      "HighestAdultTotal": "1610400.00"
+    },
+    {
+      "Origin": "PQC",
+      "Destination": "DAD",
+      "Flights": 27,
+      "LowestAdultTotal": "1469600.00",
+      "HighestAdultTotal": "1760000.00"
+    },
+    {
+      "Origin": "PQC",
+      "Destination": "HAN",
+      "Flights": 27,
+      "LowestAdultTotal": "1830400.00",
+      "HighestAdultTotal": "2150500.00"
+    },
+    {
+      "Origin": "PQC",
+      "Destination": "SGN",
+      "Flights": 26,
+      "LowestAdultTotal": "1100000.00",
+      "HighestAdultTotal": "1320000.00"
+    },
+    {
+      "Origin": "SGN",
+      "Destination": "CXR",
+      "Flights": 27,
+      "LowestAdultTotal": "1109900.00",
+      "HighestAdultTotal": "1329900.00"
+    },
+    {
+      "Origin": "SGN",
+      "Destination": "DAD",
+      "Flights": 212,
+      "LowestAdultTotal": "1329900.00",
+      "HighestAdultTotal": "1589500.00"
+    },
+    {
+      "Origin": "SGN",
+      "Destination": "DLI",
+      "Flights": 26,
+      "LowestAdultTotal": "1060400.00",
+      "HighestAdultTotal": "1170400.00"
+    },
+    {
+      "Origin": "SGN",
+      "Destination": "HAN",
+      "Flights": 213,
+      "LowestAdultTotal": "1809500.00",
+      "HighestAdultTotal": "2170300.00"
+    },
+    {
+      "Origin": "SGN",
+      "Destination": "HPH",
+      "Flights": 27,
+      "LowestAdultTotal": "1730300.00",
+      "HighestAdultTotal": "1919500.00"
+    },
+    {
+      "Origin": "SGN",
+      "Destination": "HUI",
+      "Flights": 27,
+      "LowestAdultTotal": "1369500.00",
+      "HighestAdultTotal": "1610400.00"
+    },
+    {
+      "Origin": "SGN",
+      "Destination": "PQC",
+      "Flights": 26,
+      "LowestAdultTotal": "1100000.00",
+      "HighestAdultTotal": "1320000.00"
+    },
+    {
+      "Origin": "SGN",
+      "Destination": "VII",
+      "Flights": 26,
+      "LowestAdultTotal": "1530100.00",
+      "HighestAdultTotal": "1769900.00"
+    },
+    {
+      "Origin": "VCA",
+      "Destination": "DAD",
+      "Flights": 26,
+      "LowestAdultTotal": "1410200.00",
+      "HighestAdultTotal": "1689600.00"
+    },
+    {
+      "Origin": "VCA",
+      "Destination": "HAN",
+      "Flights": 26,
+      "LowestAdultTotal": "1830400.00",
+      "HighestAdultTotal": "2019600.00"
+    },
+    {
+      "Origin": "VII",
+      "Destination": "DAD",
+      "Flights": 27,
+      "LowestAdultTotal": "1200100.00",
+      "HighestAdultTotal": "1329900.00"
+    },
+    {
+      "Origin": "VII",
+      "Destination": "HAN",
+      "Flights": 27,
+      "LowestAdultTotal": "1090100.00",
+      "HighestAdultTotal": "1249600.00"
+    },
+    {
+      "Origin": "VII",
+      "Destination": "SGN",
+      "Flights": 26,
+      "LowestAdultTotal": "1530100.00",
+      "HighestAdultTotal": "1769900.00"
+    }
+  ],
+  "repeat_import": {
+    "created": 0,
+    "existing": 2232,
+    "created_aircraft": 0,
+    "created_fare_classes": 0,
+    "updated_fares": 0,
+    "legacy_updated_fares": 0,
+    "skipped_closed_flights": 0
+  },
+  "historical_rows_preserved": true,
+  "snapshot_sha256_before": {
+    "Tickets": "98fbc280837292de99d84d140ef6c08aa6b9b39949a5fc2d7505d0fbd1dc6dc7",
+    "Bookings": "810fcf9a7c84b637d18f8d4f71d84cac98a2030b014fd5c7715ac340ffb014a4",
+    "Payments": "ca36be9159a8b08a8a18c76d888f07a1c776dcf5824b1dc2f406aaa5c858cfa8"
+  },
+  "snapshot_sha256_after": {
+    "Tickets": "98fbc280837292de99d84d140ef6c08aa6b9b39949a5fc2d7505d0fbd1dc6dc7",
+    "Bookings": "810fcf9a7c84b637d18f8d4f71d84cac98a2030b014fd5c7715ac340ffb014a4",
+    "Payments": "ca36be9159a8b08a8a18c76d888f07a1c776dcf5824b1dc2f406aaa5c858cfa8"
+  },
+  "constraint_check": "PASS",
+  "dbcc_checkdb": "PASS",
+  "rotations": "PASS",
+  "discovery_price_date_matching": "PASS",
+  "discovery_ms": [
+    446.74,
+    290.53,
+    283.49
+  ],
+  "offers": [
+    {
+      "DestinationCity": "Hà Nội",
+      "DestinationCode": "HAN",
+      "DestinationID": 1,
+      "FlightCount": 243,
+      "FromPrice": "1339800.00",
+      "NextDeparture": "2026-12-02T00:00:00+00:00",
+      "OriginCity": "Đà Nẵng",
+      "OriginCode": "DAD",
+      "OriginID": 3
+    },
+    {
+      "DestinationCity": "Đà Nẵng",
+      "DestinationCode": "DAD",
+      "DestinationID": 3,
+      "FlightCount": 243,
+      "FromPrice": "1339800.00",
+      "NextDeparture": "2026-12-02T02:25:00+00:00",
+      "OriginCity": "Hà Nội",
+      "OriginCode": "HAN",
+      "OriginID": 1
+    },
+    {
+      "DestinationCity": "TP. Hồ Chí Minh",
+      "DestinationCode": "SGN",
+      "DestinationID": 2,
+      "FlightCount": 243,
+      "FromPrice": "1809500.00",
+      "NextDeparture": "2026-12-01T23:40:00+00:00",
+      "OriginCity": "Hà Nội",
+      "OriginCode": "HAN",
+      "OriginID": 1
+    },
+    {
+      "DestinationCity": "Hà Nội",
+      "DestinationCode": "HAN",
+      "DestinationID": 1,
+      "FlightCount": 243,
+      "FromPrice": "1809500.00",
+      "NextDeparture": "2026-12-02T02:50:00+00:00",
+      "OriginCity": "TP. Hồ Chí Minh",
+      "OriginCode": "SGN",
+      "OriginID": 2
+    },
+    {
+      "DestinationCity": "TP. Hồ Chí Minh",
+      "DestinationCode": "SGN",
+      "DestinationID": 2,
+      "FlightCount": 212,
+      "FromPrice": "1329900.00",
+      "NextDeparture": "2026-12-02T02:15:00+00:00",
+      "OriginCity": "Đà Nẵng",
+      "OriginCode": "DAD",
+      "OriginID": 3
+    },
+    {
+      "DestinationCity": "Đà Nẵng",
+      "DestinationCode": "DAD",
+      "DestinationID": 3,
+      "FlightCount": 212,
+      "FromPrice": "1329900.00",
+      "NextDeparture": "2026-12-01T23:50:00+00:00",
+      "OriginCity": "TP. Hồ Chí Minh",
+      "OriginCode": "SGN",
+      "OriginID": 2
+    }
+  ]
+}

@@ -6,6 +6,40 @@ from ..validation import iso_date, integer
 
 bp = Blueprint('flights', __name__, url_prefix='/api')
 
+# A fare is sellable only when its cabin has enough free seats for the party.
+# The reporting view's FromPrice is the minimum of every configured fare, even
+# for a full cabin, so it must not be used as a public offer price.
+BOOKABLE_FLIGHTS = """
+WITH CabinAvailability AS (
+ SELECT f.FlightID,s.Cabin,COUNT(*) CabinAvailable
+ FROM dbo.Flights f
+ JOIN dbo.AircraftSeats s ON s.AircraftID=f.AircraftID AND s.IsActive=1
+ WHERE NOT EXISTS (
+  SELECT 1 FROM dbo.FlightSeatAssignments a
+  JOIN dbo.Tickets t ON t.AssignmentID=a.AssignmentID
+  JOIN dbo.BookingPassengers bp ON bp.BookingPassengerID=t.BookingPassengerID
+  JOIN dbo.Bookings b ON b.BookingID=bp.BookingID
+  WHERE a.FlightID=f.FlightID AND a.SeatID=s.SeatID AND a.IsActive=1
+   AND (b.Status='CONFIRMED' OR (b.Status='HELD' AND b.ExpiresAt>SYSUTCDATETIME()))
+ )
+ GROUP BY f.FlightID,s.Cabin
+), PricedFares AS (
+ SELECT ff.FlightID,c.*,ff.BasePrice,ff.TaxRate,ca.CabinAvailable,
+  dbo.fn_CalculateTicketPrice(ff.BasePrice,ff.TaxRate) Price
+ FROM dbo.FlightFares ff
+ JOIN dbo.FareClasses c ON c.FareClassID=ff.FareClassID
+ JOIN CabinAvailability ca ON ca.FlightID=ff.FlightID AND ca.Cabin=c.Cabin
+ WHERE ca.CabinAvailable>=?
+), PublicFlights AS (
+ SELECT f.FlightID,f.FlightNumber,f.AircraftID,f.OriginID,f.DestinationID,
+  f.OriginCode,f.OriginCity,f.DestinationCode,f.DestinationCity,
+  f.DepartureTime,f.ArrivalTime,f.Status,f.Model,f.AirlineName,f.AirlineCode,
+  f.TotalSeats,f.AvailableSeats,
+  (SELECT MIN(p.Price) FROM PricedFares p WHERE p.FlightID=f.FlightID) FromPrice
+ FROM dbo.vw_FlightAvailability f
+)
+"""
+
 @bp.get('/health')
 def health():
     query('SELECT 1 Ready')
@@ -17,7 +51,22 @@ def airports():
 
 @bp.get('/discovery')
 def discovery():
-    return jsonify(items=query("SELECT TOP(6) OriginID,DestinationID,OriginCode,DestinationCode,OriginCity,DestinationCity,MIN(FromPrice) FromPrice,MIN(DepartureTime) NextDeparture,COUNT(*) FlightCount FROM dbo.vw_FlightAvailability WHERE Status='SCHEDULED' AND DepartureTime>DATEADD(hour,2,SYSUTCDATETIME()) AND AvailableSeats>0 AND FromPrice IS NOT NULL GROUP BY OriginID,DestinationID,OriginCode,DestinationCode,OriginCity,DestinationCity ORDER BY COUNT(*) DESC,OriginCode,DestinationCode"))
+    # The advertised date belongs to the same flight as the advertised price.
+    # Lowest price wins, then earliest departure gives a stable tie-breaker.
+    return jsonify(items=query(BOOKABLE_FLIGHTS + """
+, RankedRoutes AS (
+ SELECT *,ROW_NUMBER() OVER(PARTITION BY OriginID,DestinationID
+  ORDER BY FromPrice,DepartureTime,FlightID) OfferRank,
+  COUNT(*) OVER(PARTITION BY OriginID,DestinationID) FlightCount
+ FROM PublicFlights
+ WHERE Status='SCHEDULED' AND DepartureTime>DATEADD(hour,2,SYSUTCDATETIME())
+  AND FromPrice IS NOT NULL
+)
+SELECT TOP(6) OriginID,DestinationID,OriginCode,DestinationCode,OriginCity,
+ DestinationCity,FromPrice,DepartureTime NextDeparture,FlightCount
+FROM RankedRoutes WHERE OfferRank=1
+ORDER BY FlightCount DESC,OriginCode,DestinationCode
+""", (1,)))
 
 @bp.get('/flights')
 def search():
@@ -28,14 +77,21 @@ def search():
     date = iso_date(d.get('date'))
     # Vietnamese civil day converted into UTC half-open interval.
     start = datetime.combine(date, time.min) - timedelta(hours=7)
-    return jsonify(items=query("SELECT * FROM dbo.vw_FlightAvailability WHERE OriginID=? AND DestinationID=? AND DepartureTime>=? AND DepartureTime<? AND DepartureTime>DATEADD(hour,2,SYSUTCDATETIME()) AND Status='SCHEDULED' AND AvailableSeats>=? ORDER BY DepartureTime", (origin, dest, start, start+timedelta(days=1), count)))
+    return jsonify(items=query(BOOKABLE_FLIGHTS + """
+SELECT * FROM PublicFlights
+WHERE OriginID=? AND DestinationID=? AND DepartureTime>=? AND DepartureTime<?
+ AND DepartureTime>DATEADD(hour,2,SYSUTCDATETIME()) AND Status='SCHEDULED'
+ AND FromPrice IS NOT NULL
+ORDER BY DepartureTime,FlightID
+""", (count, origin, dest, start, start+timedelta(days=1))))
 
 @bp.get('/flights/<int:flight_id>')
 def details(flight_id):
-    f = query('SELECT * FROM dbo.vw_FlightAvailability WHERE FlightID=?', (flight_id,), one=True)
+    count = integer(request.args, 'passengers', 1, 9) if 'passengers' in request.args else 1
+    f = query(BOOKABLE_FLIGHTS + 'SELECT * FROM PublicFlights WHERE FlightID=?', (count, flight_id), one=True)
     if not f:
         raise ApiError('Không tìm thấy chuyến bay.', 404)
-    fares = query('SELECT c.*,ff.BasePrice,ff.TaxRate,dbo.fn_CalculateTicketPrice(ff.BasePrice,ff.TaxRate) Price FROM dbo.FlightFares ff JOIN dbo.FareClasses c ON c.FareClassID=ff.FareClassID WHERE ff.FlightID=? ORDER BY Price', (flight_id,))
+    fares = query(BOOKABLE_FLIGHTS + 'SELECT * FROM PricedFares WHERE FlightID=? ORDER BY Price,FareClassID', (count, flight_id))
     return jsonify(flight=f, fares=fares)
 
 @bp.get('/flights/<int:flight_id>/seats')

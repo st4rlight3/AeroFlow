@@ -1,0 +1,47 @@
+{
+  "mode": "APPLIED",
+  "days": 30,
+  "planned_flights": 1080,
+  "planned_aircraft": 9,
+  "airport_codes": [
+    "CXR",
+    "DAD",
+    "DLI",
+    "HAN",
+    "HPH",
+    "HUI",
+    "PQC",
+    "SGN",
+    "VCA",
+    "VII"
+  ],
+  "airline_codes": [
+    "AF",
+    "LS",
+    "BA"
+  ],
+  "fare_classes_per_flight": 12,
+  "planned_fare_rows": 12960,
+  "seats_per_aircraft": 150,
+  "local_first_date": "2026-10-26",
+  "local_last_date": "2026-11-24",
+  "economy_basic_total_vnd": {
+    "min": "1060400.00",
+    "max": "2170300.00"
+  },
+  "han_sgn_economy_basic_total_vnd": {
+    "min": "1809500.00",
+    "max": "2170300.00"
+  },
+  "minimum_turnaround_minutes": 60,
+  "note": "Fictional AeroFlow training timetable and reference-based demo fares; not live airline offers.",
+  "result": {
+    "created": 1080,
+    "existing": 0,
+    "created_aircraft": 9,
+    "created_fare_classes": 12,
+    "updated_fares": 12960,
+    "legacy_updated_fares": 359,
+    "skipped_closed_flights": 0
+  }
+}

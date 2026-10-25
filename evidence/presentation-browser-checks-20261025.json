@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-25",
+  "url": "http://127.0.0.1:5080",
+  "database": "AeroFlow_Test_Presentation_20261025",
+  "checks": {
+    "home": "HAN–SGN 2/12/2026 1.809.500 VND for one adult",
+    "decemberSearch": "HAN–SGN 02/12/2026: 4 flights",
+    "januarySearch": "HAN–SGN 15/01/2027: 3 flights",
+    "responsiveWidths": [
+      390,
+      1280
+    ],
+    "horizontalOverflow": false,
+    "consoleWarningsErrors": []
+  },
+  "limits": [
+    "Only listed browser actions were tested; not every device or flow."
+  ]
+}

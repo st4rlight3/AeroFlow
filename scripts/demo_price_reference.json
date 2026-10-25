@@ -1,0 +1,33 @@
+{
+  "checked_on": "2026-10-25",
+  "currency": "VND",
+  "purpose": "Reference points for plausible fictional AeroFlow demo fares, not a live fare feed.",
+  "sources": [
+    {
+      "publisher": "Vietnam Airlines",
+      "route": "HAN-SGN",
+      "url": "https://www.vietnamairlines.com/vi-vn/v%C3%A9-m%C3%A1y-bay-t%E1%BB%AB-h%C3%A0-n%E1%BB%99i-%C4%91%E1%BA%BFn-tp-h%E1%BB%93-ch%C3%AD-minh",
+      "displayed_from_total_including_taxes_fees": {
+        "ECONOMY": 1494000,
+        "PREMIUM": 2450000,
+        "BUSINESS": 3957000
+      }
+    },
+    {
+      "publisher": "Vietnam Airlines",
+      "route": "HAN-DAD",
+      "url": "https://www.vietnamairlines.com/vi-vn/v%C3%A9-m%C3%A1y-bay-t%E1%BB%AB-h%C3%A0-n%E1%BB%99i-%C4%91%E1%BA%BFn-%C4%91%C3%A0-n%E1%BA%B5ng",
+      "displayed_from_total_including_taxes_fees": {
+        "ECONOMY": 1088000,
+        "PREMIUM": 2302000,
+        "BUSINESS": 2607000
+      }
+    }
+  ],
+  "limitations": [
+    "Displayed from-prices vary by date, availability, fare rules and optional services; these are not guaranteed bookable quotes.",
+    "AeroFlow Air, Lotus Sky and Blue Arc remain fictional demo airlines. Generated flight numbers, schedules and fares are not copied live airline inventory.",
+    "The existing SQL model uses a 10% demonstration tax rate. It does not reproduce real airline VAT, airport charges or the composition of a real all-in ticket price.",
+    "Generated adult totals exclude optional seat selection and additional services. Child and infant demo factors are applied separately by the booking rules."
+  ]
+}

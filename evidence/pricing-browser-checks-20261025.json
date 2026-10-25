@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-25",
+  "origin": "http://127.0.0.1:5080",
+  "database": "AeroFlow_Test_Preview_20261025",
+  "checks": {
+    "homeOffer": "HAN-SGN 27/10/2026 1809500 VND for 1 adult including demonstration tax",
+    "legacySearch": "6 flights for HAN-SGN on 27/10/2026",
+    "twoPassengerDetails": "12 available fare cards",
+    "ultimateSearch": "date calendar, three airlines and six direct options displayed",
+    "responsiveWidths": [
+      390,
+      1280,
+      1440
+    ],
+    "horizontalOverflow": false,
+    "consoleErrorsOrWarnings": []
+  },
+  "limits": [
+    "Only the listed screens and actions were checked in this browser session. No claim of all-browser or load testing."
+  ]
+}

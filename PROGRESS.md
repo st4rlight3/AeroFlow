@@ -1,3 +1,36 @@
+# Bản dành cho buổi thuyết trình tháng 11 — 25/10/2026
+
+Nhánh phát hành: **feature/presentation-demo-dec-jan**, phát triển từ frontend a09d803. Kết quả dưới đây thuộc bản lịch tháng 12/tháng 1; các phần phía dưới là lịch sử của bản 30 ngày cũ.
+
+- **154 PASS, 0 FAIL/ERROR/SKIP, 140,29 giây**, chạy với SQL Server Express thật trên database hồi quy riêng `AeroFlow_Test_Presentation_Regression_20261025`. Bao gồm 35 test preset mới và toàn bộ 119 test trước đó. `evidence/presentation-regression-20261025.xml`.
+- Đã tạo **2.232 chuyến mới, 26.784 giá vé**, từ **01/12/2026 đến 31/01/2027 theo giờ Việt Nam**. 9 máy bay ×150 ghế, 10 sân bay, 3 hãng giả lập, 4 khoang/12 gói. Database demo sạch `AeroFlow_Test_Presentation_20261025` có tổng **2.352 chuyến** kể cả 120 baseline, không chạy fixtures hồi quy trên database này.
+- Baseline 04 cho cài mới đặt lịch tháng 12, máy bay khứ hồi về căn cứ, quay đầu 80 phút, khoang thương gia ở trước, ghế mẫu B4 đúng khoang. Giữ guard bảo vệ DB cũ; không di chuyển ngày hoặc sơ đồ ghế đã bán. Migrations 001–014 giữ nguyên checksum.
+- Nhập lại cả bộ: **0 bản ghi chuyến/giá mới hoặc bị sửa**. Hash Tickets/Bookings/Payments giữ nguyên. SQL tests xác nhận snapshot lần nhập đầu, rollback khi xung đột giữa kế hoạch, giá ngoài allowlist không đổi. `evidence/presentation-validation-20261025.json`.
+- `DBCC CHECKDB`, `DBCC CHECKCONSTRAINTS`, vòng quay/khóa ghế và giá/ngày gợi ý: PASS. Cả `09_business_queries.sql` và `10_test_cases.sql` chạy không lỗi, đầy đủ các phép kiểm tra ràng buộc/rollback. `evidence/presentation-sql-checks.json` và `presentation-database-inventory.json`.
+- Browser thật: gợi ý HAN–SGN **02/12/2026, 1.809.500 VND/người lớn**; tìm ngày 02/12 trả 4 chuyến, ngày 15/01/2027 trả 3 chuyến. Desktop 1280×800/mobile 390×844 không tràn ngang, không console error/warning trong thao tác đã thử. `evidence/presentation-browser-checks-20261025.json`, ảnh `presentation-*.png`.
+- Giá phổ thông Basic HAN–SGN khoảng 1,81–2,17 triệu VND, gồm thuế mô phỏng, không phải báo giá trực tiếp của hãng. Discovery trên 2.352 chuyến đo local khoảng 283–447 ms, không thay thế benchmark tải. Python AST/Node syntax đều đạt; `presentation-source-checks-20261025.json`.
+
+Giới hạn giữ nguyên: đây là hệ thống mô phỏng; chưa thử mọi trình duyệt, tải nhiều người dùng hoặc SMTP thật. Chỉ sửa phạm vi giá/lịch/dữ liệu mẫu và các lỗi giá liên quan; không tự xử lý các phát hiện audit khác. Main giữ nguyên. Clone nhánh mới theo README, cấu hình SQL Server/ODBC và chạy seed sau migrations; GitHub không tự tạo database cho máy clone.
+
+---
+
+# Giá và dữ liệu demo — kiểm chứng ngày 25/10/2026
+
+Phạm vi lần này: sửa giá mẫu, mở rộng lịch bay, giá gợi ý/tìm kiếm và đóng gói. Giữ Microsoft SQL Server/T-SQL, dùng SSMS bình thường; không đổi Flask, không sửa migrations 001–014. Các kết quả ngày cũ phía dưới là lịch sử.
+
+- **119 PASS, 0 FAIL, 0 ERROR, 0 SKIP, 186,77 giây** trên SQL Server Express thật, database kiểm thử riêng `AeroFlow_Test_Pricing_20261025`; `evidence/pricing-regression-20261025.xml`. Gồm 76 test cũ, 37 test lịch/giá thuần, 4 test giá công khai và 2 test importer SQL.
+- Preview riêng `AeroFlow_Test_Preview_20261025` nạp **1.080 chuyến mới**, 9 máy bay × 150 ghế, 12.960 giá vé, 10 sân bay, 3 hãng giả lập; cộng 120 chuyến baseline là 1.200 chuyến. Khoảng ngày Việt Nam 26/10–24/11/2026. Database demo không chạy fixtures nghiệp vụ; database/tài khoản cũ không bị xóa.
+- Đọc bằng kết nối mới xác nhận đủ số dòng; nhập lại **0 chuyến mới, 0 giá thay đổi**. Hash Tickets/Bookings/Payments giữ nguyên qua lần nhập lại. SQL test riêng đối chiếu toàn bộ hàng trước/sau lần nhập đầu và giữ nguyên giá chuyến ngoài allowlist. Lỗi giữa ngày thứ hai rollback toàn bộ thay đổi của importer. `evidence/demo-seed-sql-20261025.xml`.
+- Đã phát hiện và sửa lỗi transaction lồng trong importer mới: `BEGIN TRANSACTION` dư làm ODBC commit chưa kết thúc giao dịch và close rollback. Các kết quả thành công hiện tại đều được xác nhận bằng kết nối SQL mới sau khi sửa.
+- `DBCC CHECKDB`, `DBCC CHECKCONSTRAINTS`, vòng quay máy bay, khoảng nghỉ tối thiểu 60 phút, giá/ngày gợi ý và khóa ghế không trùng: PASS. `evidence/demo-catalog-validation-20261025.json`; truy vấn SSMS ở `sql/demo/verify_demo_catalog.sql`.
+- Tổng phổ thông Basic HAN–SGN trong bộ mẫu 1.809.500–2.170.300 VND/người lớn; giá đã gồm thuế mô phỏng 10%, chưa gồm ghế/dịch vụ mua thêm. Nguồn tham khảo chính thức và giới hạn ở `scripts/demo_price_reference.json`. Không phải giá trực tiếp của hãng.
+- Browser thật: trang chủ hiển thị HAN–SGN 1.809.500 VND với ngày 27/10; tìm kiếm ngày đó trả 6 chuyến; chi tiết cho 2 khách có 12 hạng còn chỗ; Ultimate hiển thị lịch giá/hãng/điều kiện vé. Desktop 1440/1280 và mobile 390 không tràn ngang; không có console error/warning trong các thao tác đã thử. `evidence/pricing-browser-checks-20261025.json`, ảnh `pricing-*.png`.
+- Truy vấn discovery trên 1.200 chuyến khoảng 224–239 ms trong phép đo local này; đây không phải kiểm thử tải. Python AST và Node syntax kiểm tra thành công: `evidence/source-verification-20261025.json`.
+
+Giới hạn: chỉ các trường hợp nêu trên đã kiểm chứng; không tuyên bố mọi trình duyệt/tình huống đều đạt, chưa benchmark nhiều người dùng đồng thời, chưa thử SMTP thật hoặc triển khai public. Những phát hiện audit khác ngoài giá/dữ liệu không được tự sửa trong lần này. Mã hiện tại được đóng gói ZIP, chưa push/merge GitHub. Dùng README và MIGRATION_GUIDE để cập nhật database hiện có.
+
+---
+
 # Frontend refresh — 23/10/2026
 
 Cập nhật nền: bầu trời/mây/đường bay local SVG cho các khoảng trống trên toàn website; tiêu đề và footer có nền sáng, khai báo only light. Đã thử thao tác tìm chuyến (4 phương án HAN–SGN 26/10), desktop/mobile không tràn ngang và nút dừng chuyển động; xem `evidence/sky-browser-checks.json` và ảnh `sky-*.png`. Chưa thử cơ chế ép màu tối của Cốc Cốc. Bản cập nhật nền chỉ có HTML/CSS/SVG; không chạy lại bộ 76 test nghiệp vụ (kết quả bên dưới thuộc lần chạy trước).

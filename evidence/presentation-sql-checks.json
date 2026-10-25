@@ -1,0 +1,165 @@
+[
+  {
+    "script": "09_business_queries.sql",
+    "result": "executed_without_error",
+    "result_sets": [
+      {
+        "columns": [
+          "AirportID",
+          "Code",
+          "Name",
+          "City",
+          "IsActive"
+        ],
+        "rows": 10
+      },
+      {
+        "columns": [
+          "FlightNumber",
+          "Origin",
+          "Destination",
+          "Registration"
+        ],
+        "rows": 2352
+      },
+      {
+        "columns": [
+          "UserID",
+          "FullName",
+          "BookingCount"
+        ],
+        "rows": 40
+      },
+      {
+        "columns": [
+          "Code",
+          "Departures"
+        ],
+        "rows": 10
+      },
+      {
+        "columns": [
+          "AirportID",
+          "Departures",
+          "Arrivals"
+        ],
+        "rows": 10
+      },
+      {
+        "columns": [
+          "OriginID",
+          "DestinationID",
+          "Flights"
+        ],
+        "rows": 42
+      },
+      {
+        "columns": [
+          "FlightID",
+          "FareClassID",
+          "BasePrice",
+          "TaxRate"
+        ],
+        "rows": 11390
+      },
+      {
+        "columns": [
+          "FullName",
+          "N"
+        ],
+        "rows": 40
+      },
+      {
+        "columns": [
+          "AirportID"
+        ],
+        "rows": 10
+      },
+      {
+        "columns": [
+          "AirportID"
+        ],
+        "rows": 10
+      },
+      {
+        "columns": [
+          "AirportID"
+        ],
+        "rows": 0
+      },
+      {
+        "columns": [
+          "UserID",
+          "FullName",
+          "Email"
+        ],
+        "rows": 40
+      },
+      {
+        "columns": [
+          "FlightID",
+          "FareClassID",
+          "BasePrice",
+          "TaxRate"
+        ],
+        "rows": 8298
+      },
+      {
+        "columns": [
+          "FlightID",
+          "FareClassID",
+          "BasePrice",
+          "TaxRate"
+        ],
+        "rows": 2720
+      },
+      {
+        "columns": [
+          "Year",
+          "Month",
+          "GrossRevenue",
+          "Refunds",
+          "NetRevenue",
+          "PaidBookings"
+        ],
+        "rows": 2
+      },
+      {
+        "columns": [
+          "FlightID",
+          "FareClassID",
+          "TotalPrice"
+        ],
+        "rows": 27144
+      },
+      {
+        "columns": [
+          "FlightID",
+          "FlightNumber",
+          "OccupancyPercent"
+        ],
+        "rows": 10
+      },
+      {
+        "columns": [
+          "Date",
+          "GrossRevenue",
+          "Refunds",
+          "NetRevenue"
+        ],
+        "rows": 25
+      },
+      {
+        "columns": [
+          "SeatNumber"
+        ],
+        "rows": 59
+      }
+    ]
+  },
+  {
+    "script": "10_test_cases.sql",
+    "result": "executed_without_error",
+    "result_sets": []
+  }
+]

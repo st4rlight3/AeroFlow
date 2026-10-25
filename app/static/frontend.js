@@ -23,7 +23,7 @@ function afIcon(name){
 function afDestinationImage(code){return '/static/images/'+({HAN:'hanoi',SGN:'saigon',DAD:'danang'}[code]||'danang')+'.webp';}
 function afScene(route){
  if(!route)return '';
- return `<div class="af-flight-note"><span class="af-note-icon">${afIcon('plane')}</span><div><small>HÀNH TRÌNH GỢI Ý</small><strong>${esc(route.OriginCode)} <span>→</span> ${esc(route.DestinationCode)}</strong><p>${esc(route.OriginCity)} · ${esc(route.DestinationCity)}</p></div><span class="af-note-fare"><small>Chỉ từ</small><b>${money(route.FromPrice)}</b></span></div>`;
+ return `<div class="af-flight-note"><span class="af-note-icon">${afIcon('plane')}</span><div><small>HÀNH TRÌNH GỢI Ý</small><strong>${esc(route.OriginCode)} <span>→</span> ${esc(route.DestinationCode)}</strong><p>${day(route.NextDeparture)} · 1 người lớn</p></div><span class="af-note-fare"><small>Từ · đã gồm thuế</small><b>${money(route.FromPrice)}</b></span></div>`;
 }
 
 (function initAeroFlowVisuals(){

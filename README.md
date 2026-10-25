@@ -1,10 +1,38 @@
+# Bản thuyết trình tháng 11 — lịch tháng 12/2026 và tháng 1/2027
+
+Nhánh: **feature/presentation-demo-dec-jan**. Bản này gồm cập nhật giao diện, sửa hiển thị giá và bộ lịch **2.232 chuyến từ 01/12/2026 đến 31/01/2027**, 10 sân bay, 3 hãng giả lập, 9 máy bay mới × 150 ghế và 26.784 dòng giá. Cài mới có thêm 120 chuyến baseline trong tháng 12. Ngày ở giao diện là giờ Việt Nam; 06:00 ngày 01/12 được lưu dưới dạng UTC 23:00 ngày 30/11 trong SQL Server.
+
+```powershell
+git clone --branch feature/presentation-demo-dec-jan --single-branch https://github.com/st4rlight3/AeroFlow.git AeroFlow
+cd AeroFlow
+```
+
+Cài Python/SQL Server/ODBC, tạo `.env`, init/migrate và Admin theo phần **Chạy trên Windows** bên dưới. Sau đó xem trước và nhập dữ liệu thuyết trình:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\seed_ultimate.py --preview
+.\.venv\Scripts\python.exe scripts\seed_ultimate.py --apply
+.\.venv\Scripts\python.exe run.py
+```
+
+Trong tháng 11/2026, không truyền tham số sẽ chọn đúng 62 ngày trên. Có thể cố định bằng `--start-date 2026-12-01 --days 62`. `--start-date` riêng chọn cửa sổ 30 ngày; `--days` cho phép 1–90 ngày. Nếu chạy trong tháng 12/tháng 1, mặc định chỉ thêm phần còn ở tương lai đến 31/01. Sau mốc này mặc định chuyển sang 30 ngày từ ngày mai, tránh tạo chuyến đã hết hạn. Preview không kết nối database; `--apply` mới ghi dữ liệu. Dừng website, sao lưu và kiểm tra `.env` trước khi nạp vào database đã có.
+
+Giá mẫu HAN–SGN phổ thông Basic khoảng **1,81–2,17 triệu đồng/người lớn**, gồm thuế mô phỏng 10%, chưa gồm ghế trả phí/dịch vụ thêm. Giá thay đổi theo tuyến, hãng, ngày, khoang và gói; nguồn tham khảo và giới hạn ở `scripts/demo_price_reference.json`, không phải dữ liệu bán trực tiếp của hãng.
+
+**SSMS dùng bình thường:** backend vẫn kết nối Microsoft SQL Server qua ODBC và dùng T-SQL. Mở `sql/demo/verify_demo_catalog.sql` trong SSMS, chọn đúng database để kiểm tra lịch, giá, ràng buộc và vòng quay máy bay. Migrations 001–014 giữ nguyên checksum. Bản baseline 04 mới chỉ tác động lần cài mới: máy bay bay khứ hồi về căn cứ, khoang thương gia ở phía trước. Database cũ không bị đổi ngày/ghế của vé đã đặt; các chuyến cũ vẫn được giữ. Bộ nhập chỉ thêm chuyến mẫu mới và định giá lại đúng allowlist của seed.
+
+Không chạy pytest trên database dùng để thuyết trình: fixtures cố tình tạo chuyến/giá và trạng thái lỗi. Dùng `AeroFlow_Test_*` riêng cho kiểm thử. Kết quả thực chạy mới nhất ở đầu `PROGRESS.md`; các mục ngày cũ bên dưới là lịch sử.
+
+---
+
 # Giao diện mới — feature/frontend-refresh
 
 Bản 23/10/2026, phát triển từ Ultimate commit 648139e. Trang chủ ảnh hàng không/điểm đến, bố cục mới, hiệu ứng chuyển trang/cuộn/hover, sơ đồ ghế và Dashboard đồng bộ. Frontend vẫn gọi Flask/SQL Server hiện có; không cần migration mới nếu đã cài Ultimate 001–014.
 
 ```powershell
-git clone --branch feature/frontend-refresh --single-branch https://github.com/st4rlight3/AeroFlow.git AeroFlow-Frontend
-cd AeroFlow-Frontend
+# Nhánh đang dùng cho bản bàn giao này:
+git clone --branch feature/presentation-demo-dec-jan --single-branch https://github.com/st4rlight3/AeroFlow.git AeroFlow
+cd AeroFlow
 ```
 
 Sau clone, cài Python/SQL Server/ODBC và cấu hình/chạy theo hướng dẫn bên dưới. GitHub lưu mã nguồn, không tự chạy Flask hoặc cung cấp SQL Server cho máy người clone.
@@ -67,7 +95,7 @@ Cấu hình trên dành cho demo cục bộ. SQL Authentication: đặt `SQL_TRU
 
 Backup path là ví dụ: thư mục phải tồn tại trên **máy SQL Server**, tài khoản dịch vụ SQL Server có quyền ghi, file chưa tồn tại. Có thể dùng thư mục Backup mặc định của instance. Lỗi backup sẽ dừng migration; không cấp quyền rộng cho toàn ổ đĩa. Runner dùng COPY_ONLY/CHECKSUM và VERIFYONLY trước migration. Xem MIGRATION_GUIDE.md.
 
-`seed_ultimate.py` là bước tùy chọn cho demo: thêm hai máy bay, bốn khoang, 12 hạng Basic/Standard/Flexible, 84 chuyến trong 14 ngày từ ngày UTC hiện tại + 2. Có HAN–SGN–HAN và HAN–DAD–SGN nối 90 phút. Chạy lại cùng ngày không nhân đôi; ngày sau chỉ thêm lịch còn thiếu. Không ghi đè dữ liệu cũ. Chạy khi website đã dừng.
+`seed_ultimate.py` nạp bộ lịch thuyết trình tháng 12/tháng 1 và giá vé mới ở đầu README. Chạy khi website đã dừng. Các chuyến UA100–UA203 từ bản seed cũ được giữ; bản mới dùng số chuyến DX… và các máy bay DEMO-AF/LS/BA.
 
 Nhập mật khẩu Admin kín, 12–128 ký tự; **không có mật khẩu mặc định**. Mở **http://127.0.0.1:5000/#ultimate**. Khách đăng ký qua web. Admin đăng nhập → Quản trị. `/api/health` kiểm tra SQL Server. Không chạy `init_db.py` hoặc baseline 02–08 để ghi đè database đã nâng cấp.
 
@@ -117,13 +145,13 @@ Inventory dùng applock Exclusive cấp transaction chung + unique filtered inde
 
 ## Demo nhanh và Git
 
-1. Seed Ultimate, tìm HAN → SGN ngày có UA100. Chọn Flexible và A6 có phí hoặc tự xếp miễn phí. Có thể chọn khứ hồi hoặc nối qua DAD.
+1. Seed Ultimate, tìm HAN → SGN trong tháng 12/2026 hoặc tháng 1/2027. Chọn chuyến DX…, gói Linh hoạt và A7 có phí hoặc tự xếp miễn phí. Có thể chọn khứ hồi hoặc nối qua DAD.
 2. Đặt vé, thêm hành lý, mã `ULTIMATE10` hoặc `DEMO100K` khi còn hiệu lực; thử thanh toán thất bại rồi thành công. Mở SSMS xem Bookings/BookingSegments/Tickets/Payments.
 3. `pytest tests/test_itineraries.py -q` chứng minh tranh chấp ghế chặng dùng chung; chỉ một khách thành công.
 4. Đổi ngày/nâng khoang, xem giá chênh lệch/vé cũ VOID; hủy riêng hoàn credit. `tests/test_exchange_wallet.py` kiểm tra chi tiêu credit đồng thời.
 5. Admin mở dashboard, doanh thu, danh mục và khai thác. Demo check-in cần chuyến trong cửa sổ 24–1 giờ; dùng fixture test tạo lịch riêng, không sửa trực tiếp chuyến đã bán của người dùng.
 6. `tests/test_migrations.py`, `sql/10_test_cases.sql` và integration tests minh chứng rollback/ràng buộc. Kết quả mới ở `evidence/ultimate-*`.
 
-Chưa push/merge main. Dùng ZIP cập nhật repo đã clone: chuyển nhánh `feature/ultimate-upgrade`, sao lưu thay đổi chưa commit, chép nội dung **bên trong AeroFlow-Ultimate** vào repo (không chép `.git`, không đè `.env`), xem diff, cài requirements, backup/migrate và test. Người dùng tự tạo PR/merge.
+Không merge main. Dùng ZIP cập nhật repo đã clone: chuyển nhánh `feature/presentation-demo-dec-jan`, sao lưu thay đổi chưa commit, chép nội dung **bên trong AeroFlow-Ultimate** vào repo (không chép `.git`, không đè `.env`), xem diff, cài requirements, backup/migrate và test. Người dùng tự tạo PR/merge.
 
 Đóng gói lại: `python scripts/package_release.py --output <đường-dẫn>\AeroFlow_Ultimate_Complete.zip`. ZIP chứa MANIFEST.sha256, kiểm tra CRC/từng byte; loại `.env`, venv, Git metadata, cache và backup DB.

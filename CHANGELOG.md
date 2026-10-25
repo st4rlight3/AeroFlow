@@ -1,3 +1,23 @@
+# Bản thuyết trình — 25/10/2026
+
+- Chọn mặc định 01/12/2026–31/01/2027: 62 ngày, 2.232 chuyến và 26.784 mức giá; không hết lịch trong buổi thuyết trình tháng 11. Cửa sổ tự lùi tới phần tương lai khi chạy muộn, có tùy chọn ngày/số ngày rõ ràng.
+- Baseline 04 cho cài mới chuyển sang tháng 12, máy bay thực hiện khứ hồi với ít nhất 80 phút quay đầu, thương gia ở đầu cabin; ghế mẫu B4 đúng khoang phổ thông. Database cũ được guard bảo toàn, migrations 001–014 không sửa.
+- Bổ sung 35 kiểm thử cửa sổ thuyết trình và kiểm chứng lại dữ liệu SQL, website, ZIP. Giữ các sửa giá/cabin/date/idempotency ở bản trước.
+- Nhánh phát hành `feature/presentation-demo-dec-jan`, tách từ giao diện hiện có; main giữ nguyên.
+
+---
+
+# Giá và lịch bay — 25/10/2026
+
+- Thêm lịch 1.080 chuyến/30 ngày, 10 sân bay, 3 hãng, 9 máy bay 150 ghế. Lịch liên tục theo vị trí máy bay, quay về căn cứ mỗi ngày, nghỉ tối thiểu 60 phút.
+- Giá mẫu theo khoảng cách/ngày/hãng/khoang/gói; tham khảo hai trang Vietnam Airlines, không coi giá khuyến mãi là giá cuối cùng cho mọi chuyến. Tiền tính bằng Decimal, tổng preview khớp SQL Server.
+- Import preview/apply, nhập lại không trùng và rollback khi lỗi; repricing giới hạn chuyến mẫu tương lai. Giữ nguyên giá vé đã phát hành và dữ liệu giao dịch.
+- Sửa API giá gợi ý gắn sai ngày, giá khoang hết ghế và chuyến không có giá hiển thị 0 đồng. Chi tiết chuyến kiểm tra đủ chỗ cho số khách được chọn.
+- Giao diện ghi ngày bay và giá một người lớn gồm thuế; giải thích khoản ghế/dịch vụ mua thêm. Bổ sung truy vấn kiểm tra trực tiếp bằng SSMS.
+- Đóng gói bắt buộc kiểm tra frontend mới, ảnh/nền, bộ dữ liệu, SQL/tests và bằng chứng; `.env`/credentials/backup không đưa vào ZIP. Kết quả thực chạy ở PROGRESS.md.
+
+---
+
 # Frontend refresh — 23/10/2026
 
 - Bổ sung nền bầu trời SVG local (1.608 bytes) cho toàn bộ trang, mây trôi/đường bay nhẹ, nền tiêu đề và footer sáng. Lớp trang trí không nhận thao tác và được ẩn khỏi trình đọc màn hình, bản in; tuân theo nút tắt chuyển động và prefers-reduced-motion.

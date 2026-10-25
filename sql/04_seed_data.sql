@@ -26,7 +26,7 @@ BEGIN TRY
    WHILE @col<=6
    BEGIN
     INSERT dbo.AircraftSeats(AircraftID,SeatNumber,RowNumber,ColumnLetter,Cabin)
-    VALUES(@air,CONCAT(CHAR(64+@col),@row),@row,CHAR(64+@col),CASE WHEN @row>=9 THEN 'BUSINESS' ELSE 'ECONOMY' END);
+    VALUES(@air,CONCAT(CHAR(64+@col),@row),@row,CHAR(64+@col),CASE WHEN @row<=2 THEN 'BUSINESS' ELSE 'ECONOMY' END);
     SET @col+=1;
    END;
    SET @row+=1;
@@ -39,15 +39,21 @@ BEGIN TRY
   INSERT dbo.Users(RoleID,Email,FullName,PasswordHash) SELECT RoleID,CONCAT('seed',RIGHT(CONCAT('000',@n),3),'@aeroflow.example'),CONCAT(N'Khách mẫu ',@n),'!disabled-seed-account!' FROM dbo.Roles WHERE Name='CUSTOMER';
   SET @n+=1;
  END;
- DECLARE @base datetime2(0)=DATEADD(day,2,CONVERT(datetime2(0),CONVERT(date,SYSUTCDATETIME()))),@depart datetime2(0),@origin int,@dest int;
+ -- Fresh installations use December for the November presentation. The seed
+ -- guard above preserves every existing database, booking and ticket.
+ DECLARE @earliest datetime2(0)=DATEADD(day,2,CONVERT(datetime2(0),CONVERT(date,SYSUTCDATETIME())));
+ DECLARE @base datetime2(0)=CASE WHEN @earliest<CONVERT(datetime2(0),'20261201',112)
+  THEN CONVERT(datetime2(0),'20261201',112) ELSE @earliest END,@depart datetime2(0),@origin int,@dest int;
  SET @n=0;
  WHILE @n<120
  BEGIN
-  SELECT @air=AircraftID FROM dbo.Aircraft WHERE Registration=CONCAT('VN-AF',(@n%4)+1);
-  SELECT @origin=AirportID FROM dbo.Airports WHERE Code=CASE WHEN @n%4=3 THEN 'SGN' ELSE 'HAN' END;
-  SELECT @dest=AirportID FROM dbo.Airports WHERE Code=CASE WHEN @n%4 IN (0,1) THEN 'SGN' WHEN @n%4=2 THEN 'DAD' ELSE 'HAN' END;
-  SET @depart=DATEADD(hour,2+(@n%4)*3,DATEADD(day,@n/4,@base));
-  INSERT dbo.Flights(FlightNumber,AircraftID,OriginID,DestinationID,DepartureTime,ArrivalTime) VALUES(CONCAT('AF',100+@n%4),@air,@origin,@dest,@depart,DATEADD(minute,CASE WHEN @n%4=2 THEN 80 ELSE 125 END,@depart));
+  -- Two aircraft each fly an outbound/return pair, returning to HAN daily.
+  SELECT @air=AircraftID FROM dbo.Aircraft WHERE Registration=CASE WHEN @n%4<2 THEN 'VN-AF1' ELSE 'VN-AF3' END;
+  SELECT @origin=AirportID FROM dbo.Airports WHERE Code=CASE @n%4 WHEN 1 THEN 'SGN' WHEN 3 THEN 'DAD' ELSE 'HAN' END;
+  SELECT @dest=AirportID FROM dbo.Airports WHERE Code=CASE @n%4 WHEN 0 THEN 'SGN' WHEN 2 THEN 'DAD' ELSE 'HAN' END;
+  SET @depart=DATEADD(minute,CASE @n%4 WHEN 0 THEN 120 WHEN 1 THEN 330 WHEN 2 THEN 150 ELSE 315 END,DATEADD(day,@n/4,@base));
+  INSERT dbo.Flights(FlightNumber,AircraftID,OriginID,DestinationID,DepartureTime,ArrivalTime)
+   VALUES(CONCAT('AF',100+@n%4),@air,@origin,@dest,@depart,DATEADD(minute,CASE WHEN @n%4<2 THEN 130 ELSE 85 END,@depart));
   SET @fid=SCOPE_IDENTITY();
   INSERT dbo.FlightFares(FlightID,FareClassID,BasePrice,TaxRate)
    SELECT @fid,FareClassID,CASE Code WHEN 'ECO' THEN 950000 WHEN 'FLEX' THEN 1450000 ELSE 2900000 END+(@n%7)*50000,0.10 FROM dbo.FareClasses;
@@ -58,7 +64,7 @@ BEGIN TRY
  BEGIN
   SELECT @uid=UserID FROM dbo.Users WHERE Email=CONCAT('seed',RIGHT(CONCAT('000',@n),3),'@aeroflow.example');
   SELECT @fid=FlightID,@air=AircraftID FROM dbo.Flights ORDER BY FlightID OFFSET (@n-1) ROWS FETCH NEXT 1 ROW ONLY;
-  SELECT @seat=SeatID FROM dbo.AircraftSeats WHERE AircraftID=@air AND SeatNumber='B2';
+  SELECT @seat=SeatID FROM dbo.AircraftSeats WHERE AircraftID=@air AND SeatNumber='B4';
   SELECT @class=FareClassID FROM dbo.FareClasses WHERE Code=CASE WHEN @n%2=0 THEN 'FLEX' ELSE 'ECO' END;
   SET @json=(SELECT @seat SeatID,@class FareClassID,CONCAT(N'Hành khách mẫu ',@n) FullName,'1998-05-20' DateOfBirth,CONCAT('DEMO',100000+@n) DocumentNumber FOR JSON PATH);
   EXEC dbo.sp_CreateBooking @uid,@fid,@json,@bid OUTPUT;

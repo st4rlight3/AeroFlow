@@ -1,3 +1,23 @@
+# Lịch dành cho buổi thuyết trình tháng 11
+
+Mặc định mới của `python scripts/seed_ultimate.py --apply` là 01/12/2026–31/01/2027 khi chạy trong tháng 11: 2.232 chuyến, 26.784 giá vé. `--preview` xem trước; dùng `--start-date 2026-12-01 --days 62` để cố định. Thêm dữ liệu qua stored procedures trong transaction; nhập lại không nhân đôi. Backup, dừng ứng dụng và kiểm tra `.env` trước khi nhập. Không cần migration schema mới; 001–014 bất biến.
+
+**Cài mới:** baseline 04 đặt lịch sang tháng 12 hoặc thời điểm còn trong tương lai, sửa hai vòng bay khứ hồi và vị trí khoang thương gia. **Database đã có:** không chạy lại init/baseline. Guard seed001 bảo vệ dữ liệu cũ, không chuyển ngày của vé đã phát hành. Allowlist giá bao phủ cả cách đánh số/đường bay baseline cũ và mới. Vé, booking và thanh toán giữ giá trị đã chốt. Chỉ chạy seed mới sau khi database đã đủ migrations 001–014.
+
+Truy vấn SSMS `sql/demo/verify_demo_catalog.sql` kiểm tra cả vòng quay baseline mới. Nếu database cũ có lịch một chiều minh họa từ bản đầu, truy vấn vòng quay có thể báo các dòng cũ; đó không phải lỗi lịch mới. Muốn có database thuyết trình sạch, tạo database demo mới theo README thay vì ghi đè database đang có. Không tự xóa chuyến hoặc dữ liệu của khách.
+
+---
+
+# Cập nhật lịch và giá mẫu — 25/10/2026
+
+Bản này không đổi schema, không sửa migrations 001–014. Database đã nâng cấp đủ 14 phiên bản chỉ cần thay source, dừng website, sao lưu rồi `python scripts/seed_ultimate.py --preview --days 30` và `python scripts/seed_ultimate.py --apply --days 30`. Chọn đúng `.env` trước khi chạy. Database mới vẫn phải init baseline rồi migrate theo phần dưới.
+
+Seeder nhập lịch bằng stored procedures trong một transaction; lỗi sẽ rollback. Chỉ repricing FlightFares của các chuyến tương lai SCHEDULED đúng allowlist của seed gốc (VN-AF1–4/AF100–103 và DEMO-ULT-1–2/UA100–203 đúng đường bay) cùng máy bay DEMO-AF/LS/BA do seed mới quản lý. Không cập nhật Tickets, Bookings, Payments, chính sách hạng đã có hoặc lịch/giá chuyến Admin tự tạo. Không thay sơ đồ ghế máy bay cũ. Nếu layout của máy bay mới đã bị thay đổi, importer dừng thay vì tự ghi đè.
+
+Mở SSMS kết nối instance SQL_SERVER trong `.env`, chọn SQL_DATABASE và kiểm tra bằng `sql/demo/verify_demo_catalog.sql` (đổi dòng USE cho database khác AeroFlow). Giá tổng demo dùng mức thuế mô phỏng 10% hiện có, không phải phép tính thuế/phí hàng không theo quy định thực tế. Mã nguồn tham khảo công khai và công thức giá nằm trong `scripts/demo_price_reference.json` và `scripts/demo_catalog.py`.
+
+---
+
 # Nâng cấp SQL Server
 
 Không DROP database. Không chạy lại baseline `init_db.py` trên database đã áp dụng Ultimate.
