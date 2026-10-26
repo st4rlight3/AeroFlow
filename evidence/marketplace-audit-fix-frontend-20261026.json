@@ -2,8 +2,8 @@
   "date": "2026-10-26",
   "method": "Actual app/static/travel.js evaluated in Node VM with a minimal form DOM and controlled API promises. Validates state transitions; does not replace browser layout or SQL integration tests.",
   "sourceSha256": "29639ae5866dff7b21b375ef6b404d6977bb9ad89430a25c794e075687119d6a",
-  "testsSha256": "d48657f015b2e6e458b70f14ba60de95a4e779e97d31be493a5c76df9c0ee17d",
-  "command": "node --test tests/frontend_travel_state.cjs",
+  "testsSha256": "461fb2153b73b99a0ab9ef7294307b8b674ca9ec709e86204677c1dfa6a9af88",
+  "command": "node --test --test-reporter=tap tests/frontend_travel_state.cjs",
   "exitCode": 0,
   "counts": {
     "tests": 11,

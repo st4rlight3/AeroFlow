@@ -55,6 +55,8 @@ def package(output):
     counts=frontend['counts']
     if frontend['exitCode']!=0 or counts['tests']<1 or counts['pass']!=counts['tests'] or any(counts.get(k,0) for k in ('fail','cancelled','skipped','todo')) or frontend['sourceSha256']!=hashlib.sha256(payloads['app/static/travel.js']).hexdigest():
         raise ValueError('Frontend test evidence is unsuccessful or belongs to another source revision.')
+    if frontend['testsSha256']!=hashlib.sha256(payloads['tests/frontend_travel_state.cjs']).hexdigest():
+        raise ValueError('Frontend evidence belongs to another test revision.')
     validation=json.loads(payloads['evidence/marketplace-audit-fix-database-validation-20261026.json'])
     if validation['migration_versions']!=list(range(1,24)) or validation['checkdb']!='PASS' or validation['checkconstraints']!='PASS' or validation['full_restore_all_tables']!='MATCH':
         raise ValueError('SQL Server verification does not cover the current migration sequence.')
