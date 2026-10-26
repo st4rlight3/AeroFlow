@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-26",
+  "method": "Actual app/static/travel.js evaluated in Node VM with a minimal form DOM and controlled API promises. Validates state transitions; does not replace browser layout or SQL integration tests.",
+  "sourceSha256": "29639ae5866dff7b21b375ef6b404d6977bb9ad89430a25c794e075687119d6a",
+  "testsSha256": "d48657f015b2e6e458b70f14ba60de95a4e779e97d31be493a5c76df9c0ee17d",
+  "command": "node --test tests/frontend_travel_state.cjs",
+  "exitCode": 0,
+  "counts": {
+    "tests": 11,
+    "pass": 11,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "checks": [
+    {
+      "case": "saved choice restores slot, coupon, notes and contact without changing its dates",
+      "result": "PASS"
+    },
+    {
+      "case": "a saved slot that is no longer offered asks for a new choice instead of switching silently",
+      "result": "PASS"
+    },
+    {
+      "case": "moving the start date preserves the current stay length, including a user-edited checkout",
+      "result": "PASS"
+    },
+    {
+      "case": "search without a valid checkout receives a one-night checkout",
+      "result": "PASS"
+    },
+    {
+      "case": "a single-date package disables the hidden checkout instead of leaving a failing date constraint",
+      "result": "PASS"
+    },
+    {
+      "case": "a quote arriving after quantity changed cannot enable booking or submit the stale amount",
+      "result": "PASS"
+    },
+    {
+      "case": "equal prices on different dates do not make an obsolete quote valid",
+      "result": "PASS"
+    },
+    {
+      "case": "submit rechecks the actual selection even when a value changes without an input event",
+      "result": "PASS"
+    },
+    {
+      "case": "an older availability response cannot replace the newly selected date or package",
+      "result": "PASS"
+    },
+    {
+      "case": "an older quote cannot unlock controls while the newer quote is still pending",
+      "result": "PASS"
+    },
+    {
+      "case": "login resume saves all customer fields and restores them for the same package",
+      "result": "PASS"
+    }
+  ]
+}

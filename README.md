@@ -2,7 +2,7 @@
 
 Nhánh `feature/travel-marketplace` mở rộng từ `feature/presentation-demo-dec-jan`; vẫn dùng Flask, pyodbc và Microsoft SQL Server. Giữ giao diện AeroFlow và nghiệp vụ hàng không. Không có trợ lý AI.
 
-Bản này có 12 nhóm dịch vụ: khách sạn, vé tham quan, tour, spa, eSIM, xe khách, đưa đón sân bay, thuê xe, du thuyền, tàu, visa và sự kiện. Tìm/lọc, chọn ngày–gói, báo giá, giữ chỗ 10 phút, thanh toán mô phỏng, hủy/hoàn tiền, QR/PDF, yêu thích, giỏ lựa chọn, lịch trình, hỗ trợ, đăng ký đối tác và quản trị đều đọc/ghi SQL Server. Danh mục mẫu gồm 132 dịch vụ, 264 gói và 16.368 lịch bán trong 01/12/2026–31/01/2027, ngoài 6.288 chuyến bay.
+Bản này có 12 nhóm dịch vụ: khách sạn, vé tham quan, tour, spa, eSIM, xe khách, đưa đón sân bay, thuê xe, du thuyền, tàu, visa và sự kiện. Tìm/lọc, chọn ngày–gói, báo giá, giữ chỗ tối đa 10 phút (không quá giờ bắt đầu dịch vụ), thanh toán mô phỏng, hủy/hoàn tiền, QR/PDF, yêu thích, giỏ lựa chọn, lịch trình, hỗ trợ, đăng ký đối tác và quản trị đều đọc/ghi SQL Server. Danh mục mẫu gồm 132 dịch vụ, 264 gói và 16.368 lịch bán trong 01/12/2026–31/01/2027, ngoài 6.288 chuyến bay.
 
 Các nhà cung cấp, dịch vụ, giá và lịch mới là dữ liệu hư cấu cho đồ án; không phải giá thị trường hay kho chỗ của Traveloka. Trang [tham khảo nhóm dịch vụ](https://www.traveloka.com/vi-vn/activities) dùng để đối chiếu phạm vi. Thanh toán, eSIM, visa và phiếu được mô phỏng. Không có kết nối nhà cung cấp, ngân hàng hoặc phát hành dịch vụ thật. Không tuyên bố đã sao chép đầy đủ mọi tính năng thương mại của Traveloka.
 
@@ -16,7 +16,7 @@ py -3 -m venv .venv
 .\.venv\Scripts\python.exe scripts\configure.py
 ```
 
-Sửa `.env` theo SQL Server của bạn. Database mới: chạy `scripts/init_db.py`, sau đó áp dụng **001–022** theo `MIGRATION_GUIDE.md`. Database đã có dữ liệu: bỏ qua `init_db.py`, sao lưu và migrate; không chạy lại baseline lên database đã nâng cấp.
+Sửa `.env` theo SQL Server của bạn. Database mới: chạy `scripts/init_db.py`, sau đó áp dụng **001–023** theo `MIGRATION_GUIDE.md`. Database đã có dữ liệu: bỏ qua `init_db.py`, sao lưu và migrate; không chạy lại baseline lên database đã nâng cấp.
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\load_demo.py --preview
@@ -29,7 +29,9 @@ Mở `http://127.0.0.1:5000/#explore`; trang máy bay vẫn ở `#home` và `#ul
 
 Trong SSMS, mở `sql/demo/verify_travel_marketplace.sql` để xem tên điểm đến, gói và giá đã lưu. Giá máy bay vẫn trong `dbo.FlightFares`; giá dịch vụ trong `dbo.TravelInventory`. Đơn dịch vụ có snapshot giá và điều kiện hủy, tách khỏi đơn vé máy bay. Điểm/tín dụng vé máy bay hiện chỉ áp dụng phân hệ hàng không. Giỏ lựa chọn lưu gói để đặt riêng; không quảng cáo thanh toán gộp hoặc đổi ngày tự động.
 
-Kiểm thử mới nhất: **217 PASS**, gồm 40 ca dịch vụ và 4 ca kết nối bổ sung. XML: `evidence/marketplace-final-release-regression-20261026.xml`. Có kiểm tra bản sao lưu/khôi phục toàn bộ bảng và kiểm tra trên trình duyệt; xem `PROGRESS.md`. Các kết quả cũ bên dưới là lịch sử của phân hệ hàng không.
+Kiểm thử bản sửa audit: **246 PASS, 0 FAIL/ERROR/SKIP** trên SQL Server thật, XML `evidence/marketplace-audit-fix-regression-20261026.xml`; thêm **11 kiểm thử trạng thái JavaScript PASS**. Cài mới, bảo toàn dữ liệu khi nâng cấp, sao lưu/khôi phục đủ 23 migrations và các luồng browser đã kiểm chứng; giới hạn và các lần chạy chưa đạt được giữ tại `PROGRESS.md`. Kết quả 217 tests và các mục bên dưới thuộc phiên bản trước.
+
+Kiểm tra trạng thái biểu mẫu JavaScript bằng `node tests/frontend_travel_state.cjs` (Node.js 18+ chỉ cần cho kiểm thử, không cần để chạy Flask). Bộ pytest tích hợp cần `RUN_SQL_TESTS=1` và database riêng `AeroFlow_Test_*`; không chạy fixtures lên database đang dùng trình diễn.
 
 ---
 

@@ -1,3 +1,14 @@
+# 26/10/2026 — Sửa lỗi sau audit Marketplace
+
+- Thêm migration023 bảo vệ giờ sử dụng và chủ hồ sơ đối tác; giữ lịch sử thanh toán, không sửa migration cũ.
+- Sửa thêm lịch đơn lẻ khi bảng có trigger, hồ sơ đối tác đồng thời, trạng thái hỗ trợ và validation.
+- Giữ dữ liệu biểu mẫu qua đăng nhập/giỏ; không tự đổi giờ đã lưu bị hết chỗ; sửa đổi ngày và phản hồi giá/lịch cũ.
+- Ẩn bộ lọc sao ngoài khách sạn; giữ giao diện AeroFlow.
+- Bổ sung test SQL/API/JavaScript; sửa fixture lệch ngày UTC và giả định seed đã đủ cửa sổ. Giữ các kết quả chạy chưa đạt, che credential trong trace.
+- Đóng gói yêu cầu đủ001–023 và bằng chứng thành công khớp mã nguồn; từ chối báo cáo lỗi hoặc JavaScript evidence cũ.
+
+---
+
 # 26/10/2026 — Travel Marketplace
 
 - Thêm 12 loại dịch vụ, 132 sản phẩm mẫu tại 11 điểm đến; 264 gói, 16.368 lịch bán tháng 12/2026–01/2027.

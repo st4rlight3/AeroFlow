@@ -174,6 +174,10 @@ def test_admin_overview_views(app,users,sql_ready):
 def test_seed_is_non_destructive(sql_ready):
     from scripts.seed_travel import seed
     before=query('SELECT COUNT(*) N,COALESCE(SUM(Total),0) V FROM dbo.TravelBookings',one=True)
+    # A clean test database may contain only a short seed window. Filling its
+    # missing dates is valid; check preservation on both import and rerun.
+    seed(datetime(2026,12,1).date(),62)
+    assert query('SELECT COUNT(*) N,COALESCE(SUM(Total),0) V FROM dbo.TravelBookings',one=True)==before
     assert seed(datetime(2026,12,1).date(),62)==dict(destinations=0,products=0,packages=0,inventory=0)
     assert query('SELECT COUNT(*) N,COALESCE(SUM(Total),0) V FROM dbo.TravelBookings',one=True)==before
 
@@ -263,8 +267,10 @@ def test_voucher_redeem_once_in_service_window(app,users,travel_item):
     c=sign_in(app,users[0]);a=sign_in(app,users[2]);now=datetime.now(timezone.utc).replace(tzinfo=None,microsecond=0)
     query("UPDATE dbo.TravelPackages SET UnitCode='PERSON',UnitLabel=N'người' WHERE PackageID=?",(travel_item['PackageID'],))
     # An unused activity slot starting soon lets us exercise the real redemption window.
-    query('UPDATE dbo.TravelInventory SET ServiceDate=?,StartsAt=?,EndsAt=? WHERE InventoryID=?',(now.date(),now+timedelta(minutes=30),now+timedelta(hours=2),travel_item['InventoryIDs'][0]))
-    d={**travel_item,'StartDate':str(now.date()),'EndDate':str(now.date()),'GuestCount':1}
+    starts=now+timedelta(minutes=30)
+    service_date=query("SELECT CONVERT(date,(CAST(? AS datetime2) AT TIME ZONE 'UTC') AT TIME ZONE d.TimeZoneName) ServiceDate FROM dbo.TravelPackages k JOIN dbo.TravelProducts p ON p.ProductID=k.ProductID JOIN dbo.TravelDestinations d ON d.DestinationID=p.DestinationID WHERE k.PackageID=?",(starts,travel_item['PackageID']),one=True)['ServiceDate']
+    query('UPDATE dbo.TravelInventory SET ServiceDate=?,StartsAt=?,EndsAt=? WHERE InventoryID=?',(service_date,starts,now+timedelta(hours=2),travel_item['InventoryIDs'][0]))
+    d={**travel_item,'StartDate':str(service_date),'EndDate':str(service_date),'GuestCount':1}
     b=reserve(c,d);assert pay(c,b).status_code==200
     code=c.get(f'/api/travel/bookings/{b["BookingID"]}').get_json()['booking']['VoucherCode']
     assert send(a,'/api/admin/travel/redeem',{'Code':code}).status_code==200

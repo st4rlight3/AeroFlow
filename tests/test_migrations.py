@@ -46,7 +46,7 @@ def migrated():
     assert before==after
     assert conn.execute('SELECT COUNT(*) FROM dbo.Bookings b WHERE NOT EXISTS(SELECT 1 FROM dbo.BookingSegments s WHERE s.BookingID=b.BookingID AND s.SegmentOrder=1 AND s.FlightID=b.FlightID)').fetchone()[0]==0
     evidence={'database':os.environ['SQL_DATABASE'],'applied':applied,'legacy_rows_unchanged':True,'before':before,'after':after}
-    (Path(__file__).resolve().parents[1]/'evidence/marketplace-migration-preservation.json').write_text(json.dumps(evidence,indent=2),encoding='utf-8')
+    (Path(__file__).resolve().parents[1]/'evidence/marketplace-audit-fix-migration-preservation.json').write_text(json.dumps(evidence,indent=2),encoding='utf-8')
     yield conn
     conn.close()
 

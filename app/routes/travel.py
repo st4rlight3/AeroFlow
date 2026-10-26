@@ -28,7 +28,7 @@ def selection(d):
     if not isinstance(slot, str) or not re.fullmatch(r'[A-Za-z0-9_-]{1,20}', slot):
         raise ApiError('Khung giờ không hợp lệ.')
     code = d.get('VoucherCode') or ''
-    if not isinstance(code, str) or (code and not re.fullmatch(r'[A-Za-z0-9-]{3,40}', code)):
+    if not isinstance(code, str) or (code and not re.fullmatch(r'[A-Za-z0-9-]{3,30}', code)):
         raise ApiError('Mã ưu đãi không hợp lệ.')
     return dict(PackageID=integer(d,'PackageID'), StartDate=str(start), EndDate=str(end), SlotCode=slot,
                 Quantity=integer(d,'Quantity',1,99), GuestCount=integer(d,'GuestCount',1,4950), VoucherCode=code.upper() or None)
@@ -261,12 +261,22 @@ def support():
 @bp.route('/support/<int:tid>',methods=['GET','POST'])
 @authenticated()
 def support_thread(tid):
-    t=query('SELECT * FROM dbo.TravelSupportTickets WHERE TicketID=? AND UserID=?',(tid,g.user['UserID']),one=True)
-    if not t:raise ApiError('Không tìm thấy yêu cầu.',404)
-    if request.method=='POST':
-        if t['Status']=='CLOSED':raise ApiError('Yêu cầu đã đóng.',409)
-        query('INSERT dbo.TravelSupportMessages(TicketID,SenderID,Message) VALUES(?,?,?); UPDATE dbo.TravelSupportTickets SET Status=\'OPEN\' WHERE TicketID=?',(tid,g.user['UserID'],text(body(),'Message',2,2000),tid))
-    return jsonify(ticket=t,messages=query('SELECT m.*,u.FullName FROM dbo.TravelSupportMessages m JOIN dbo.Users u ON u.UserID=m.SenderID WHERE TicketID=? ORDER BY MessageID',(tid,)))
+    message=text(body(),'Message',2,2000) if request.method=='POST' else None
+    with connection() as conn:
+        lock=' WITH(UPDLOCK,HOLDLOCK)' if request.method=='POST' else ''
+        cursor=conn.execute('SELECT * FROM dbo.TravelSupportTickets'+lock+' WHERE TicketID=? AND UserID=?',tid,g.user['UserID'])
+        row=cursor.fetchone()
+        if not row:raise ApiError('Không tìm thấy yêu cầu.',404)
+        t=dict(zip([c[0] for c in cursor.description],row))
+        if request.method=='POST':
+            if t['Status']=='CLOSED':raise ApiError('Yêu cầu đã đóng.',409)
+            conn.execute('INSERT dbo.TravelSupportMessages(TicketID,SenderID,Message) VALUES(?,?,?)',tid,g.user['UserID'],message)
+            conn.execute("UPDATE dbo.TravelSupportTickets SET Status='OPEN' WHERE TicketID=?",tid)
+            t['Status']='OPEN'
+        cursor=conn.execute('SELECT m.*,u.FullName FROM dbo.TravelSupportMessages m JOIN dbo.Users u ON u.UserID=m.SenderID WHERE TicketID=? ORDER BY MessageID',tid)
+        names=[c[0] for c in cursor.description]
+        messages=[dict(zip(names,row)) for row in cursor.fetchall()]
+    return jsonify(ticket=t,messages=messages)
 
 @bp.get('/articles')
 def articles():return jsonify(items=query('SELECT ArticleID,Slug,Title,Summary,ImagePath FROM dbo.TravelArticles WHERE IsPublished=1 ORDER BY ArticleID'))
@@ -280,10 +290,15 @@ def article(aid):
 @bp.post('/provider/apply')
 @authenticated()
 def provider_apply():
-    d=body()
-    if query('SELECT ProviderID FROM dbo.TravelProviders WHERE OwnerUserID=?',(g.user['UserID'],),one=True):raise ApiError('Bạn đã gửi hồ sơ đối tác.',409)
-    return jsonify(provider=query('SET NOCOUNT ON; INSERT dbo.TravelProviders(OwnerUserID,Name,Description,Status,IsDemo) VALUES(?,?,?,\'PENDING\',0); SELECT CONVERT(int,SCOPE_IDENTITY()) ProviderID;',
-     (g.user['UserID'],text(d,'Name',3,150),text(d,'Description',10,1000)),one=True)),201
+    d=body();name=text(d,'Name',3,150);description=text(d,'Description',10,1000)
+    with connection() as conn:
+        # An owner lock spans both the existence check and insert across workers;
+        # the unique filtered index is the backstop for direct SQL writes.
+        result=conn.execute("SET NOCOUNT ON; DECLARE @r int; EXEC @r=sys.sp_getapplock @Resource=?,@LockMode='Exclusive',@LockOwner='Transaction',@LockTimeout=10000; SELECT @r;",'AeroFlow:TravelProvider:Owner:'+str(g.user['UserID'])).fetchone()[0]
+        if result<0:raise ApiError('Hồ sơ đối tác đang được xử lý. Vui lòng thử lại.',409)
+        if conn.execute('SELECT ProviderID FROM dbo.TravelProviders WHERE OwnerUserID=?',g.user['UserID']).fetchone():raise ApiError('Bạn đã gửi hồ sơ đối tác.',409)
+        pid=conn.execute("SET NOCOUNT ON; INSERT dbo.TravelProviders(OwnerUserID,Name,Description,Status,IsDemo) VALUES(?,?,?,'PENDING',0); SELECT CONVERT(int,SCOPE_IDENTITY());",g.user['UserID'],name,description).fetchone()[0]
+    return jsonify(provider={'ProviderID':pid}),201
 
 @bp.get('/provider')
 @authenticated()

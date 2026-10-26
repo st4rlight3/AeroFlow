@@ -63,7 +63,7 @@ def create_package():
     d=body();unit=text(d,'UnitCode',3,12)
     if unit not in ('NIGHT','DAY','PERSON','BOOKING'):raise ApiError('Đơn vị không hợp lệ.')
     row=query('SET NOCOUNT ON; INSERT dbo.TravelPackages(ProductID,Name,Description,UnitCode,UnitLabel,MaxGuests,RefundPercent,CancelCutoffHours,ChangeAllowed,ChangeFee) VALUES(?,?,?,?,?,?,?,?,0,0); SELECT CONVERT(int,SCOPE_IDENTITY()) PackageID;',
-      (integer(d,'ProductID'),text(d,'Name',3,150),text(d,'Description',5,2000),unit,text(d,'UnitLabel',2,30),integer(d,'MaxGuests',1,50),decimal_value(d,'RefundPercent',0,100),integer(d,'CancelCutoffHours',0,720)),one=True)
+      (integer(d,'ProductID'),text(d,'Name',3,150),text(d,'Description',5,1000),unit,text(d,'UnitLabel',2,30),integer(d,'MaxGuests',1,50),decimal_value(d,'RefundPercent',0,100),integer(d,'CancelCutoffHours',0,720)),one=True)
     return jsonify(package=row),201
 
 @bp.route('/inventory',methods=['GET','POST','PATCH'])
@@ -82,8 +82,12 @@ def inventory():
             package=integer(d,'PackageID');pk=conn.execute('SELECT ProductID FROM dbo.TravelPackages WHERE PackageID=?',package).fetchone()
             if not pk:raise ApiError('Không tìm thấy gói.',404)
             conn.execute('EXEC dbo.sp_TravelLock ?',pk[0])
-            start=utc_datetime(d.get('StartsAt'));end=utc_datetime(d.get('EndsAt'))
-            iid=conn.execute('INSERT dbo.TravelInventory(PackageID,ServiceDate,SlotCode,StartsAt,EndsAt,Capacity,UnitPrice) OUTPUT INSERTED.InventoryID VALUES(?,?,?,?,?,?,?)',package,iso_date(d.get('ServiceDate')),text(d,'SlotCode',1,20),start,end,integer(d,'Capacity',0,5000),decimal_value(d,'UnitPrice',1,100000000)).fetchone()[0]
+            start=utc_datetime(d.get('StartsAt'));end=utc_datetime(d.get('EndsAt'));slot=text(d,'SlotCode',1,20)
+            import re
+            if not re.fullmatch(r'[A-Za-z0-9_-]+',slot):raise ApiError('Khung giờ chưa hợp lệ.')
+            if end<=start:raise ApiError('Giờ kết thúc phải sau giờ bắt đầu.')
+            # INSERT targets have enabled integrity triggers; OUTPUT must use INTO.
+            iid=conn.execute('SET NOCOUNT ON; DECLARE @new TABLE(InventoryID int); INSERT dbo.TravelInventory(PackageID,ServiceDate,SlotCode,StartsAt,EndsAt,Capacity,UnitPrice) OUTPUT INSERTED.InventoryID INTO @new VALUES(?,?,?,?,?,?,?); SELECT InventoryID FROM @new;',package,iso_date(d.get('ServiceDate')),slot,start,end,integer(d,'Capacity',0,5000),decimal_value(d,'UnitPrice',1,100000000)).fetchone()[0]
         conn.execute("INSERT dbo.TravelAuditLog(ActorID,Entity,EntityID,Action) VALUES(?,'INVENTORY',?,'SAVE')",g.user['UserID'],iid)
     return jsonify(InventoryID=iid)
 
@@ -139,7 +143,7 @@ def coupons():
     if request.method=='GET':return jsonify(items=query('SELECT * FROM dbo.TravelCoupons ORDER BY CouponID DESC'))
     d=body();kind=text(d,'Kind',5,8)
     if kind not in ('FIXED','PERCENT'):raise ApiError('Loại ưu đãi không hợp lệ.')
-    code=text(d,'Code',3,40).upper()
+    code=text(d,'Code',3,30).upper()
     import re
     if not re.fullmatch('[A-Z0-9-]+',code):raise ApiError('Mã ưu đãi chỉ gồm chữ, số và dấu gạch ngang.')
     query('INSERT dbo.TravelCoupons(Code,Title,Kind,Amount,MaxDiscount,MinSubtotal,UsageLimit,PerUserLimit,ValidFrom,ValidUntil,CategoryCode) VALUES(?,?,?,?,?,?,?,?,?,?,?)',
@@ -178,12 +182,24 @@ def support():return jsonify(items=query('SELECT TOP(300) t.*,u.Email FROM dbo.T
 @bp.route('/support/<int:tid>',methods=['GET','POST'])
 @authenticated(admin=True)
 def support_reply(tid):
-    if not query('SELECT TicketID FROM dbo.TravelSupportTickets WHERE TicketID=?',(tid,),one=True):raise ApiError('Không tìm thấy yêu cầu.',404)
-    if request.method=='POST':
-        d=body();status=d.get('Status','ANSWERED')
-        if status not in ('ANSWERED','CLOSED'):raise ApiError('Trạng thái không hợp lệ.')
-        query('INSERT dbo.TravelSupportMessages(TicketID,SenderID,Message) VALUES(?,?,?); UPDATE dbo.TravelSupportTickets SET Status=? WHERE TicketID=?',(tid,g.user['UserID'],text(d,'Message',2,2000),status,tid))
-    return jsonify(messages=query('SELECT m.*,u.FullName FROM dbo.TravelSupportMessages m JOIN dbo.Users u ON u.UserID=m.SenderID WHERE TicketID=? ORDER BY MessageID',(tid,)))
+    d=body() if request.method=='POST' else {}
+    status=d.get('Status','ANSWERED')
+    if status not in ('ANSWERED','CLOSED'):raise ApiError('Trạng thái không hợp lệ.')
+    message=text(d,'Message',2,2000) if request.method=='POST' else None
+    with connection() as conn:
+        lock=' WITH(UPDLOCK,HOLDLOCK)' if request.method=='POST' else ''
+        cursor=conn.execute('SELECT * FROM dbo.TravelSupportTickets'+lock+' WHERE TicketID=?',tid)
+        row=cursor.fetchone()
+        if not row:raise ApiError('Không tìm thấy yêu cầu.',404)
+        ticket=dict(zip([c[0] for c in cursor.description],row))
+        if request.method=='POST':
+            conn.execute('INSERT dbo.TravelSupportMessages(TicketID,SenderID,Message) VALUES(?,?,?)',tid,g.user['UserID'],message)
+            conn.execute('UPDATE dbo.TravelSupportTickets SET Status=? WHERE TicketID=?',status,tid)
+            ticket['Status']=status
+        cursor=conn.execute('SELECT m.*,u.FullName FROM dbo.TravelSupportMessages m JOIN dbo.Users u ON u.UserID=m.SenderID WHERE TicketID=? ORDER BY MessageID',tid)
+        names=[c[0] for c in cursor.description]
+        messages=[dict(zip(names,row)) for row in cursor.fetchall()]
+    return jsonify(ticket=ticket,messages=messages)
 
 @bp.get('/audit')
 @authenticated(admin=True)

@@ -2,7 +2,7 @@
 
 Preview does not open a database. --apply imports each catalogue atomically;
 all stages are idempotent, so a failed stage can safely be retried. Apply
-migrations 001–022 first. Existing customer/ticket/payment history is retained.
+migrations 001–023 first. Existing customer/ticket/payment history is retained.
 """
 import argparse
 from dataclasses import asdict

@@ -54,9 +54,9 @@ def verify():
         assert before==after,'Full backup restoration changed application rows.'
         assert apply(conn,migration_files(),test_database=True)==[]
         version=conn.execute('SELECT MAX(Version) FROM dbo.SchemaMigrations').fetchone()[0]
-        assert version==22
-    result=dict(checked_at_utc=datetime.now(timezone.utc).isoformat(),database=name,restored_database=restored,migration_versions=list(range(1,23)),migration_rerun='NO_OP',checkconstraints='PASS',checkdb='PASS',over_capacity_rows=0,backup_verify='PASS',full_restore_all_tables='MATCH',tables=before)
-    out=ROOT/'evidence'/'marketplace-database-validation-20261026.json';out.write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
+        assert version==23
+    result=dict(checked_at_utc=datetime.now(timezone.utc).isoformat(),database=name,restored_database=restored,migration_versions=list(range(1,24)),migration_rerun='NO_OP',checkconstraints='PASS',checkdb='PASS',over_capacity_rows=0,backup_verify='PASS',full_restore_all_tables='MATCH',tables=before)
+    out=ROOT/'evidence'/'marketplace-audit-fix-database-validation-20261026.json';out.write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
     print(json.dumps({k:v for k,v in result.items() if k!='tables'},ensure_ascii=False))
 
 if __name__=='__main__':

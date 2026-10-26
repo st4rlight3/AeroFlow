@@ -1,0 +1,234 @@
+{
+  "verified_at_utc": "2026-10-26T16:21:39.401196+00:00",
+  "database": "AeroFlow_Test_AuditFresh_75bbaa2422",
+  "scope": "Fresh baseline, immutable migrations001-023, all three imports for2026-12-01 and2026-12-02",
+  "result": "PASS",
+  "migrations": [
+    "001_booking_segments.sql",
+    "002_unified_ticket_core.sql",
+    "003_create_itinerary.sql",
+    "004_assignment_and_summary.sql",
+    "005_customer_operations.sql",
+    "006_assistance_snapshot.sql",
+    "007_services_and_partial_refunds.sql",
+    "008_pricing_integration.sql",
+    "009_exchange_and_wallet_schema.sql",
+    "010_exchange_segment.sql",
+    "011_wallet_points_and_pricing.sql",
+    "012_operational_controls.sql",
+    "013_payment_guard_and_routes.sql",
+    "014_current_booking_summary.sql",
+    "015_airline_consistency.sql",
+    "016_international_airports.sql",
+    "017_vancouver_timezone.sql",
+    "018_travel_marketplace_schema.sql",
+    "019_travel_booking_engine.sql",
+    "020_travel_history_guards.sql",
+    "021_travel_insert_guards_and_demo_slots.sql",
+    "022_travel_inventory_calendar.sql",
+    "023_travel_service_cutoff_and_provider_owner.sql"
+  ],
+  "baseline_original_columns_preserved": true,
+  "baseline_table_hashes": {
+    "Aircraft": {
+      "count": 6,
+      "sha256": "74b6729ac641d2d732d20a376c510f2596ae864e9d87b2fefeba61b9db8f1665"
+    },
+    "AircraftSeats": {
+      "count": 396,
+      "sha256": "c108c6da7298cbfe225bc0a77a5e6ecb2ad74b83099f626e46a35cadeb0f8368"
+    },
+    "Airlines": {
+      "count": 3,
+      "sha256": "ffe73c7fb3643d6a87167b335dbca970f0b886f9dbd93ad6546d0a44c2392718"
+    },
+    "Airports": {
+      "count": 10,
+      "sha256": "979cd18d626e9d67b81942a184b0d7d79c82f7d72ad93b9bba79cf2a97635db0"
+    },
+    "AuditLogs": {
+      "count": 248,
+      "sha256": "79c508d90c60637e9141e519063f60aa54034b08fbcc396f8585c5843375ba5f"
+    },
+    "BookingPassengers": {
+      "count": 40,
+      "sha256": "7f2d60b1cd34ba9b012e81eae720ef2060ee6d4c3b9ffccd967076ca27689c4d"
+    },
+    "Bookings": {
+      "count": 40,
+      "sha256": "924d5c0d16e41a2dc7d9ba1176b9c28107ee639f1e720645bf6dbe64f717041d"
+    },
+    "FareClasses": {
+      "count": 3,
+      "sha256": "2f38d3ee1def8dcc15816decdf85b51a45c16c6544de38c128c749bf50e26422"
+    },
+    "FlightFares": {
+      "count": 360,
+      "sha256": "cfbcbd7ec4b6f8e0314af6217e1bb454888caac6da31c3bbf0f5269b853b3d2b"
+    },
+    "Flights": {
+      "count": 120,
+      "sha256": "25ac501a52d35784d042ecf1e7238ef1feba659c4357916a6cf69816a3b5142b"
+    },
+    "FlightSeatAssignments": {
+      "count": 40,
+      "sha256": "b53adab90bba865ac39d5853a001e21676cf5d43afbbf6f3f02923a10706d8de"
+    },
+    "Passengers": {
+      "count": 40,
+      "sha256": "11ea4c3933f6bdaa26b89d6cf74aa72cdc0d3bddc6f291a7d7f4f419ed009669"
+    },
+    "Payments": {
+      "count": 48,
+      "sha256": "9ae607dc615e0c59dc27420144f0ec1ff34025d5afa7e7efd7b767ef3260eb4f"
+    },
+    "Roles": {
+      "count": 2,
+      "sha256": "56fb05d9494ab2ac12991aa4a7b1852f52f77bf214a12b7925fbb5264364d5f8"
+    },
+    "Tickets": {
+      "count": 40,
+      "sha256": "ba25a1e3b2ac3a8f701822d55cf3d40157bc600450bde91200e5b41ac0709cd4"
+    },
+    "Users": {
+      "count": 40,
+      "sha256": "d7167cca1f5f740a1f5bbc9103e863e9f219f2df69b78a69df144c648e9256a7"
+    }
+  },
+  "migration_rerun": [],
+  "imports": {
+    "domestic": {
+      "created": 72,
+      "existing": 0,
+      "created_aircraft": 9,
+      "created_fare_classes": 12,
+      "updated_fares": 864,
+      "legacy_updated_fares": 359,
+      "skipped_closed_flights": 0
+    },
+    "international": {
+      "created": 96,
+      "existing": 0,
+      "created_aircraft": 48,
+      "created_fare_classes": 0,
+      "updated_fares": 1152,
+      "legacy_updated_fares": 0,
+      "skipped_closed_flights": 0
+    },
+    "travel": {
+      "destinations": 11,
+      "products": 132,
+      "packages": 264,
+      "inventory": 528
+    }
+  },
+  "repeat_imports": {
+    "domestic": {
+      "created": 0,
+      "existing": 72,
+      "created_aircraft": 0,
+      "created_fare_classes": 0,
+      "updated_fares": 0,
+      "legacy_updated_fares": 0,
+      "skipped_closed_flights": 0
+    },
+    "international": {
+      "created": 0,
+      "existing": 96,
+      "created_aircraft": 0,
+      "created_fare_classes": 0,
+      "updated_fares": 0,
+      "legacy_updated_fares": 0,
+      "skipped_closed_flights": 0
+    },
+    "travel": {
+      "destinations": 0,
+      "products": 0,
+      "packages": 0,
+      "inventory": 0
+    }
+  },
+  "repeat_all_table_hashes_unchanged": true,
+  "history_hashes_unchanged": true,
+  "history_hashes": {
+    "Users": {
+      "count": 40,
+      "sha256": "d7167cca1f5f740a1f5bbc9103e863e9f219f2df69b78a69df144c648e9256a7"
+    },
+    "Passengers": {
+      "count": 40,
+      "sha256": "c8c23009cebb5ba185c10422de1854714d628217a5c01f62eccbd933b0e628a4"
+    },
+    "Bookings": {
+      "count": 40,
+      "sha256": "e2c13cffff3e8e9a8f9001cff31a6bf3b150019a781d99f152134c9b54887631"
+    },
+    "BookingPassengers": {
+      "count": 40,
+      "sha256": "7f2d60b1cd34ba9b012e81eae720ef2060ee6d4c3b9ffccd967076ca27689c4d"
+    },
+    "Tickets": {
+      "count": 40,
+      "sha256": "bcb724ff68b1ff27160a105aa4c184876ff7950437524e283c8f642bc3693cbc"
+    },
+    "Payments": {
+      "count": 48,
+      "sha256": "2127d8a2a2ab207b45edc85f138003ac11ef94d0c823a1f6d7e980e47ed4b8e7"
+    },
+    "FlightSeatAssignments": {
+      "count": 40,
+      "sha256": "b53adab90bba865ac39d5853a001e21676cf5d43afbbf6f3f02923a10706d8de"
+    },
+    "TravelBookings": {
+      "count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "TravelBookingItems": {
+      "count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "TravelPayments": {
+      "count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "TravelVouchers": {
+      "count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "TravelFulfillments": {
+      "count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "table_counts": {
+    "SchemaMigrations": 23,
+    "Airports": 42,
+    "Aircraft": 63,
+    "Flights": 288,
+    "FlightFares": 2376,
+    "TravelCategories": 12,
+    "TravelDestinations": 11,
+    "TravelProducts": 132,
+    "TravelPackages": 264,
+    "TravelInventory": 528
+  },
+  "constraints": {
+    "checkconstraints": "PASS",
+    "checkdb": "PASS",
+    "untrusted_or_disabled_foreign_keys": 0,
+    "negative_travel_availability": 0,
+    "duplicate_provider_owners": 0,
+    "duplicate_active_flight_seats": 0,
+    "unique_provider_owner_index": "PASS"
+  },
+  "timings": {
+    "baseline_seconds": 1.217,
+    "migrations_seconds": 0.997,
+    "domestic_seed_seconds": 1.596,
+    "international_seed_seconds": 2.915,
+    "travel_seed_seconds": 1.559,
+    "all_seed_reruns_seconds": 1.395,
+    "total_seconds": 11.796
+  },
+  "safety": "Created a new unique test database; no existing database was edited, dropped or overwritten."
+}

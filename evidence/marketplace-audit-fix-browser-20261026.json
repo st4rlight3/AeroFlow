@@ -1,0 +1,72 @@
+{
+  "checkedAt": "2026-10-26T16:26:15.916Z",
+  "checks": [
+    {
+      "case": "search detail prefill and moving start",
+      "start": "2026-12-20",
+      "end": "2026-12-22",
+      "rooms": 2,
+      "guests": 3,
+      "result": "PASS"
+    },
+    {
+      "case": "real SQL quote for Dec20-22,2rooms3guests withHELLOTRIP",
+      "subtotal": 5300000,
+      "discount": 300000,
+      "total": 5000000,
+      "result": "PASS"
+    },
+    {
+      "case": "login restores dates,coupon,notes and contact",
+      "method": "Accessibility snapshot after successful QA login on5082",
+      "start": "2026-12-20",
+      "end": "2026-12-22",
+      "coupon": "HELLOTRIP",
+      "notes": "Đón chuyến AF123 — kiểm tra giữ ghi chú",
+      "result": "PASS"
+    },
+    {
+      "case": "editing quantity clears previous quote and disables booking",
+      "result": "PASS"
+    },
+    {
+      "case": "new custom form creates booking,failedpayment retains hold,successfulpayment showsQR andPDF link",
+      "database": "AeroFlow_Test_Marketplace_Fixes_d3da4333e3",
+      "bookingID": 37,
+      "total": 1125000,
+      "result": "PASS",
+      "observed": {
+        "documentWidth": 1265,
+        "qrLoaded": true,
+        "receiptHref": "/api/travel/bookings/37/receipt",
+        "width": 1280
+      }
+    },
+    {
+      "case": "cancel paid booking refunds policy snapshot and hides validQR",
+      "database": "AeroFlow_Test_Marketplace_Fixes_d3da4333e3",
+      "bookingID": 37,
+      "total": 1125000,
+      "refund": 562500,
+      "result": "PASS"
+    },
+    {
+      "case": "car catalogue omits hotel-star filter and has no horizontal overflow",
+      "result": "PASS",
+      "observed": {
+        "brokenImages": 0,
+        "documentWidth": 1265,
+        "hotelStarFields": 0,
+        "width": 1280
+      }
+    },
+    {
+      "case": "QA browser console has no error or warning during tested workflow",
+      "result": "PASS",
+      "errors": []
+    }
+  ],
+  "primaryPreview": "http://127.0.0.1:5082/",
+  "qaPreview": "http://127.0.0.1:5083/",
+  "limitations": "Tested IAB desktop workflow; asynchronous response races additionally covered by NodeVM tests, not browser network throttling. PDF link and QR loading checked, not all PDF layouts."
+}

@@ -1,0 +1,10 @@
+{
+  "method": "Only generated test-password values in failure trace dictionaries are redacted. Test outcomes and counts are retained.",
+  "files": [
+    {
+      "file": "marketplace-audit-fix-second-regression-20261026.xml",
+      "credential_values_redacted": 2,
+      "outcome_attributes_unchanged": true
+    }
+  ]
+}

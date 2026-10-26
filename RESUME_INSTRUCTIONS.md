@@ -1,3 +1,17 @@
+# Tiếp tục sau bản sửa audit
+
+Làm ở `feature/travel-marketplace` trong `AeroFlow-Marketplace`, không sửa main hoặc nhánh hàng không nếu chưa có yêu cầu mới. User đã cho phép sửa các điểm bất hợp lý/lỗi phát hiện khi tiếp tục; không cần hỏi lại cho cùng phạm vi sửa lỗi.
+
+Đọc đầu PROGRESS, README và MIGRATION_GUIDE. Cần migrations001–023, đều bất biến sau áp dụng. 023 preflight từ chối OwnerUserID trùng; không tự xóa/gộp dữ liệu. Hold hết hạn trước hoặc tại giờ bắt đầu, payment replay đã xử lý vẫn an toàn.
+
+Lượt hồi quy cuối: 246 PASS/368.42s; JavaScript11/11. Các lượt 244/2 ở evidence là lịch sử chưa đạt, không dùng làm kết quả cuối. Test SQL dùng DB riêng, cần nạp đủ dữ liệu du lịch hoặc để test seed bổ sung. Không chạy regression trên preview.
+
+Preview người dùng cổng5082 dùng `AeroFlow_Test_Marketplace_Demo_20261026`, có23migrations. Launcher/credential chỉ ở ngoài repo. Bản QA cổng5083 chỉ dùng khi kiểm thử, dừng sau khi xong. Không đưa launcher, credential, .env hoặc backup SQL vào ZIP.
+
+Giữ kiểu giao diện AeroFlow và không thêm trợ lý AI. Bản phát hành dùng `scripts/package_release.py --output <đường_dẫn>/AeroFlow_Ultimate_Complete.zip`; packager kiểm tra bằng chứng hiện tại, CRC, manifest. Xem validation cạnh ZIP và remote GitHub trước khi khẳng định đã push.
+
+---
+
 # Tiếp tục nhánh Marketplace
 
 Dùng worktree `AeroFlow-Marketplace`, nhánh `feature/travel-marketplace`. Nhánh hàng không cũ là `feature/presentation-demo-dec-jan`; không đưa các bảng dịch vụ vào nhánh đó. Không đổi main. Không thêm trợ lý AI.

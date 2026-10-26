@@ -1,3 +1,20 @@
+# Bản sửa sau audit — 26/10/2026
+
+Nhánh `feature/travel-marketplace`; giữ nhánh hàng không và main riêng. User đã đồng ý sửa các lỗi audit. Phạm vi tiếp tục Flask, pyodbc và SQL Server; không có trợ lý AI.
+
+- Migration mới **023**: hạn giữ không vượt giờ bắt đầu, chặn thanh toán/xác nhận muộn, một chủ tài khoản chỉ có một hồ sơ đối tác. 001–022 giữ nguyên checksum. Nếu có chủ trùng, preflight dừng trước thay đổi; không tự xóa/gộp/chuyển chủ.
+- API thêm một lịch bán lưu được với trigger; hồ sơ đối tác tạo nguyên tử, 8 request đồng thời chỉ một thành công. Hỗ trợ trả đúng trạng thái; đầu vào số sai trả 400; mô tả gói tối đa 1.000 và mã ưu đãi tối đa 30 ký tự.
+- Biểu mẫu giữ khung giờ, ưu đãi, ghi chú sau đăng nhập. Khung đã mất yêu cầu chọn lại. Đổi ngày giữ số đêm, bỏ báo giá/lịch phản hồi cũ, kiểm tra lựa chọn lần nữa trước đặt. Bộ lọc sao chỉ hiện cho khách sạn/tất cả.
+- **246 PASS, 0 FAIL/ERROR/SKIP, 368.42 giây** trên database riêng `AeroFlow_Test_AuditFresh_75bbaa2422`: `evidence/marketplace-audit-fix-regression-20261026.xml`. JavaScript **11/11 PASS** chạy mã nguồn thật trong Node VM với DOM nhỏ và API kiểm soát; không thay cho kiểm tra SQL/browser.
+- Không giấu lần chạy chưa đạt: lần đầu 244 PASS/2 ERROR do chọn bản sao chứa lịch thử trùng (`marketplace-audit-fix-initial-regression-20261026.xml`); lần hai 244 PASS/2 FAIL do test giả định seed đủ 62 ngày và lấy ngày UTC cho lịch địa phương (`marketplace-audit-fix-second-regression-20261026.xml`). Đã sửa fixture; hai ca chạy lại đạt (`marketplace-audit-fix-fixture-regression-20261026.xml`) trước lượt toàn bộ cuối. Một lượt tạm đã dừng sớm để hoàn thiện fixture, không tính là kết quả hoàn thành. Credential kiểm thử trong trace lỗi được che; trạng thái/kết quả lỗi giữ nguyên.
+- Cài mới baseline→023 và nhập lại cả ba seed đã đạt trên DB mới: hai ngày mẫu, 132 dịch vụ/264 gói/528 lịch dịch vụ. Hash cột baseline và lịch sử không đổi; nhập lại không thêm hoặc sửa giá. `marketplace-audit-fix-fresh-install-20261026.json`.
+- Nâng cấp DB preview sau COPY_ONLY/CHECKSUM/VERIFYONLY: chỉ ledger thay đổi, mọi bảng ứng dụng giữ hash nguyên vì không có hold đang mở. CHECKDB/CHECKCONSTRAINTS và full backup RESTORE sang DB mới sau 23 migrations đều đạt, hash mọi bảng khớp. `marketplace-audit-fix-upgrade-20261026.json`, `marketplace-audit-fix-database-validation-20261026.json`.
+- Browser: ngày 15–17/12 đổi thành 20–22/12, khôi phục ưu đãi/ghi chú sau đăng nhập; sửa số lượng hủy báo giá; tạo đơn→thất bại→thành công→QR/PDF link→hủy/hoàn được thử trên DB QA riêng. Chi tiết và ảnh trong `marketplace-audit-fix-browser-20261026.json`. Không chạy fixtures lên DB trình diễn.
+
+Giới hạn: chưa kiểm mọi trình duyệt, PDF với mọi độ dài hoặc tải lớn. Kho dịch vụ, thanh toán, visa/eSIM và QR vẫn mô phỏng. Giỏ lưu để đặt riêng, chưa checkout gộp hoặc tự đổi ngày. Bản đóng gói kiểm tra CRC/manifest và kết quả kiểm thử hiện hành; kiểm tra GitHub/manifest để xác nhận đúng bản bạn tải.
+
+---
+
 # Trạng thái Marketplace — 26/10/2026
 
 Nhánh hiện tại: **feature/travel-marketplace**. Phát triển tiếp từ bản hàng không `dda8ac4`. Nhánh cũ `feature/presentation-demo-dec-jan` được giữ riêng; bản sửa kết nối ODBC chung đã backport.

@@ -1,11 +1,11 @@
-# Nâng cấp nhánh Marketplace — 001–022
+# Nâng cấp nhánh Marketplace — 001–023
 
 Dừng ứng dụng, sao lưu database trước khi nâng cấp. Không sửa các file migration đã được ghi checksum. 018–022 bổ sung miền dịch vụ và ràng buộc; không xóa bảng hoặc viết lại lịch sử vé máy bay.
 
 - Database mới: chạy `python scripts/init_db.py`, rồi `python scripts/migrate.py --apply --backup-file "<thư-mục-backup-trên-SQL-Server>\AeroFlow_before_marketplace_20261026.bak"` với tên file chưa tồn tại.
 - Database cũ đã có Ultimate: bỏ qua `init_db.py`; chạy cùng lệnh migrate với bản sao lưu mới. Trong SSMS có thể lấy thư mục bằng `SELECT SERVERPROPERTY('InstanceDefaultBackupPath');`.
 - Chỉ với database kiểm thử có tên `AeroFlow_Test_*`, có thể dùng `python scripts/migrate.py --apply --test-database`. Không dùng cờ này để bỏ qua backup database đang sử dụng.
-- Chạy `python scripts/migrate.py` để xem trạng thái; mọi phiên bản 001–022 phải APPLIED. Chạy lại không tạo đối tượng hoặc dữ liệu trùng.
+- Chạy `python scripts/migrate.py` để xem trạng thái; mọi phiên bản 001–023 phải APPLIED. Chạy lại không tạo đối tượng hoặc dữ liệu trùng.
 - Nhập mẫu bằng `python scripts/load_demo.py --apply --start-date 2026-12-01 --days 62`. Không nhập SQL 04 lên database đã migrate. Các giai đoạn nội địa, quốc tế và dịch vụ có transaction riêng.
 - Đặt Windows Task Scheduler gọi `python scripts/expire_holds.py` mỗi phút; tác vụ xử lý cả vé máy bay và dịch vụ. Chỗ hết hạn được loại khỏi sức chứa ngay trong View, không phụ thuộc tác vụ có chạy đúng phút hay không.
 
@@ -13,7 +13,22 @@ Dừng ứng dụng, sao lưu database trước khi nâng cấp. Không sửa c�
 
 022 kiểm tra ngày địa phương: mỗi đơn vị đêm/ngày phải kết thúc vào ngày kế tiếp; lịch không được bắt đầu lệch ngày bán. Tác vụ hết hạn dùng OUTPUT INTO để tương thích bảng có trigger của SQL Server.
 
-Bản sao lưu toàn bộ database demo sau 22 migrations đã được RESTORE vào database mới và so sánh hash mọi bảng. `evidence/marketplace-database-validation-20261026.json` ghi kết quả. Có thể chạy lại bằng `SQL_DATABASE=AeroFlow_Test_<tên>` và `python scripts/verify_marketplace.py --run`; lệnh tạo backup mới và database restore mới, không xóa hay ghi đè bản cũ.
+023 chặn thanh toán/xác nhận khi dịch vụ đã bắt đầu, giới hạn hạn giữ đến giờ bắt đầu và bảo đảm mỗi tài khoản có tối đa một hồ sơ đối tác. Chỉ đơn HELD được rút ngắn hạn hoặc chuyển EXPIRED khi đã quá giờ; các đơn đã thanh toán/đóng và lịch sử giao dịch được giữ nguyên. Gửi lại cùng idempotency key của khoản đã xử lý vẫn trả kết quả cũ, không thu lần nữa.
+
+Trước 023 có thể kiểm tra chủ hồ sơ trùng trong SSMS:
+
+```sql
+SELECT OwnerUserID, COUNT(*) AS ProviderCount
+FROM dbo.TravelProviders
+WHERE OwnerUserID IS NOT NULL
+GROUP BY OwnerUserID HAVING COUNT(*) > 1;
+```
+
+Nếu có kết quả, 023 dừng trước khi đổi dữ liệu. Cần xem hồ sơ và sản phẩm liên quan, quyết định hồ sơ nào thuộc tài khoản trước khi chạy lại. Migration không tự xóa, gộp hoặc chuyển chủ hồ sơ. Database không có trùng thì nâng cấp trực tiếp được.
+
+Bản sao lưu toàn bộ database demo sau 22 migrations đã được RESTORE vào database mới và so sánh hash mọi bảng: `evidence/marketplace-database-validation-20261026.json`. Công cụ hiện tại `SQL_DATABASE=AeroFlow_Test_<tên>` và `python scripts/verify_marketplace.py --run` kiểm tra đủ 23 phiên bản, tạo backup và database restore mới, không xóa hay ghi đè bản cũ; kết quả mới lưu riêng tại `evidence/marketplace-audit-fix-database-validation-20261026.json`.
+
+Đã kiểm chứng cài mới/nâng cấp đến023, preflight rollback khi trùng chủ và full backup restore sau023. Xem `evidence/marketplace-audit-fix-fresh-install-20261026.json`, `marketplace-audit-fix-provider-preflight-20261026.json` và `marketplace-audit-fix-database-validation-20261026.json`.
 
 ---
 

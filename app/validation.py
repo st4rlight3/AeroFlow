@@ -18,9 +18,19 @@ def text(data, key, minimum=1, maximum=120):
 
 def integer(data, key, minimum=1, maximum=2147483647):
     value = data.get(key)
-    if isinstance(value, bool) or not str(value).isdigit() or not minimum <= int(value) <= maximum:
+    # Numeric fields use JSON integers or ASCII decimal form fields. Unicode
+    # isdigit() also accepts characters such as superscripts that int() rejects.
+    try:
+        if isinstance(value, bool) or not isinstance(value, (int, str)):
+            raise ValueError
+        if isinstance(value, str) and not re.fullmatch(r'[0-9]+', value):
+            raise ValueError
+        number = int(value)
+        if not minimum <= number <= maximum:
+            raise ValueError
+    except (ValueError, TypeError, OverflowError):
         raise ApiError(f'Trường {key} phải là số nguyên từ {minimum} đến {maximum}.')
-    return int(value)
+    return number
 
 def decimal_value(data, key, minimum=0, maximum=100000000):
     try:
