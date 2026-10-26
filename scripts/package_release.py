@@ -35,7 +35,8 @@ def package(output):
     destination_codes='BKK BOM CDG CEB CGK CNX DEL DOH DPS DXB FRA HKG HKT ICN IST JFK KIX KUL LAX LHR MEL MNL NRT PEK PEN PUS PVG SFO SIN SYD TPE YVR'.split()
     required.update(f'app/static/images/destinations/{code}.svg' for code in destination_codes)
     versions=sorted(int(Path(name).name.split('_')[0]) for name,_ in files if name.startswith('sql/migrations/') and name.endswith('.sql'))
-    if versions!=list(range(1,18)): raise ValueError('Release requires the full immutable migration sequence 001–017.')
+    if versions!=list(range(1,23)): raise ValueError('Release requires the full immutable migration sequence 001–022.')
+    required.update({'app/routes/travel.py','app/routes/travel_admin.py','app/static/travel.js','app/static/travel.css','scripts/seed_travel.py','tests/test_travel_marketplace.py','tests/test_connection_isolation.py','sql/demo/verify_travel_marketplace.sql','scripts/verify_marketplace.py','evidence/marketplace-fresh-install-20261026.json','evidence/marketplace-final-release-regression-20261026.xml','evidence/marketplace-browser-checks-20261026.json','evidence/marketplace-home-desktop-20261026.png','evidence/marketplace-booking-desktop-20261026.png','evidence/marketplace-database-validation-20261026.json'})
     baseline=[name for name,_ in files if name.startswith('sql/') and name.count('/')==1 and name.endswith('.sql')]
     if sorted(int(Path(name).name.split('_')[0]) for name in baseline)!=list(range(1,11)): raise ValueError('Baseline SQL scripts 01–10 are incomplete.')
     missing=required-{name for name,_ in files}

@@ -1,3 +1,19 @@
+# Tiếp tục nhánh Marketplace
+
+Dùng worktree `AeroFlow-Marketplace`, nhánh `feature/travel-marketplace`. Nhánh hàng không cũ là `feature/presentation-demo-dec-jan`; không đưa các bảng dịch vụ vào nhánh đó. Không đổi main. Không thêm trợ lý AI.
+
+Đọc phần mới đầu README, PROGRESS và MIGRATION_GUIDE. Source dùng Flask/pyodbc/SQL Server, 001–022 bất biến; thêm migration mới nếu cần, không sửa file đã ledger-applied. `load_demo.py --apply` nhập ba catalogue độc lập, idempotent. Giá dịch vụ ở `TravelInventory`, snapshot đơn ở `TravelBookings/TravelBookingItems`; không thay bằng dữ liệu frontend.
+
+Kết quả mới nhất: 217 PASS toàn bộ; 40 ca dịch vụ và 4 ca cô lập kết nối mới. Giữ cả báo cáo lỗi ban đầu 209/1 và bằng chứng bản sửa ODBC. SQL backup/restore toàn bộ bảng khớp hash. Xem `evidence/marketplace-*` và `pooled-isolation-*`. Chạy test trên database riêng `AeroFlow_Test_*`; không chạy regression trên database trình diễn.
+
+Preview nội bộ nhánh mới dùng cổng 5082, nhánh hàng không 5080. Launcher, tài khoản QA và secret chỉ ở ngoài repo/ZIP. Bạn bè clone phải tạo `.env`, migrate, nhập mẫu và tự tạo tài khoản; không phụ thuộc máy của tác giả.
+
+Phạm vi còn có thể mở rộng: số ghế xe/tàu; checkout nhiều gói trong một giao dịch; đổi lịch có chênh lệch/hoàn tiền; quản lý inventory của đối tác; tích hợp nguồn dịch vụ thật khi có hợp đồng/API. Không nói các tính năng này đã có. Giữ giao diện AeroFlow, không lấy nhãn hiệu hoặc ảnh thương mại của Traveloka. Không tạo slide/báo cáo nếu không có yêu cầu mới.
+
+Sau thay đổi: chạy test phù hợp, xác nhận browser, cập nhật bằng chứng và đóng `AeroFlow_Ultimate_Complete.zip` bằng packager (đủ 001–022, manifest/CRC). Không đưa secret/venv/Git/backup SQL/tài khoản thật vào ZIP.
+
+---
+
 # Tiếp tục bản trong nước và quốc tế — 26/10/2026
 
 Làm việc trên **feature/presentation-demo-dec-jan** trong `work/AeroFlow-Frontend`; đọc đầu README/PROGRESS và Git status trước khi sửa. Hoàn tất bản cũ, kiểm tra rồi push trước khi tạo nhánh mới. **Nhánh mới không có tính năng trợ lý AI.** Không chuyển nhánh sớm, không sửa/merge main và không tạo thêm slide/báo cáo; giữ tài liệu học thuật cũ.

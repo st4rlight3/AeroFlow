@@ -1,3 +1,38 @@
+# AeroFlow Marketplace — nhánh dịch vụ du lịch
+
+Nhánh `feature/travel-marketplace` mở rộng từ `feature/presentation-demo-dec-jan`; vẫn dùng Flask, pyodbc và Microsoft SQL Server. Giữ giao diện AeroFlow và nghiệp vụ hàng không. Không có trợ lý AI.
+
+Bản này có 12 nhóm dịch vụ: khách sạn, vé tham quan, tour, spa, eSIM, xe khách, đưa đón sân bay, thuê xe, du thuyền, tàu, visa và sự kiện. Tìm/lọc, chọn ngày–gói, báo giá, giữ chỗ 10 phút, thanh toán mô phỏng, hủy/hoàn tiền, QR/PDF, yêu thích, giỏ lựa chọn, lịch trình, hỗ trợ, đăng ký đối tác và quản trị đều đọc/ghi SQL Server. Danh mục mẫu gồm 132 dịch vụ, 264 gói và 16.368 lịch bán trong 01/12/2026–31/01/2027, ngoài 6.288 chuyến bay.
+
+Các nhà cung cấp, dịch vụ, giá và lịch mới là dữ liệu hư cấu cho đồ án; không phải giá thị trường hay kho chỗ của Traveloka. Trang [tham khảo nhóm dịch vụ](https://www.traveloka.com/vi-vn/activities) dùng để đối chiếu phạm vi. Thanh toán, eSIM, visa và phiếu được mô phỏng. Không có kết nối nhà cung cấp, ngân hàng hoặc phát hành dịch vụ thật. Không tuyên bố đã sao chép đầy đủ mọi tính năng thương mại của Traveloka.
+
+Cài trên Windows (Python 3.11+, SQL Server Express và Microsoft ODBC Driver 18; SSMS dùng quản trị SQL):
+
+```powershell
+git clone --branch feature/travel-marketplace https://github.com/st4rlight3/AeroFlow.git
+cd AeroFlow
+py -3 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe scripts\configure.py
+```
+
+Sửa `.env` theo SQL Server của bạn. Database mới: chạy `scripts/init_db.py`, sau đó áp dụng **001–022** theo `MIGRATION_GUIDE.md`. Database đã có dữ liệu: bỏ qua `init_db.py`, sao lưu và migrate; không chạy lại baseline lên database đã nâng cấp.
+
+```powershell
+.\.venv\Scripts\python.exe scripts\load_demo.py --preview
+.\.venv\Scripts\python.exe scripts\load_demo.py --apply --start-date 2026-12-01 --days 62
+.\.venv\Scripts\python.exe scripts\create_user.py --role ADMIN --email admin@example.test
+.\.venv\Scripts\python.exe run.py
+```
+
+Mở `http://127.0.0.1:5000/#explore`; trang máy bay vẫn ở `#home` và `#ultimate`. Quản trị dịch vụ ở `#travel-admin`. `load_demo.py` gồm ba bộ nhập độc lập; mỗi bộ có transaction riêng, chạy lại không nhân bản hoặc ghi đè giá đã chỉnh. Có thể chỉ nhập du lịch bằng `scripts/seed_travel.py --apply`.
+
+Trong SSMS, mở `sql/demo/verify_travel_marketplace.sql` để xem tên điểm đến, gói và giá đã lưu. Giá máy bay vẫn trong `dbo.FlightFares`; giá dịch vụ trong `dbo.TravelInventory`. Đơn dịch vụ có snapshot giá và điều kiện hủy, tách khỏi đơn vé máy bay. Điểm/tín dụng vé máy bay hiện chỉ áp dụng phân hệ hàng không. Giỏ lựa chọn lưu gói để đặt riêng; không quảng cáo thanh toán gộp hoặc đổi ngày tự động.
+
+Kiểm thử mới nhất: **217 PASS**, gồm 40 ca dịch vụ và 4 ca kết nối bổ sung. XML: `evidence/marketplace-final-release-regression-20261026.xml`. Có kiểm tra bản sao lưu/khôi phục toàn bộ bảng và kiểm tra trên trình duyệt; xem `PROGRESS.md`. Các kết quả cũ bên dưới là lịch sử của phân hệ hàng không.
+
+---
+
 # AeroFlow trong nước và quốc tế — cập nhật 26/10/2026
 
 Nhánh hiện tại: **feature/presentation-demo-dec-jan**. Bản lịch trình diễn 01/12/2026–31/01/2027 trên database demo sạch có **6.288 chuyến = 2.232 nội địa + 3.936 quốc tế + 120 baseline**, **42 sân bay**, **170 đường bay** và **74.376 dòng giá vé**. Phần quốc tế gồm 32 sân bay tại 20 quốc gia/vùng lãnh thổ ngoài Việt Nam. Đây là dữ liệu mô phỏng; số lượng trên không áp dụng cho database hồi quy có thêm fixtures.

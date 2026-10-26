@@ -74,6 +74,8 @@ def create_app(test_config=None):
     from .routes.customer import bp as customer
     from .routes.commerce import bp as commerce
     from .routes.operations import bp as operations
-    for bp in (auth, flights, bookings, admin, itineraries, customer, commerce, operations):
+    from .routes.travel import bp as travel
+    from .routes.travel_admin import bp as travel_admin
+    for bp in (auth, flights, bookings, admin, itineraries, customer, commerce, operations, travel, travel_admin):
         app.register_blueprint(bp)
     return app

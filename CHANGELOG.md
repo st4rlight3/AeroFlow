@@ -1,3 +1,16 @@
+# 26/10/2026 — Travel Marketplace
+
+- Thêm 12 loại dịch vụ, 132 sản phẩm mẫu tại 11 điểm đến; 264 gói, 16.368 lịch bán tháng 12/2026–01/2027.
+- Tìm theo loại, từ khóa, điểm đến, ngày, số khách, ngân sách, sao và sắp xếp; tính tổng đủ các đêm/ngày và số đơn vị cần cho nhóm khách.
+- Thêm báo giá SQL, giữ chỗ 10 phút, chống vượt sức chứa khi đặt đồng thời, payment idempotency, coupon quota, hủy/hoàn theo snapshot, QR/PDF và eSIM mô phỏng.
+- Thêm yêu thích, giỏ lựa chọn, lịch trình cá nhân, hỗ trợ, hồ sơ đối tác, quản trị danh mục/gói/lịch/giá/ưu đãi/đánh giá/phiếu và báo cáo SQL.
+- Giữ giao diện hàng không; thêm thanh dịch vụ. Không thêm trợ lý AI.
+- Sửa sắp xếp Mới nhất gây lỗi ORDER BY; sửa điều hướng bất đồng bộ để trang cũ không ghi đè trang vừa chọn.
+- Sửa ODBC pooling giữ SERIALIZABLE giữa yêu cầu, dẫn đến tranh chấp thanh toán–hủy. Khôi phục READ COMMITTED ở đầu mỗi kết nối, giữ khóa mạnh tại nghiệp vụ cần thiết. Bản sửa chung cũng được đưa sang nhánh hàng không.
+- Hồi quy đầu: 209 PASS / 1 FAIL; sau sửa: 214 PASS; bản bổ sung tác vụ hết hạn, đổi QR và lịch địa phương đạt 217 PASS. Không che hoặc coi lần chạy lỗi là thành công.
+
+---
+
 # Trong nước và quốc tế — 26/10/2026
 
 - Giữ nhánh `feature/presentation-demo-dec-jan`; lịch 01/12/2026–31/01/2027 gồm **3.936 chuyến quốc tế + 2.232 nội địa + 120 baseline = 6.288 chuyến**, **42 sân bay**, **170 đường bay**, **74.376 dòng giá** trên database demo sạch. Quốc tế có 32 sân bay tại 20 quốc gia/vùng lãnh thổ ngoài Việt Nam.

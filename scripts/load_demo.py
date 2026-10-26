@@ -1,8 +1,8 @@
-"""One entry point for the entire domestic + international demo catalogue.
+"""One entry point for domestic, international and travel demo catalogues.
 
 Preview does not open a database. --apply imports each catalogue atomically;
-both are idempotent, so a failed second stage can safely be retried. Apply
-migrations 001–017 first. Existing customer/ticket/payment history is retained.
+all stages are idempotent, so a failed stage can safely be retried. Apply
+migrations 001–022 first. Existing customer/ticket/payment history is retained.
 """
 import argparse
 from dataclasses import asdict
@@ -14,6 +14,7 @@ from scripts.seed_ultimate import resolve_window,seed_demo
 from scripts.seed_international import seed_international
 from scripts.demo_catalog import preview as domestic_preview
 from scripts.international_catalog import preview as international_preview
+from scripts.seed_travel import seed as seed_travel,CATEGORIES,DESTINATIONS
 
 
 def main():
@@ -30,9 +31,11 @@ def main():
         result=dict(mode='APPLIED' if args.apply else 'PREVIEW_ONLY',start_date=start.isoformat(),days=days,
                     total_new_catalogue_flights=domestic['planned_flights']+world['planned_international_flights'],
                     domestic=domestic,international=world)
+        result['travel']=dict(destinations=len(DESTINATIONS),products=len(DESTINATIONS)*len(CATEGORIES),packages=len(DESTINATIONS)*len(CATEGORIES)*2,inventory=len(DESTINATIONS)*len(CATEGORIES)*2*days)
         if args.apply:
             result['domestic_result']=asdict(seed_demo(days,start))
             result['international_result']=asdict(seed_international(days,start))
+            result['travel_result']=seed_travel(start,days)
     except (ValueError,RuntimeError) as error:parser.error(str(error))
     print(json.dumps(result,ensure_ascii=False,indent=2))
 

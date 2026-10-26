@@ -1,3 +1,22 @@
+# Nâng cấp nhánh Marketplace — 001–022
+
+Dừng ứng dụng, sao lưu database trước khi nâng cấp. Không sửa các file migration đã được ghi checksum. 018–022 bổ sung miền dịch vụ và ràng buộc; không xóa bảng hoặc viết lại lịch sử vé máy bay.
+
+- Database mới: chạy `python scripts/init_db.py`, rồi `python scripts/migrate.py --apply --backup-file "<thư-mục-backup-trên-SQL-Server>\AeroFlow_before_marketplace_20261026.bak"` với tên file chưa tồn tại.
+- Database cũ đã có Ultimate: bỏ qua `init_db.py`; chạy cùng lệnh migrate với bản sao lưu mới. Trong SSMS có thể lấy thư mục bằng `SELECT SERVERPROPERTY('InstanceDefaultBackupPath');`.
+- Chỉ với database kiểm thử có tên `AeroFlow_Test_*`, có thể dùng `python scripts/migrate.py --apply --test-database`. Không dùng cờ này để bỏ qua backup database đang sử dụng.
+- Chạy `python scripts/migrate.py` để xem trạng thái; mọi phiên bản 001–022 phải APPLIED. Chạy lại không tạo đối tượng hoặc dữ liệu trùng.
+- Nhập mẫu bằng `python scripts/load_demo.py --apply --start-date 2026-12-01 --days 62`. Không nhập SQL 04 lên database đã migrate. Các giai đoạn nội địa, quốc tế và dịch vụ có transaction riêng.
+- Đặt Windows Task Scheduler gọi `python scripts/expire_holds.py` mỗi phút; tác vụ xử lý cả vé máy bay và dịch vụ. Chỗ hết hạn được loại khỏi sức chứa ngay trong View, không phụ thuộc tác vụ có chạy đúng phút hay không.
+
+018 tạo danh mục, inventory theo ngày/khung, đặt chỗ, payment, coupon, review, lịch trình và hỗ trợ. 019 tạo engine báo giá–đặt–thanh toán–hủy cùng khóa giao dịch và trigger sức chứa. 020 khóa snapshot lịch sử, giới hạn giữ chỗ, tạo fulfillment mô phỏng. 021 bảo vệ trạng thái khi INSERT, khớp khung giờ và sửa các lịch tour demo chưa có lịch sử từ 18 giờ thành 8 giờ; không sửa lịch đã phát sinh booking item.
+
+022 kiểm tra ngày địa phương: mỗi đơn vị đêm/ngày phải kết thúc vào ngày kế tiếp; lịch không được bắt đầu lệch ngày bán. Tác vụ hết hạn dùng OUTPUT INTO để tương thích bảng có trigger của SQL Server.
+
+Bản sao lưu toàn bộ database demo sau 22 migrations đã được RESTORE vào database mới và so sánh hash mọi bảng. `evidence/marketplace-database-validation-20261026.json` ghi kết quả. Có thể chạy lại bằng `SQL_DATABASE=AeroFlow_Test_<tên>` và `python scripts/verify_marketplace.py --run`; lệnh tạo backup mới và database restore mới, không xóa hay ghi đè bản cũ.
+
+---
+
 # Nâng cấp trong nước và quốc tế — 26/10/2026
 
 Bản hiện tại cần đủ **migrations 001–017**, không chỉ 001–014. 015 sửa tính nhất quán lịch/tuổi; 016 bổ sung quốc gia, khu vực, múi giờ sân bay và xử lý ngày địa phương cho tìm kiếm/đặt/đổi chuyến. 017 sửa metadata múi giờ Vancouver (YVR), ưu tiên British Columbia Standard Time, dự phòng Yukon Standard Time theo múi giờ cài trên host; không đổi thời điểm UTC hoặc lịch sử vé. Các migration đã ghi trong ledger là bất biến: sửa tiếp bằng migration mới, không thay checksum.

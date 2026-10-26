@@ -10,9 +10,10 @@ const badge=s=>`<span class="status ${esc(s)}">${esc(statuses[s]||s)}</span>`;
 const state={csrf:'',user:null,airports:[],search:null,checkout:null,admin:'overview',timer:null};
 let routeVersion=0;
 async function api(path,method='GET',data){
+ const contextHash=location.hash;
  const r=await fetch('/api'+path,{method,credentials:'same-origin',headers:{'Content-Type':'application/json','X-CSRF-Token':state.csrf},...(data===undefined?{}:{body:JSON.stringify(data)})});
  const result=await r.json().catch(()=>({error:{message:'Máy chủ trả về phản hồi không hợp lệ.'}}));
- if(!r.ok){const e=new Error(result.error?.message||'Không thể thực hiện yêu cầu.');e.status=r.status;e.code=result.error?.code;if(r.status===401&&path!=='/me'&&!path.startsWith('/auth/')){state.user=null;state.afterLogin=location.hash.slice(1);nav();state.csrf=(await api('/csrf')).token;location.hash='login';}throw e;}
+ if(!r.ok){const e=new Error(result.error?.message||'Không thể thực hiện yêu cầu.');e.status=r.status;e.code=result.error?.code;if(r.status===401&&path!=='/me'&&!path.startsWith('/auth/')){state.user=null;nav();state.csrf=(await api('/csrf')).token;if(location.hash===contextHash){state.afterLogin=location.hash.slice(1);location.hash='login';}}throw e;}
  return result;
 }
 function toast(message){$('#toast').textContent=message;$('#toast').classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('#toast').classList.remove('show'),5500);}
@@ -159,9 +160,16 @@ function chart(canvas,labels,series){
  if(!labels.length){ctx.fillStyle='#627278';ctx.fillText('Chưa có giao dịch',left+20,100);}
 }
 function downloadCSV(rows){if(!rows.length){toast('Chưa có dữ liệu để xuất.');return;}const keys=Object.keys(rows[0]);const quote=v=>'"'+String(v??'').replace(/^[=+\-@]/,"'$&").replace(/"/g,'""')+'"';const csv='\ufeff'+[keys,...rows.map(r=>keys.map(k=>r[k]))].map(r=>r.map(quote).join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='AeroFlow_DoanhThu.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
+let afRouteRunning=false,afRoutePending=false;
 async function route(){
+ if(afRouteRunning){afRoutePending=true;routeVersion++;return;}
+ afRouteRunning=true;
+ try{do{afRoutePending=false;await performRoute();}while(afRoutePending);}
+ finally{afRouteRunning=false;}
+}
+async function performRoute(){
  clearInterval(state.timer);$('#main').setAttribute('aria-busy','true');const version=++routeVersion;const [name,id]=(location.hash.slice(1)||'home').split('/');$('#modal').close();$('#main').innerHTML='<div class="container"><div class="loading">Đang tải hành trình…</div></div>';
- try{const handlers={wallet:walletPage,exchange:()=>exchangePage(Number(id)),options:()=>bookingOptions(Number(id)),promotions:adminPromotions,travellers:savedTravellers,preferences:customerPreferences,"reset-password":resetPassword,loyalty:loyaltyPage,notifications:notificationsPage,lookup:lookupPage,"flight-status":flightStatusPage,ticket:()=>ticketPage(Number(id)),operations:adminOperations,ultimate,"ultimate-passengers":ultimatePassengers,"ultimate-seats":ultimateSeats,"ultimate-review":ultimateReview,home,results,flight:()=>flight(Number(id)),seats,passengers,review,login:()=>auth(false),register:()=>auth(true),profile,bookings,booking:()=>booking(Number(id)),admin};await (handlers[name]||home)();if(version===routeVersion){window.scrollTo({top:0,left:0,behavior:'instant'});$('#main').focus({preventScroll:true});$('#main').classList.remove('af-page-enter');void $('#main').offsetWidth;$('#main').classList.add('af-page-enter');document.title=($('#main h1')?.innerText.replace(/\s+/g,' ')||'AeroFlow')+' · AeroFlow Ultimate';}}
+ try{const handlers={explore:travelExplore,travel:()=>travelCatalog(id||"all"),experience:()=>travelDetail(Number(id)),"travel-more":travelMore,"travel-bookings":travelBookings,"travel-booking":()=>travelBooking(Number(id)),wishlist:travelWishlist,"travel-cart":travelCart,"travel-coupons":travelCoupons,"travel-trips":travelTrips,"travel-trip":()=>travelTrip(Number(id)),"travel-help":()=>travelHelp(Number(id)||null),"travel-article":()=>travelArticle(Number(id)),"travel-provider":travelProvider,"travel-admin":travelAdmin,wallet:walletPage,exchange:()=>exchangePage(Number(id)),options:()=>bookingOptions(Number(id)),promotions:adminPromotions,travellers:savedTravellers,preferences:customerPreferences,"reset-password":resetPassword,loyalty:loyaltyPage,notifications:notificationsPage,lookup:lookupPage,"flight-status":flightStatusPage,ticket:()=>ticketPage(Number(id)),operations:adminOperations,ultimate,"ultimate-passengers":ultimatePassengers,"ultimate-seats":ultimateSeats,"ultimate-review":ultimateReview,home,results,flight:()=>flight(Number(id)),seats,passengers,review,login:()=>auth(false),register:()=>auth(true),profile,bookings,booking:()=>booking(Number(id)),admin};await (handlers[name]||home)();if(version===routeVersion){window.scrollTo({top:0,left:0,behavior:'instant'});$('#main').focus({preventScroll:true});$('#main').classList.remove('af-page-enter');void $('#main').offsetWidth;$('#main').classList.add('af-page-enter');document.title=($('#main h1')?.innerText.replace(/\s+/g,' ')||'AeroFlow')+' · AeroFlow Ultimate';}}
  catch(e){if(version!==routeVersion)return;$('#main').innerHTML=page('Chưa thể tải nội dung','',`<div class="error-panel"><h3>${esc(e.message)}</h3><p>Vui lòng thử lại. Dữ liệu sẽ xuất hiện khi kết nối hoạt động trở lại.</p><button id="retry">Thử lại</button> <a href="#home" class="button ghost">Trang chủ</a></div>`);$('#retry').onclick=()=>route();}
  finally{if(version===routeVersion){$('#main').setAttribute('aria-busy','false');window.dispatchEvent(new Event('aeroflow:route-ready'));}}
 }

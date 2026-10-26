@@ -1,3 +1,23 @@
+# Trạng thái Marketplace — 26/10/2026
+
+Nhánh hiện tại: **feature/travel-marketplace**. Phát triển tiếp từ bản hàng không `dda8ac4`. Nhánh cũ `feature/presentation-demo-dec-jan` được giữ riêng; bản sửa kết nối ODBC chung đã backport.
+
+Đã triển khai và kiểm thử SQL Server:
+
+- 12 nhóm dịch vụ; 132 sản phẩm, 264 gói và 16.368 lịch bán mẫu; 11 điểm đến. Database xem thử còn giữ 6.288 chuyến bay / 74.376 dòng FlightFares của bộ hàng không.
+- Ngày lưu trú tính `[StartDate, EndDate)`; mua lượt theo một ngày và khung giờ. Tìm theo ngày tính tổng đủ kỳ ở và đủ số phòng/xe cho số khách. Giá, capacity và voucher được kiểm tra lại tại SQL khi tạo đơn.
+- Khóa applock theo sản phẩm trong transaction; trigger bảo vệ sức chứa ngay cả khi sửa qua SSMS. Hold hết hạn không chiếm stock. Giá và chính sách được snapshot; coupon trả lượt sau hủy hold, không trả lượt đã thanh toán/hoàn tiền.
+- Customer: tìm/lọc, chi tiết, gói, lịch, báo giá, giữ chỗ, mô phỏng thanh toán thất bại/thành công, hủy/hoàn, QR/PDF, eSIM mô phỏng, yêu thích, giỏ lựa chọn, lịch trình, hỗ trợ và hồ sơ đối tác.
+- Admin: dashboard từ Views; tạo/sửa/đóng dịch vụ, gói, lịch theo giờ địa phương; giá/sức chứa; đối tác; ưu đãi; duyệt đánh giá; hỗ trợ; đổi QR một lần; nhật ký. Đối tác đã duyệt chỉ xem danh mục và đơn xác nhận thuộc đơn vị mình.
+- **217 PASS, 0 FAIL/ERROR/SKIP**, `evidence/marketplace-final-release-regression-20261026.xml`, 388,00 giây. Lần hồi quy đầu ghi 209 PASS/1 FAIL tại `marketplace-full-regression-20261026.xml`; đã truy nguyên mức cô lập bị giữ bởi ODBC pooling (4 -> 4), sửa về mặc định 2. Riêng bản sửa qua 5 ca đồng thời; không coi lần đầu là PASS.
+- Lần kiểm tra mở rộng worker/QR có 38 PASS/1 FAIL do một đoạn kiểm tra số khách đặt nhầm phạm vi hàm (`marketplace-worker-voucher-regression-20261026.xml`). Đã sửa mã test và chạy lại trong bộ cuối 217 PASS; không dùng báo cáo trung gian đó làm bằng chứng thành công.
+- `CHECKDB`, `CHECKCONSTRAINTS`, không vượt capacity, migration chạy lại không thay đổi và restore toàn bộ bảng đều PASS; hash nguồn/restore khớp. Bằng chứng `marketplace-database-validation-20261026.json`.
+- Browser: đã thử lọc ngân sách, lấy báo giá, đặt phòng, thất bại rồi thanh toán lại, nhận QR/PDF link, hủy và hoàn 625.000/1.250.000 đồng theo gói; admin tạo nháp/gói và 2 lịch mới. Bản nháp QA không công khai, không tính vào 132 sản phẩm mẫu. Bằng chứng ảnh và JSON trong `evidence/marketplace-*`.
+
+Giới hạn thực tế: dữ liệu dịch vụ hư cấu; không phát hành eSIM/vé/visa hoặc giao dịch ngân hàng thật. Mỗi đơn là một gói; giỏ lưu để đặt riêng. Chưa có checkout gộp, tự đổi ngày, số ghế riêng cho xe/tàu hoặc kết nối nhà cung cấp. Không tuyên bố tương đương toàn bộ Traveloka. Các phần này cần phát triển riêng nếu tiếp tục mở rộng. Không có trợ lý AI; không mở rộng slide/báo cáo.
+
+---
+
 # Trạng thái hiện tại — trong nước và quốc tế, 26/10/2026
 
 Nhánh đang hoàn thiện: **feature/presentation-demo-dec-jan**. Các kết quả dưới đây thuộc bản quốc tế hiện tại; mọi mục sau phần này là lịch sử. Không suy ra commit/push đã hoàn tất từ kết quả kiểm thử.

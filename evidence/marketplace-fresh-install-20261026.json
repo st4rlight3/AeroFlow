@@ -1,0 +1,94 @@
+{
+  "database": "AeroFlow_Test_Marketplace_Fresh_ef050d98",
+  "versions": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22
+  ],
+  "original_columns_preserved": true,
+  "original_baseline": {
+    "Aircraft": 6,
+    "AircraftSeats": 396,
+    "Airlines": 3,
+    "Airports": 10,
+    "AuditLogs": 248,
+    "BookingPassengers": 40,
+    "Bookings": 40,
+    "FareClasses": 3,
+    "FlightFares": 360,
+    "Flights": 120,
+    "FlightSeatAssignments": 40,
+    "Passengers": 40,
+    "Payments": 48,
+    "Roles": 2,
+    "Tickets": 40,
+    "Users": 40
+  },
+  "domestic": {
+    "created": 72,
+    "existing": 0,
+    "created_aircraft": 9,
+    "created_fare_classes": 12,
+    "updated_fares": 864,
+    "legacy_updated_fares": 359,
+    "skipped_closed_flights": 0
+  },
+  "international": {
+    "created": 96,
+    "existing": 0,
+    "created_aircraft": 48,
+    "created_fare_classes": 0,
+    "updated_fares": 1152,
+    "legacy_updated_fares": 0,
+    "skipped_closed_flights": 0
+  },
+  "travel": {
+    "destinations": 11,
+    "products": 132,
+    "packages": 264,
+    "inventory": 528
+  },
+  "rerun_domestic": {
+    "created": 0,
+    "existing": 72,
+    "created_aircraft": 0,
+    "created_fare_classes": 0,
+    "updated_fares": 0,
+    "legacy_updated_fares": 0,
+    "skipped_closed_flights": 0
+  },
+  "rerun_international": {
+    "created": 0,
+    "existing": 96,
+    "created_aircraft": 0,
+    "created_fare_classes": 0,
+    "updated_fares": 0,
+    "legacy_updated_fares": 0,
+    "skipped_closed_flights": 0
+  },
+  "rerun_travel": {
+    "destinations": 0,
+    "products": 0,
+    "packages": 0,
+    "inventory": 0
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "checked_at": "2026-10-26T14:05:43.768Z",
+  "preview": "http://127.0.0.1:5082/#explore",
+  "desktop": {
+    "width": 840,
+    "height": 523,
+    "pageWidth": 825,
+    "overflow": false,
+    "brokenImages": 0
+  },
+  "mobile": {
+    "width": 390,
+    "height": 844,
+    "pageWidth": 375,
+    "overflow": false,
+    "brokenImages": 0,
+    "search": {
+      "start": "2026-12-15",
+      "end": "2026-12-17",
+      "guests": 3,
+      "total_vnd": 5000000,
+      "detail_preserved_rooms": 2
+    }
+  },
+  "checks": [
+    "Budget 1 VND gives empty catalogue",
+    "Quote from SQL: 1 night, 1 room = 1250000 VND",
+    "UI hold created; failed payment retained hold; retry confirmed booking",
+    "QR image complete, naturalWidth 210; PDF download link rendered",
+    "UI cancellation refunded 625000 VND of 1250000 according to 50% snapshot",
+    "Admin dashboard net revenue 625000 VND matched transaction history",
+    "Admin UI created unpublished draft 133, package and two January slots",
+    "Fast hotels -> more navigation finished on #travel-more with correct heading"
+  ],
+  "limitations": [
+    "Browser checks cover representative journeys, not all 12 categories end to end in UI. SQL/API suite covers all categories.",
+    "No real provider, bank, eSIM activation or visa processing."
+  ]
+}

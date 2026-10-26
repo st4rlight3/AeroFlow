@@ -1,0 +1,497 @@
+{
+  "database": "AeroFlow_Test_Marketplace_20261026",
+  "applied": [],
+  "legacy_rows_unchanged": true,
+  "before": {
+    "Aircraft": {
+      "count": 312,
+      "sha256": "74adb6b3c05dc1e7900868609eee102eb5590c44c5bf31e888af046c8361447f"
+    },
+    "AircraftSeats": {
+      "count": 14142,
+      "sha256": "bf9701dfa16a176ec4c64be5b7d995a96f00386947f1655f4c5a1cea92d6d232"
+    },
+    "Airlines": {
+      "count": 3,
+      "sha256": "748f91b3a6bba4cc1d1e7a7ff72a8877dc7ff126aa2f1cae9257cacb1b2a700c"
+    },
+    "Airports": {
+      "count": 42,
+      "sha256": "9d8bf4794923b334ff1c5d8c5f0fb227565a5ae2957bf6977dd25671a13baaef"
+    },
+    "AuditLogs": {
+      "count": 1526,
+      "sha256": "193ac65d1cf597c4c9445f08448d9dd5cace26645837fe39f9175dc69fa61b98"
+    },
+    "BookingChanges": {
+      "count": 6,
+      "sha256": "185f93bfd01195f741b499a746bc9bf116ad12fcbc064cd9ef02e7852d14f12e"
+    },
+    "BookingDiscounts": {
+      "count": 9,
+      "sha256": "4c1074b16006ab6039e7dcb377e92d7d9a4850c09e300d3a6f6b24f967702e79"
+    },
+    "BookingExtras": {
+      "count": 9,
+      "sha256": "c2c5902601b2e5481086f23b05abfa6255ab5027864d828f54cd47adb193935e"
+    },
+    "BookingPassengers": {
+      "count": 249,
+      "sha256": "b5148f3cbad6a6c2b98c42796ce3d748910be19270aa3f80ef52b67e8ae51092"
+    },
+    "Bookings": {
+      "count": 201,
+      "sha256": "4ecf84fb70033dad99eb936f7074a0fed70c49d2b37cbc6e5b4a4292f70f9614"
+    },
+    "CheckIns": {
+      "count": 8,
+      "sha256": "69b67cbd7914c2e4f3866dc1f8124fb8d3759060d22b48b421e18568c18caf16"
+    },
+    "DiscountCodes": {
+      "count": 5,
+      "sha256": "23393e45d12561d6c7891414bb76b8c48e4255f8049528d63cae54e6a1d571a1"
+    },
+    "FareClasses": {
+      "count": 15,
+      "sha256": "aafe63eca585390936f69bc6bc2893413c4b1d08c27b083fea5840c6ad052d4b"
+    },
+    "FlightFares": {
+      "count": 3287,
+      "sha256": "143a09cfd6133b23d9f34161958413dc981848ba8d4e616b3f484a0e406c1ff8"
+    },
+    "Flights": {
+      "count": 598,
+      "sha256": "8da2994b360ae98276a90417405f36159fed6879aa898926b4f20ab59066fc8c"
+    },
+    "FlightSeatAssignments": {
+      "count": 279,
+      "sha256": "a97b99f76e885bbd758d6a5605bff0a8849051dd77849df6e06c8c9d5af5e97c"
+    },
+    "LoyaltyLedger": {
+      "count": 119,
+      "sha256": "aa3aae3211ac19c0952d8d831fe77baa1bd944039fa1c3d9645df0bec24032f6"
+    },
+    "LoyaltySpends": {
+      "count": 3,
+      "sha256": "6ed699bba1c342ecea34c5cbff3d31fccfbb604de55ad55c4f228bd908a01191"
+    },
+    "LoyaltyTiers": {
+      "count": 3,
+      "sha256": "f04266387272b7e26f4a851ea1a395004dfbc2d57b76096ab8f9ce7d70844655"
+    },
+    "NotificationDeliveries": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "Notifications": {
+      "count": 488,
+      "sha256": "b699312d7434e72c085cd15a3c23be6f6a72c757d5e83455ae160ceda9f6ca63"
+    },
+    "Passengers": {
+      "count": 249,
+      "sha256": "1feb2c14fab4df7ea881063e0188da1cbc925d0a64fead182b6250969a97012e"
+    },
+    "PassengerTypes": {
+      "count": 3,
+      "sha256": "a80b8c0ddf84c236ccd241c15ea16fd184b85f0fedb61b94b98790935d6691f6"
+    },
+    "PasswordResetTokens": {
+      "count": 9,
+      "sha256": "87fb04c0499e11569faee658897d9cc56590968f3f059c5932dda2b251d2f4c1"
+    },
+    "Payments": {
+      "count": 170,
+      "sha256": "a4d3e15f29864d4e1136fdce7b039de17b169487d47f3161060cd93e4766bc91"
+    },
+    "Roles": {
+      "count": 2,
+      "sha256": "d1b58918a0d1ee5b1bc6f15ba94f09602f2032a3042ea037453c7db6dfb5325f"
+    },
+    "Routes": {
+      "count": 133,
+      "sha256": "7063113a7d1bd003b3186af9f4fd0007e139c2c0f68b63d01c2861c4e93f140e"
+    },
+    "SavedTravellers": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "Services": {
+      "count": 5,
+      "sha256": "584101f7bb25e33bfd9f9e08ba20239315fd23b4a3744ee99c7f7348dc67c9f8"
+    },
+    "TicketDiscounts": {
+      "count": 15,
+      "sha256": "9000a1c78f522eaab8032ddd38ba84c8029d699ed9fb3d6b7ab1069fa0d76359"
+    },
+    "TicketRefunds": {
+      "count": 6,
+      "sha256": "41a8c81cf2f2e13114ef2b7bd185141e969c43277cce5f1d089b0a0a6725d9d3"
+    },
+    "TicketRules": {
+      "count": 279,
+      "sha256": "cd533a0384ca08d2b3d6806625f997dbe81dd549318013cd0337984d1ecbbf3f"
+    },
+    "Tickets": {
+      "count": 279,
+      "sha256": "e41aa639ada9382c28cd42329dab010d5b9f44683b8205b0cf96fc2b7f1a55df"
+    },
+    "TravelAmenities": {
+      "count": 8,
+      "sha256": "17d2ba5197829ebd5564ce4c4e9905c716dfe57c43b73360f3b7a0a2f419cc78"
+    },
+    "TravelArticles": {
+      "count": 2,
+      "sha256": "22bde59b92cd5ca9f1fe5f7dfd04c16d851f8d583b7e4ecdbfe412037254bf0d"
+    },
+    "TravelAuditLog": {
+      "count": 287,
+      "sha256": "fedc1dc2ff68365d9f711d80b286f393fa7b16cfd5062a866f18e2e473b48b39"
+    },
+    "TravelBookingItems": {
+      "count": 112,
+      "sha256": "c1c06b70f45cec04f291a3ed816779b7c3825844b81157acc4b97488be3ad1cb"
+    },
+    "TravelBookings": {
+      "count": 112,
+      "sha256": "1fefad859d65f49e06d788e2f8fe3cf66d77cddd6ad88500ff8c43bf85bc51b6"
+    },
+    "TravelCart": {
+      "count": 5,
+      "sha256": "a0337527721216b9725190171273f04a5550b08b154891aaae5da56c432d3b96"
+    },
+    "TravelCategories": {
+      "count": 12,
+      "sha256": "fee5f0a988b077b189cf1febb4ff277ba6b4999bbf4b067ca7d7612807511982"
+    },
+    "TravelCouponReservations": {
+      "count": 8,
+      "sha256": "1de14141ef048752040e342a97565dd26dde456c3f21a6c831f4da5024d15513"
+    },
+    "TravelCoupons": {
+      "count": 5,
+      "sha256": "12bebd82d3d59823cadde21bf991f5c068a5e0e26da1e0ff47e63e02e65b3ebf"
+    },
+    "TravelCreditLedger": {
+      "count": 6,
+      "sha256": "104d466cf36f9a4778505cd7dd19d1eaa06617b25008e5f570a9b3dcdf961f24"
+    },
+    "TravelDestinations": {
+      "count": 11,
+      "sha256": "5e508be92d9ef7309782b9c5d71e74f8427aeb85c3f5ce63cd74ed3932e7c1eb"
+    },
+    "TravelFulfillments": {
+      "count": 65,
+      "sha256": "701a280ddf7ef2e0fc7f7bc2a48841f8e34e29c7b79cd85f5711597b39d78dff"
+    },
+    "TravelInventory": {
+      "count": 16662,
+      "sha256": "70678b7e82016ce6bf7197f18436bda42bbcd5071a0ebe948e1f19200d98e60a"
+    },
+    "TravelPackages": {
+      "count": 362,
+      "sha256": "307ab90d99c6b40436dfedafb3dd10ee22e72643cdf024dc084c4f30ced7f2e7"
+    },
+    "TravelPayments": {
+      "count": 130,
+      "sha256": "2d52365c4e028db14cdbde8360847a7c6ab1a16029910e54a10a139821a593f9"
+    },
+    "TravelProductAmenities": {
+      "count": 220,
+      "sha256": "88fd9ae35e620d94dc059b527cca471360a5d760e7bbd67b159dd5b5036a0098"
+    },
+    "TravelProductImages": {
+      "count": 136,
+      "sha256": "f169aa736556bbcc8f5ade140bb845e65b0a3358a0718dd8759e84703033e698"
+    },
+    "TravelProducts": {
+      "count": 230,
+      "sha256": "62f74a40f9d8d3af46f4632e055e2bb4709261a7ac5faf709ad26fa2d64c3297"
+    },
+    "TravelProviders": {
+      "count": 5,
+      "sha256": "f95579dd44c6b813774e52e8129be3db035a1d9b9fca5f3fea681f5ce2c8e736"
+    },
+    "TravelReviews": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "TravelSupportMessages": {
+      "count": 5,
+      "sha256": "0f6dc92c2640b973a013e8759631f5f86cf1369235200052d5f3f4a2cecf5e06"
+    },
+    "TravelSupportTickets": {
+      "count": 5,
+      "sha256": "a4c459cbe297971d25d519b8ad6200834d772f9d8358d46573ed20fbfa0d4377"
+    },
+    "TravelTrips": {
+      "count": 5,
+      "sha256": "77533e2eca9294d1b36a027ea2c32b18c1cb9432da6b6513c6883f9d8ec5b7d3"
+    },
+    "TravelTripStops": {
+      "count": 5,
+      "sha256": "101593df8b5cda353cb6c84593589085485600e00616508f5e044d2fe4203bcf"
+    },
+    "TravelVouchers": {
+      "count": 68,
+      "sha256": "2cf784966a982cddc49f6fd9e1582553a2a5d5859279a75a9d1116ef126265ae"
+    },
+    "TravelWishlists": {
+      "count": 5,
+      "sha256": "b761c2e12ae15b72b58189f892963abb80fab7d8763850889c375233a7dcaded"
+    },
+    "UserPreferences": {
+      "count": 3,
+      "sha256": "56c5e28599d5f7570267c32a3e710980c4cdcdfbd733461533155eed141cc643"
+    },
+    "Users": {
+      "count": 958,
+      "sha256": "e0c08655bd5a1401ee612fdfe093107ea59e3e5a1228018882e57d40a7f4c6fa"
+    }
+  },
+  "after": {
+    "Aircraft": {
+      "count": 312,
+      "sha256": "74adb6b3c05dc1e7900868609eee102eb5590c44c5bf31e888af046c8361447f"
+    },
+    "AircraftSeats": {
+      "count": 14142,
+      "sha256": "bf9701dfa16a176ec4c64be5b7d995a96f00386947f1655f4c5a1cea92d6d232"
+    },
+    "Airlines": {
+      "count": 3,
+      "sha256": "748f91b3a6bba4cc1d1e7a7ff72a8877dc7ff126aa2f1cae9257cacb1b2a700c"
+    },
+    "Airports": {
+      "count": 42,
+      "sha256": "9d8bf4794923b334ff1c5d8c5f0fb227565a5ae2957bf6977dd25671a13baaef"
+    },
+    "AuditLogs": {
+      "count": 1526,
+      "sha256": "193ac65d1cf597c4c9445f08448d9dd5cace26645837fe39f9175dc69fa61b98"
+    },
+    "BookingChanges": {
+      "count": 6,
+      "sha256": "185f93bfd01195f741b499a746bc9bf116ad12fcbc064cd9ef02e7852d14f12e"
+    },
+    "BookingDiscounts": {
+      "count": 9,
+      "sha256": "4c1074b16006ab6039e7dcb377e92d7d9a4850c09e300d3a6f6b24f967702e79"
+    },
+    "BookingExtras": {
+      "count": 9,
+      "sha256": "c2c5902601b2e5481086f23b05abfa6255ab5027864d828f54cd47adb193935e"
+    },
+    "BookingPassengers": {
+      "count": 249,
+      "sha256": "b5148f3cbad6a6c2b98c42796ce3d748910be19270aa3f80ef52b67e8ae51092"
+    },
+    "Bookings": {
+      "count": 201,
+      "sha256": "4ecf84fb70033dad99eb936f7074a0fed70c49d2b37cbc6e5b4a4292f70f9614"
+    },
+    "CheckIns": {
+      "count": 8,
+      "sha256": "69b67cbd7914c2e4f3866dc1f8124fb8d3759060d22b48b421e18568c18caf16"
+    },
+    "DiscountCodes": {
+      "count": 5,
+      "sha256": "23393e45d12561d6c7891414bb76b8c48e4255f8049528d63cae54e6a1d571a1"
+    },
+    "FareClasses": {
+      "count": 15,
+      "sha256": "aafe63eca585390936f69bc6bc2893413c4b1d08c27b083fea5840c6ad052d4b"
+    },
+    "FlightFares": {
+      "count": 3287,
+      "sha256": "143a09cfd6133b23d9f34161958413dc981848ba8d4e616b3f484a0e406c1ff8"
+    },
+    "Flights": {
+      "count": 598,
+      "sha256": "8da2994b360ae98276a90417405f36159fed6879aa898926b4f20ab59066fc8c"
+    },
+    "FlightSeatAssignments": {
+      "count": 279,
+      "sha256": "a97b99f76e885bbd758d6a5605bff0a8849051dd77849df6e06c8c9d5af5e97c"
+    },
+    "LoyaltyLedger": {
+      "count": 119,
+      "sha256": "aa3aae3211ac19c0952d8d831fe77baa1bd944039fa1c3d9645df0bec24032f6"
+    },
+    "LoyaltySpends": {
+      "count": 3,
+      "sha256": "6ed699bba1c342ecea34c5cbff3d31fccfbb604de55ad55c4f228bd908a01191"
+    },
+    "LoyaltyTiers": {
+      "count": 3,
+      "sha256": "f04266387272b7e26f4a851ea1a395004dfbc2d57b76096ab8f9ce7d70844655"
+    },
+    "NotificationDeliveries": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "Notifications": {
+      "count": 488,
+      "sha256": "b699312d7434e72c085cd15a3c23be6f6a72c757d5e83455ae160ceda9f6ca63"
+    },
+    "Passengers": {
+      "count": 249,
+      "sha256": "1feb2c14fab4df7ea881063e0188da1cbc925d0a64fead182b6250969a97012e"
+    },
+    "PassengerTypes": {
+      "count": 3,
+      "sha256": "a80b8c0ddf84c236ccd241c15ea16fd184b85f0fedb61b94b98790935d6691f6"
+    },
+    "PasswordResetTokens": {
+      "count": 9,
+      "sha256": "87fb04c0499e11569faee658897d9cc56590968f3f059c5932dda2b251d2f4c1"
+    },
+    "Payments": {
+      "count": 170,
+      "sha256": "a4d3e15f29864d4e1136fdce7b039de17b169487d47f3161060cd93e4766bc91"
+    },
+    "Roles": {
+      "count": 2,
+      "sha256": "d1b58918a0d1ee5b1bc6f15ba94f09602f2032a3042ea037453c7db6dfb5325f"
+    },
+    "Routes": {
+      "count": 133,
+      "sha256": "7063113a7d1bd003b3186af9f4fd0007e139c2c0f68b63d01c2861c4e93f140e"
+    },
+    "SavedTravellers": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "Services": {
+      "count": 5,
+      "sha256": "584101f7bb25e33bfd9f9e08ba20239315fd23b4a3744ee99c7f7348dc67c9f8"
+    },
+    "TicketDiscounts": {
+      "count": 15,
+      "sha256": "9000a1c78f522eaab8032ddd38ba84c8029d699ed9fb3d6b7ab1069fa0d76359"
+    },
+    "TicketRefunds": {
+      "count": 6,
+      "sha256": "41a8c81cf2f2e13114ef2b7bd185141e969c43277cce5f1d089b0a0a6725d9d3"
+    },
+    "TicketRules": {
+      "count": 279,
+      "sha256": "cd533a0384ca08d2b3d6806625f997dbe81dd549318013cd0337984d1ecbbf3f"
+    },
+    "Tickets": {
+      "count": 279,
+      "sha256": "e41aa639ada9382c28cd42329dab010d5b9f44683b8205b0cf96fc2b7f1a55df"
+    },
+    "TravelAmenities": {
+      "count": 8,
+      "sha256": "17d2ba5197829ebd5564ce4c4e9905c716dfe57c43b73360f3b7a0a2f419cc78"
+    },
+    "TravelArticles": {
+      "count": 2,
+      "sha256": "22bde59b92cd5ca9f1fe5f7dfd04c16d851f8d583b7e4ecdbfe412037254bf0d"
+    },
+    "TravelAuditLog": {
+      "count": 287,
+      "sha256": "fedc1dc2ff68365d9f711d80b286f393fa7b16cfd5062a866f18e2e473b48b39"
+    },
+    "TravelBookingItems": {
+      "count": 112,
+      "sha256": "c1c06b70f45cec04f291a3ed816779b7c3825844b81157acc4b97488be3ad1cb"
+    },
+    "TravelBookings": {
+      "count": 112,
+      "sha256": "1fefad859d65f49e06d788e2f8fe3cf66d77cddd6ad88500ff8c43bf85bc51b6"
+    },
+    "TravelCart": {
+      "count": 5,
+      "sha256": "a0337527721216b9725190171273f04a5550b08b154891aaae5da56c432d3b96"
+    },
+    "TravelCategories": {
+      "count": 12,
+      "sha256": "fee5f0a988b077b189cf1febb4ff277ba6b4999bbf4b067ca7d7612807511982"
+    },
+    "TravelCouponReservations": {
+      "count": 8,
+      "sha256": "1de14141ef048752040e342a97565dd26dde456c3f21a6c831f4da5024d15513"
+    },
+    "TravelCoupons": {
+      "count": 5,
+      "sha256": "12bebd82d3d59823cadde21bf991f5c068a5e0e26da1e0ff47e63e02e65b3ebf"
+    },
+    "TravelCreditLedger": {
+      "count": 6,
+      "sha256": "104d466cf36f9a4778505cd7dd19d1eaa06617b25008e5f570a9b3dcdf961f24"
+    },
+    "TravelDestinations": {
+      "count": 11,
+      "sha256": "5e508be92d9ef7309782b9c5d71e74f8427aeb85c3f5ce63cd74ed3932e7c1eb"
+    },
+    "TravelFulfillments": {
+      "count": 65,
+      "sha256": "701a280ddf7ef2e0fc7f7bc2a48841f8e34e29c7b79cd85f5711597b39d78dff"
+    },
+    "TravelInventory": {
+      "count": 16662,
+      "sha256": "70678b7e82016ce6bf7197f18436bda42bbcd5071a0ebe948e1f19200d98e60a"
+    },
+    "TravelPackages": {
+      "count": 362,
+      "sha256": "307ab90d99c6b40436dfedafb3dd10ee22e72643cdf024dc084c4f30ced7f2e7"
+    },
+    "TravelPayments": {
+      "count": 130,
+      "sha256": "2d52365c4e028db14cdbde8360847a7c6ab1a16029910e54a10a139821a593f9"
+    },
+    "TravelProductAmenities": {
+      "count": 220,
+      "sha256": "88fd9ae35e620d94dc059b527cca471360a5d760e7bbd67b159dd5b5036a0098"
+    },
+    "TravelProductImages": {
+      "count": 136,
+      "sha256": "f169aa736556bbcc8f5ade140bb845e65b0a3358a0718dd8759e84703033e698"
+    },
+    "TravelProducts": {
+      "count": 230,
+      "sha256": "62f74a40f9d8d3af46f4632e055e2bb4709261a7ac5faf709ad26fa2d64c3297"
+    },
+    "TravelProviders": {
+      "count": 5,
+      "sha256": "f95579dd44c6b813774e52e8129be3db035a1d9b9fca5f3fea681f5ce2c8e736"
+    },
+    "TravelReviews": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "TravelSupportMessages": {
+      "count": 5,
+      "sha256": "0f6dc92c2640b973a013e8759631f5f86cf1369235200052d5f3f4a2cecf5e06"
+    },
+    "TravelSupportTickets": {
+      "count": 5,
+      "sha256": "a4c459cbe297971d25d519b8ad6200834d772f9d8358d46573ed20fbfa0d4377"
+    },
+    "TravelTrips": {
+      "count": 5,
+      "sha256": "77533e2eca9294d1b36a027ea2c32b18c1cb9432da6b6513c6883f9d8ec5b7d3"
+    },
+    "TravelTripStops": {
+      "count": 5,
+      "sha256": "101593df8b5cda353cb6c84593589085485600e00616508f5e044d2fe4203bcf"
+    },
+    "TravelVouchers": {
+      "count": 68,
+      "sha256": "2cf784966a982cddc49f6fd9e1582553a2a5d5859279a75a9d1116ef126265ae"
+    },
+    "TravelWishlists": {
+      "count": 5,
+      "sha256": "b761c2e12ae15b72b58189f892963abb80fab7d8763850889c375233a7dcaded"
+    },
+    "UserPreferences": {
+      "count": 3,
+      "sha256": "56c5e28599d5f7570267c32a3e710980c4cdcdfbd733461533155eed141cc643"
+    },
+    "Users": {
+      "count": 958,
+      "sha256": "e0c08655bd5a1401ee612fdfe093107ea59e3e5a1228018882e57d40a7f4c6fa"
+    }
+  }
+}

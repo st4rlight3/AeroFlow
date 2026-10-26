@@ -4,6 +4,18 @@ class ApiError(Exception):
         self.message, self.status, self.code = message, status, code
 
 SQL_ERRORS = {
+    52001: ('Dịch vụ đang được đặt bởi khách khác. Vui lòng thử lại.', 409),
+    52002: ('Gói dịch vụ đã ngừng bán hoặc không tồn tại.', 404),
+    52003: ('Ngày sử dụng, số lượng hoặc thông tin liên hệ chưa hợp lệ.', 400),
+    52004: ('Không còn đủ chỗ cho toàn bộ thời gian đã chọn.', 409),
+    52005: ('Mã ưu đãi không hợp lệ, chưa đủ điều kiện hoặc đã hết lượt.', 409),
+    52006: ('Tài khoản không còn hoạt động.', 403),
+    52007: ('Mã giao dịch đã dùng cho một yêu cầu khác.', 409),
+    52008: ('Giá đã thay đổi. Vui lòng lấy lại báo giá trước khi xác nhận.', 409),
+    52009: ('Không tìm thấy đơn đặt dịch vụ.', 404),
+    52010: ('Đơn đã hết hạn hoặc trạng thái hiện tại không cho phép thao tác.', 409),
+    52011: ('Đã quá hạn hủy hoặc phiếu dịch vụ đã được sử dụng.', 409),
+    52012: ('Lịch đã phát sinh đơn đặt. Hãy tạo khung giờ mới để giữ lịch sử.', 409),
     51018: ('Lịch máy bay không liên tục giữa các sân bay. Cần bổ sung chặng định vị phù hợp.', 409),
     51001: ('Dữ liệu đang được cập nhật. Vui lòng thử lại.', 409),
     51002: ('Tài khoản không hoạt động.', 403),
