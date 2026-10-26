@@ -1,3 +1,9 @@
+# 26/10/2026 — sửa kết nối ODBC
+
+Đặt lại READ COMMITTED ở đầu mỗi kết nối để không giữ SERIALIZABLE từ phiên pooled trước. Đã tái hiện mức cô lập 4 -> 4 trước sửa, về 2 sau sửa. Bản sửa đã qua 5 ca kiểm thử trên database hàng không riêng, gồm thanh toán/hủy đồng thời (`evidence/airline-pooled-isolation-20261026.xml`). Không thêm bảng hoặc tính năng dịch vụ vào nhánh này.
+
+---
+
 # Trạng thái hiện tại — trong nước và quốc tế, 26/10/2026
 
 Nhánh đang hoàn thiện: **feature/presentation-demo-dec-jan**. Các kết quả dưới đây thuộc bản quốc tế hiện tại; mọi mục sau phần này là lịch sử. Không suy ra commit/push đã hoàn tất từ kết quả kiểm thử.

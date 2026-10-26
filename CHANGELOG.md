@@ -1,3 +1,9 @@
+# 26/10/2026 — sửa kết nối ODBC
+
+Đặt lại READ COMMITTED ở đầu mỗi kết nối để không giữ SERIALIZABLE từ phiên pooled trước. Đã tái hiện mức cô lập 4 -> 4 trước sửa, về 2 sau sửa. Bản sửa đã qua 5 ca kiểm thử trên database hàng không riêng, gồm thanh toán/hủy đồng thời (`evidence/airline-pooled-isolation-20261026.xml`). Không thêm bảng hoặc tính năng dịch vụ vào nhánh này.
+
+---
+
 # Trong nước và quốc tế — 26/10/2026
 
 - Giữ nhánh `feature/presentation-demo-dec-jan`; lịch 01/12/2026–31/01/2027 gồm **3.936 chuyến quốc tế + 2.232 nội địa + 120 baseline = 6.288 chuyến**, **42 sân bay**, **170 đường bay**, **74.376 dòng giá** trên database demo sạch. Quốc tế có 32 sân bay tại 20 quốc gia/vùng lãnh thổ ngoài Việt Nam.
