@@ -43,3 +43,17 @@ body:not([data-page="home"]) .page-head{padding:22px 26px;background:linear-grad
 @keyframes af-sky-route{to{stroke-dashoffset:-300}}
 @media(max-width:700px){.af-sky{background-position:40% top}.af-sky-routes{opacity:.17}.af-sky-cloud{opacity:.6}.af-quick-links{padding:8px 14px}.af-footer{border-radius:20px 20px 0 0;margin-left:12px;margin-right:12px}body:not([data-page="home"]) .page-head{padding:20px}.af-sky-cloud-two{display:none}}
 @media print{.af-sky{display:none!important}body{background:white!important}}
+
+/* Original globe and aircraft illustration balances the shorter hero title. */
+.af-title-row{display:grid;grid-template-columns:max-content minmax(0,180px);align-items:center;gap:12px;max-width:510px}
+.af-title-row h1{margin-bottom:0;white-space:nowrap}
+.af-sky-art{display:block;pointer-events:none;min-width:0;filter:drop-shadow(0 14px 16px #27735d10)}
+.af-sky-art svg{display:block;width:100%;height:auto;overflow:visible}
+.af-sky-plane{animation:af-sky-drift 7s ease-in-out infinite;transform-origin:130px 110px}
+@keyframes af-sky-drift{0%,100%{transform:translate(0,0) rotate(-2deg)}50%{transform:translate(3px,-5px) rotate(1deg)}}
+@media(min-width:701px) and (max-width:1100px){.af-title-row h1{font-size:clamp(34px,4.3vw,50px)}}
+@media(max-width:700px){.af-title-row{grid-template-columns:max-content minmax(0,165px);max-width:420px}.af-title-row h1{font-size:clamp(34px,6.4vw,45px)}}
+.af-motion-off .af-sky-plane{animation:none}
+@media(prefers-reduced-motion:reduce){.af-sky-plane{animation:none}}
+
+.af-destination-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 12px}.af-explore-more{display:flex;justify-content:center;margin-top:24px}.af-destination-tabs button{min-height:40px}.af-flight-filters{margin-top:20px}.af-flight-filters .u-filters{padding:0;border:0}.af-flight-filters .section-head{margin:14px 0 0}.af-flight-filters input{max-width:210px}.af-destination-code{max-width:calc(100% - 32px);line-height:1.5;white-space:normal}#af-destination-count{font-size:12px;margin-bottom:20px}

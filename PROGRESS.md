@@ -1,4 +1,19 @@
-# Bản dành cho buổi thuyết trình tháng 11 — 25/10/2026
+# Trạng thái hiện tại — trong nước và quốc tế, 26/10/2026
+
+Nhánh đang hoàn thiện: **feature/presentation-demo-dec-jan**. Các kết quả dưới đây thuộc bản quốc tế hiện tại; mọi mục sau phần này là lịch sử. Không suy ra commit/push đã hoàn tất từ kết quả kiểm thử.
+
+- Hồi quy quốc tế ban đầu trước migration 017: XML `evidence/international-full-regression-20261026.xml` ghi **171 PASS, 0 FAIL, 0 ERROR, 0 SKIP, 207,953 giây**; thời điểm bắt đầu 13:59:20 ngày 26/10/2026, UTC+7. Gồm hồi quy nghiệp vụ, sửa tính nhất quán và quốc tế/múi giờ. Sau migration 017, hồi quy cuối **173 PASS, 0 FAIL/ERROR/SKIP**, 206.470 giây (`evidence/international-final-regression-20261026.xml`). Database mới cài baseline và đủ 17 migrations giữ nguyên 40 booking/40 ticket/48 payment cũ; nhập lại không nhân đôi và kết nối mới đọc được dữ liệu. Kiểm tra 3.936 lịch quốc tế và 2.604 ngày sân bay không lệch IANA trong cửa sổ demo. Xem `international-fresh-upgrade-20261026.json`, `international-final-validation-20261026.json` và `vancouver-migration-preservation-20261026.json`.
+- Database demo sạch có **6.288 chuyến = 2.232 nội địa + 3.936 quốc tế + 120 baseline**, **42 sân bay**, **170 đường bay**, **74.376 dòng giá** cho bộ lịch trình diễn 01/12/2026–31/01/2027. Quốc tế gồm 32 sân bay tại 20 quốc gia/vùng lãnh thổ ngoài Việt Nam. Không dùng số liệu database hồi quy có fixtures để mô tả bộ demo.
+- Source và bộ nhập cần **migrations 001–017**. Các file đã ledger-applied là bất biến. SQL lưu UTC; tìm kiếm/ngày tuổi theo sân bay đi, giờ đến theo sân bay đến và xử lý DST. Admin nhập lịch vẫn theo giờ Việt Nam.
+- `scripts/load_demo.py --preview/--apply` là lối vào chung cho hai bộ nhập độc lập; vẫn giữ `seed_ultimate.py` và `seed_international.py`. Mỗi bộ nhập có transaction riêng, chạy lại không nhân đôi; không tuyên bố toàn bộ hai giai đoạn là một transaction.
+- `data/demo_route_prices.csv` và `data/demo_flight_prices.csv` là bản xuất từ SQL để xem trên GitHub/Excel; ứng dụng tiếp tục đọc SQL Server. Có 32 ảnh SVG local riêng cho điểm đến quốc tế. Footer đã bỏ nút chuyển động.
+- Bằng chứng restore 14 migrations và browser/test cũ dưới đây chỉ là lịch sử. Chưa dùng kết quả 171 tests để tuyên bố restore đầy đủ 17 migrations, thử mọi trình duyệt, tải lớn hoặc SMTP thật.
+
+Hoàn tất, kiểm tra và push bản hiện tại trước khi tạo nhánh tiếp theo. **Nhánh mới không có tính năng trợ lý AI.** Giữ main và tài liệu học thuật/slide cũ; không tạo thêm slide/báo cáo trong phạm vi này. Các yêu cầu tiếp tục hiện hành nằm ở đầu `RESUME_INSTRUCTIONS.md`.
+
+---
+
+# Lịch sử — bản thuyết trình tháng 11, 25/10/2026
 
 Nhánh phát hành: **feature/presentation-demo-dec-jan**, phát triển từ frontend a09d803. Kết quả dưới đây thuộc bản lịch tháng 12/tháng 1; các phần phía dưới là lịch sử của bản 30 ngày cũ.
 
@@ -14,7 +29,7 @@ Giới hạn giữ nguyên: đây là hệ thống mô phỏng; chưa thử mọ
 
 ---
 
-# Giá và dữ liệu demo — kiểm chứng ngày 25/10/2026
+# Lịch sử — giá và dữ liệu demo, 25/10/2026
 
 Phạm vi lần này: sửa giá mẫu, mở rộng lịch bay, giá gợi ý/tìm kiếm và đóng gói. Giữ Microsoft SQL Server/T-SQL, dùng SSMS bình thường; không đổi Flask, không sửa migrations 001–014. Các kết quả ngày cũ phía dưới là lịch sử.
 
@@ -31,7 +46,7 @@ Giới hạn: chỉ các trường hợp nêu trên đã kiểm chứng; không 
 
 ---
 
-# Frontend refresh — 23/10/2026
+# Lịch sử — frontend refresh, 23/10/2026
 
 Cập nhật nền: bầu trời/mây/đường bay local SVG cho các khoảng trống trên toàn website; tiêu đề và footer có nền sáng, khai báo only light. Đã thử thao tác tìm chuyến (4 phương án HAN–SGN 26/10), desktop/mobile không tràn ngang và nút dừng chuyển động; xem `evidence/sky-browser-checks.json` và ảnh `sky-*.png`. Chưa thử cơ chế ép màu tối của Cốc Cốc. Bản cập nhật nền chỉ có HTML/CSS/SVG; không chạy lại bộ 76 test nghiệp vụ (kết quả bên dưới thuộc lần chạy trước).
 
@@ -49,7 +64,7 @@ Nhánh `feature/frontend-refresh` từ Ultimate `648139e`. Phiên này chỉ s�
 
 ---
 
-# AeroFlow Ultimate — trạng thái bàn giao
+# Lịch sử — AeroFlow Ultimate, trạng thái bàn giao 14/10/2026
 
 Ngày 14/10/2026, Asia/Saigon. Nhánh feature/ultimate-upgrade, base 5c16bed. Không sửa/push/merge main. ZIP mục tiêu: AeroFlow_Ultimate_Complete.zip.
 

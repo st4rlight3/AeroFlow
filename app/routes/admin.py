@@ -21,7 +21,9 @@ CATALOGS = {
 }
 CATALOGS['seats'][2].update(SeatFee=('decimal',5000000),IsPriority=('bool',0))
 CATALOGS['fare-classes'][2].update(Bundle=('text',10),ChangeAllowed=('bool',0),ChangeFee=('decimal',10000000),CabinBaggageKg=('int0',30))
+CATALOGS['airports'][2].update(CountryCode=('text',2),CountryName=('text',80),RegionCode=('text',12),TimeZoneName=('text',64),IanaTimeZone=('text',64))
 OPTIONAL_FIELDS={'SeatFee','IsPriority','Bundle','ChangeAllowed','ChangeFee','CabinBaggageKg'}
+OPTIONAL_FIELDS.update({'CountryCode','CountryName','RegionCode','TimeZoneName','IanaTimeZone'})
 
 @bp.get('/overview')
 @authenticated(admin=True)
@@ -49,6 +51,12 @@ def save_flight(flight_id=None):
 def flight_status(flight_id):
     query('EXEC dbo.sp_UpdateFlightStatus ?,?', (flight_id, text(body(), 'Status', 1, 12)))
     return jsonify(message='Đã cập nhật trạng thái chuyến bay.')
+
+@bp.get('/flights/<int:flight_id>/fares')
+@authenticated(admin=True)
+def configured_fares(flight_id):
+    if not query('SELECT FlightID FROM dbo.Flights WHERE FlightID=?',(flight_id,),one=True): raise ApiError('Không tìm thấy chuyến bay.',404)
+    return jsonify(items=query('SELECT c.*,ff.BasePrice,ff.TaxRate FROM dbo.FlightFares ff JOIN dbo.FareClasses c ON c.FareClassID=ff.FareClassID WHERE ff.FlightID=? ORDER BY c.FareClassID',(flight_id,)))
 
 @bp.put('/flights/<int:flight_id>/fares/<int:class_id>')
 @authenticated(admin=True)
@@ -90,6 +98,15 @@ def save_catalog(entity, item_id=None):
         values['Code'] = values['Code'].upper()
     if 'Cabin' in values and values['Cabin'] not in ('ECONOMY','PREMIUM','BUSINESS','FIRST'):
         raise ApiError('Khoang không hợp lệ.')
+    if entity=='airports':
+        if 'CountryCode' in values:
+            values['CountryCode']=values['CountryCode'].upper()
+            if len(values['CountryCode'])!=2 or not values['CountryCode'].isascii() or not values['CountryCode'].isalpha():raise ApiError('Mã quốc gia cần đúng 2 chữ cái.')
+        if values.get('RegionCode','ASIA') not in ('ASIA','EUROPE','OCEANIA','AMERICAS','MIDDLE_EAST','AFRICA'):raise ApiError('Khu vực không hợp lệ.')
+        if 'TimeZoneName' in values or 'IanaTimeZone' in values:
+            from scripts.international_catalog import AIRPORTS
+            pairs={(a[5],a[6]) for a in AIRPORTS}|{('SE Asia Standard Time','Asia/Ho_Chi_Minh'),('Yukon Standard Time','America/Vancouver')}
+            if (values.get('TimeZoneName'),values.get('IanaTimeZone')) not in pairs:raise ApiError('Cặp múi giờ Windows / IANA không được hỗ trợ. Xem danh sách trong README.')
     if entity == 'seats':
         values['ColumnLetter'] = values['ColumnLetter'].upper()
         values['SeatNumber'] = f"{values['ColumnLetter']}{values['RowNumber']}"
@@ -102,6 +119,9 @@ def save_catalog(entity, item_id=None):
                 raise ApiError('Không tìm thấy bản ghi.', 404)
             if entity=='aircraft' and conn.execute('SELECT 1 FROM dbo.Flights WHERE AircraftID=?', item_id).fetchone():
                 raise ApiError('Máy bay đã có lịch sử chuyến bay. Hãy tạo máy bay mới.', 409)
+            if entity=='airports' and conn.execute('SELECT 1 FROM dbo.Flights WHERE OriginID=? OR DestinationID=?',item_id,item_id).fetchone():
+                current=conn.execute('SELECT TimeZoneName,IanaTimeZone FROM dbo.Airports WHERE AirportID=?',item_id).fetchone()
+                if any(key in values and values[key]!=current[i] for i,key in enumerate(('TimeZoneName','IanaTimeZone'))):raise ApiError('Sân bay đã có lịch bay; không đổi múi giờ của dữ liệu lịch sử.',409)
             if entity=='fare-classes':
                 current = conn.execute('SELECT Cabin FROM dbo.FareClasses WHERE FareClassID=?', item_id).fetchone()[0]
                 if values['Cabin']!=current and conn.execute('SELECT 1 FROM dbo.FlightFares WHERE FareClassID=?', item_id).fetchone():
@@ -121,7 +141,7 @@ def save_catalog(entity, item_id=None):
                 biz = integer(d, 'BusinessRows', 0, rows)
                 for r in range(1, rows+1):
                     for c in 'ABCDEF':
-                        conn.execute('INSERT dbo.AircraftSeats(AircraftID,SeatNumber,RowNumber,ColumnLetter,Cabin) VALUES(?,?,?,?,?)', item_id, f'{c}{r}', r, c, 'BUSINESS' if r>rows-biz else 'ECONOMY')
+                        conn.execute('INSERT dbo.AircraftSeats(AircraftID,SeatNumber,RowNumber,ColumnLetter,Cabin) VALUES(?,?,?,?,?)', item_id, f'{c}{r}', r, c, 'BUSINESS' if r<=biz else 'ECONOMY')
         conn.execute('INSERT dbo.AuditLogs(ActorID,Entity,EntityID,Action) VALUES(?,?,?,?)', g.user['UserID'], table, item_id, 'CATALOG_SAVE')
     return jsonify(id=item_id, message='Đã lưu danh mục.')
 

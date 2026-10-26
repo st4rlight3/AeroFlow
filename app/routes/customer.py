@@ -111,7 +111,7 @@ def ticket_details(ticket_id):
     row=query('''SELECT t.TicketID,t.TicketNumber,t.Status TicketStatus,t.Amount,t.BaseFare,t.TaxAmount,t.SeatFee,t.BreakdownSource,
       b.BookingID,b.PNR,b.UserID,b.Status BookingStatus,p.FullName,p.Assistance,s.SeatNumber,fc.Name FareName,
       f.FlightID,f.FlightNumber,f.DepartureTime,f.ArrivalTime,f.EstimatedDeparture,f.Gate,f.OperationNote,f.Status FlightStatus,
-      o.Code OriginCode,d.Code DestinationCode,ci.Reference,ci.Status CheckInStatus,ci.CheckedInAt,ci.BoardedAt,
+      o.Code OriginCode,d.Code DestinationCode,o.IanaTimeZone OriginTimeZone,d.IanaTimeZone DestinationTimeZone,CONVERT(datetime2(0),(f.DepartureTime AT TIME ZONE 'UTC') AT TIME ZONE o.TimeZoneName) LocalDeparture,CONVERT(datetime2(0),(COALESCE(f.EstimatedDeparture,f.DepartureTime) AT TIME ZONE 'UTC') AT TIME ZONE o.TimeZoneName) LocalEstimatedDeparture,CONVERT(datetime2(0),(f.ArrivalTime AT TIME ZONE 'UTC') AT TIME ZONE d.TimeZoneName) LocalArrival,ci.Reference,ci.Status CheckInStatus,ci.CheckedInAt,ci.BoardedAt,
       dbo.fn_TicketPaidValue(t.TicketID) PaidValue,
       COALESCE((SELECT SUM(e.Quantity*e.UnitPrice) FROM dbo.BookingExtras e WHERE e.TicketID=t.TicketID),0) ExtrasAmount,
       COALESCE((SELECT td.Amount FROM dbo.TicketDiscounts td WHERE td.TicketID=t.TicketID),0) DiscountAmount,
@@ -149,21 +149,40 @@ def pdf(ticket_id):
 def flight_status():
     number=request.args.get('number','').strip().upper()
     if not re.fullmatch('[A-Z0-9]{3,8}',number): raise ApiError('Nhập mã chuyến bay từ 3 đến 8 ký tự.')
-    return jsonify(items=query('SELECT TOP(30) f.FlightNumber,f.DepartureTime,f.ArrivalTime,f.EstimatedDeparture,f.Gate,f.OperationNote,f.Status,o.Code OriginCode,d.Code DestinationCode FROM dbo.Flights f JOIN dbo.Airports o ON o.AirportID=f.OriginID JOIN dbo.Airports d ON d.AirportID=f.DestinationID WHERE f.FlightNumber=? ORDER BY f.DepartureTime DESC',(number,)))
+    return jsonify(items=query('SELECT TOP(30) f.FlightNumber,f.DepartureTime,f.ArrivalTime,f.EstimatedDeparture,f.Gate,f.OperationNote,f.Status,o.Code OriginCode,d.Code DestinationCode,o.IanaTimeZone OriginTimeZone,d.IanaTimeZone DestinationTimeZone FROM dbo.Flights f JOIN dbo.Airports o ON o.AirportID=f.OriginID JOIN dbo.Airports d ON d.AirportID=f.DestinationID WHERE f.FlightNumber=? ORDER BY f.DepartureTime DESC',(number,)))
+
+@bp.get('/admin/flights/<int:flight_id>/operations')
+@authenticated(admin=True)
+def read_operations(flight_id):
+    row=query('SELECT FlightID,DepartureTime,Gate,EstimatedDeparture,OperationNote,Status FROM dbo.Flights WHERE FlightID=?',(flight_id,),one=True)
+    if not row: raise ApiError('Không tìm thấy chuyến bay.',404)
+    return jsonify(flight=row)
 
 @bp.put('/admin/flights/<int:flight_id>/operations')
 @authenticated(admin=True)
 def operations(flight_id):
-    d=body(); gate=str(d.get('Gate','')).strip(); note=str(d.get('OperationNote','')).strip()
-    estimated=utc_datetime(d['EstimatedDeparture']) if d.get('EstimatedDeparture') else None
-    if len(gate)>12 or len(note)>300: raise ApiError('Cửa tối đa 12 ký tự; ghi chú tối đa 300 ký tự.')
+    d=body()
     with connection() as conn:
         conn.execute('EXEC dbo.sp_LockFlight 0')
-        row=conn.execute('SELECT DepartureTime,Status FROM dbo.Flights WHERE FlightID=?',flight_id).fetchone()
+        row=conn.execute('SELECT DepartureTime,Status,Gate,EstimatedDeparture,OperationNote FROM dbo.Flights WHERE FlightID=?',flight_id).fetchone()
         if not row: raise ApiError('Không tìm thấy chuyến bay.',404)
         if row[1] not in ('SCHEDULED','BOARDING'): raise ApiError('Chuyến bay đã kết thúc hoặc bị hủy.',409)
+        def value(key,old,limit):
+            val=d[key] if key in d else old
+            if val is not None and not isinstance(val,str): raise ApiError('Thông tin khai thác cần là văn bản.')
+            val=(val or '').strip()
+            if len(val)>limit: raise ApiError('Thông tin khai thác vượt độ dài cho phép.')
+            return val or None
+        gate=value('Gate',row[2],12); note=value('OperationNote',row[4],300)
+        estimated=(utc_datetime(d['EstimatedDeparture']) if d.get('EstimatedDeparture') else None) if 'EstimatedDeparture' in d else row[3]
+        if 'Original' in d:
+            old=d['Original']
+            if not isinstance(old,dict): raise ApiError('Thiếu dữ liệu khai thác ban đầu.')
+            previous=utc_datetime(old['EstimatedDeparture']) if old.get('EstimatedDeparture') else None
+            if (old.get('Gate') or None,previous,old.get('OperationNote') or None)!=(row[2],row[3],row[4]):
+                raise ApiError('Dữ liệu khai thác đã thay đổi. Tải lại chuyến trước khi lưu.',409)
         if estimated and not 0<=(estimated-row[0]).total_seconds()<=86400: raise ApiError('Giờ dự kiến phải từ giờ lịch đến tối đa 24 giờ sau lịch.')
-        conn.execute('UPDATE dbo.Flights SET Gate=?,EstimatedDeparture=?,OperationNote=? WHERE FlightID=?',gate or None,estimated,note or None,flight_id)
+        conn.execute('UPDATE dbo.Flights SET Gate=?,EstimatedDeparture=?,OperationNote=? WHERE FlightID=?',gate,estimated,note,flight_id)
     return jsonify(message='Đã cập nhật khai thác và thông báo cho khách.')
 
 @bp.get('/admin/check-ins')

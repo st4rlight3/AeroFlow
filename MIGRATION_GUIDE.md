@@ -1,4 +1,25 @@
-# Lịch dành cho buổi thuyết trình tháng 11
+# Nâng cấp trong nước và quốc tế — 26/10/2026
+
+Bản hiện tại cần đủ **migrations 001–017**, không chỉ 001–014. 015 sửa tính nhất quán lịch/tuổi; 016 bổ sung quốc gia, khu vực, múi giờ sân bay và xử lý ngày địa phương cho tìm kiếm/đặt/đổi chuyến. 017 sửa metadata múi giờ Vancouver (YVR), ưu tiên British Columbia Standard Time, dự phòng Yukon Standard Time theo múi giờ cài trên host; không đổi thời điểm UTC hoặc lịch sử vé. Các migration đã ghi trong ledger là bất biến: sửa tiếp bằng migration mới, không thay checksum.
+
+Database mới: init baseline một lần rồi migrate. Database đã có dữ liệu: **không chạy lại init/baseline**; dừng ứng dụng, xác nhận `.env`, tạo backup mới và migrate theo mục **Nâng cấp SQL Server** bên dưới. Sau đó xem trước/nhập toàn bộ lịch:
+
+```powershell
+python scripts/migrate.py
+python scripts/migrate.py --apply --backup-file "C:\SQLBackups\AeroFlow_before_international_20261026.bak"
+python scripts/load_demo.py --preview --start-date 2026-12-01 --days 62
+python scripts/load_demo.py --apply --start-date 2026-12-01 --days 62
+```
+
+Có thể gọi riêng `seed_ultimate.py` rồi `seed_international.py` với cùng cửa sổ ngày; quốc tế không có `--apply` là preview. Hai bộ nhập có transaction riêng, chạy lại không nhân đôi và giữ lịch sử Bookings/Tickets/Payments. Database demo sạch sau nhập có **6.288 chuyến (2.232 nội địa + 3.936 quốc tế + 120 baseline), 42 sân bay, 170 đường bay, 74.376 dòng giá**; 32 sân bay quốc tế thuộc 20 quốc gia/vùng lãnh thổ ngoài Việt Nam. Database cũ có dữ liệu khác có thể có tổng khác.
+
+SQL lưu UTC; tìm kiếm/ngày tính tuổi theo sân bay đi, giờ đến theo sân bay đến, có DST. Biểu mẫu Admin nhập lịch vẫn dùng giờ Việt Nam. Kiểm tra trong SSMS bằng `sql/demo/verify_international_catalog.sql` và truy vấn nội địa hiện có. Hồi quy quốc tế ban đầu, trước migration 017: **171 PASS**, `evidence/international-full-regression-20261026.xml`; kiểm chứng 017 đang chờ hoàn tất. Bằng chứng restore 001–014 bên dưới chỉ thuộc lần kiểm chứng cũ.
+
+Các mục **Lịch sử** sau đây không còn là hướng dẫn nâng cấp hiện tại.
+
+---
+
+# Lịch sử 25/10/2026 — lịch nội địa cho buổi thuyết trình tháng 11
 
 Mặc định mới của `python scripts/seed_ultimate.py --apply` là 01/12/2026–31/01/2027 khi chạy trong tháng 11: 2.232 chuyến, 26.784 giá vé. `--preview` xem trước; dùng `--start-date 2026-12-01 --days 62` để cố định. Thêm dữ liệu qua stored procedures trong transaction; nhập lại không nhân đôi. Backup, dừng ứng dụng và kiểm tra `.env` trước khi nhập. Không cần migration schema mới; 001–014 bất biến.
 
@@ -8,7 +29,7 @@ Truy vấn SSMS `sql/demo/verify_demo_catalog.sql` kiểm tra cả vòng quay ba
 
 ---
 
-# Cập nhật lịch và giá mẫu — 25/10/2026
+# Lịch sử 25/10/2026 — cập nhật lịch và giá mẫu
 
 Bản này không đổi schema, không sửa migrations 001–014. Database đã nâng cấp đủ 14 phiên bản chỉ cần thay source, dừng website, sao lưu rồi `python scripts/seed_ultimate.py --preview --days 30` và `python scripts/seed_ultimate.py --apply --days 30`. Chọn đúng `.env` trước khi chạy. Database mới vẫn phải init baseline rồi migrate theo phần dưới.
 
@@ -27,7 +48,7 @@ Không DROP database. Không chạy lại baseline `init_db.py` trên database �
 3. Dùng đường dẫn backup mới trên máy SQL Server, nơi tài khoản dịch vụ SQL Server có quyền ghi:
 
 ```powershell
-python scripts/migrate.py --apply --backup-file "C:\SQLBackups\AeroFlow_before_ultimate_20261013.bak"
+python scripts/migrate.py --apply --backup-file "C:\SQLBackups\AeroFlow_before_international_20261026.bak"
 ```
 
 Công cụ thực hiện COPY_ONLY/CHECKSUM và RESTORE VERIFYONLY trước migration. VERIFYONLY không thay thế diễn tập restore. Không ghi đè file backup tồn tại. SQL Server từ xa cần đường dẫn thuộc máy server.
@@ -53,6 +74,6 @@ Nếu phải quay về bản cũ: dừng ứng dụng, giữ bản backup, phụ
 
 Rules vé trước 009 ghi Source=LEGACY_CURRENT theo danh mục lúc nâng cấp; vé mới ISSUED_SNAPSHOT. Không suy đoán quy tắc quá khứ hoặc tạo điểm/ví giả hồi tố.
 
-Đã chạy 001–014, backup CHECKSUM/VERIFYONLY và restore sang DB khác, hash 16 bảng gốc PASS: evidence/ultimate-fresh-upgrade-restore.json. Tái tạo bằng scripts/verify_upgrade.py --run (cần quyền SQL thích hợp, không tự xóa DB test). Vẫn phải tạo backup mới của database người dùng trước mỗi lần nâng cấp.
+**Bằng chứng lịch sử ngày 14/10/2026:** đã chạy 001–014, backup CHECKSUM/VERIFYONLY và restore sang DB khác, hash 16 bảng gốc PASS: evidence/ultimate-fresh-upgrade-restore.json. Tái tạo bằng scripts/verify_upgrade.py --run (cần quyền SQL thích hợp, không tự xóa DB test). Vẫn phải tạo backup mới của database người dùng trước mỗi lần nâng cấp.
 
-Sau migration khởi động lại Flask, kiểm tra /api/health và thử nghiệp vụ trên demo. Seed Ultimate là tùy chọn thêm dữ liệu DEMO; chạy khi website dừng để tránh tranh chấp khóa lịch/inventory. Không chạy lại baseline 02–08 sau nâng cấp.
+015–017 bổ sung quy tắc lịch máy bay, metadata sân bay, hàm ngày địa phương và sửa múi giờ YVR; xem phần đầu file. Sau migration khởi động lại Flask, kiểm tra /api/health và thử nghiệp vụ trên demo. `load_demo.py` là tùy chọn thêm cả dữ liệu nội địa/quốc tế; chạy khi website dừng để tránh tranh chấp khóa lịch/inventory. Không chạy lại baseline 02–08 sau nâng cấp.

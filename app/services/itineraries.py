@@ -69,7 +69,7 @@ def quote(data):
             raise ApiError('Chuyến hoặc hạng vé không còn mở bán.',409)
         flights.append(f);fares.append(fare)
     validate_route(kind,segments,flights)
-    fly_day=flights[0]['DepartureTime'].date()
+    fly_day=flights[0]['DepartureDate']
     types=[]
     for p in passengers:
         birth=date.fromisoformat(p['DateOfBirth'])
@@ -117,24 +117,25 @@ def search(args):
     count=integer(args,'Passengers',1,9);cabin=args.get('Cabin','ECONOMY')
     if cabin not in CABINS:
         raise ApiError('Khoang không hợp lệ.')
-    start=datetime.combine(day-timedelta(days=3),datetime.min.time())-timedelta(hours=7)
-    end=start+timedelta(days=9)
+    from .timezones import airport_day_bounds
+    start,_=airport_day_bounds(origin,day-timedelta(days=3))
+    _,end=airport_day_bounds(origin,day+timedelta(days=5))
     rows=query("""SELECT f.*,c.FareClassID,c.Name FareName,c.Cabin,c.Bundle,c.BaggageKg,c.CabinBaggageKg,c.RefundPercent,c.ChangeAllowed,c.ChangeFee,ff.BasePrice,ff.TaxRate,
      dbo.fn_CalculateTicketPrice(ff.BasePrice,ff.TaxRate) Price,
      (SELECT COUNT(*) FROM dbo.AircraftSeats s WHERE s.AircraftID=f.AircraftID AND s.Cabin=c.Cabin AND s.IsActive=1 AND NOT EXISTS
       (SELECT 1 FROM dbo.FlightSeatAssignments a JOIN dbo.Tickets t ON t.AssignmentID=a.AssignmentID JOIN dbo.BookingPassengers bp ON bp.BookingPassengerID=t.BookingPassengerID JOIN dbo.Bookings b ON b.BookingID=bp.BookingID
        WHERE a.FlightID=f.FlightID AND a.SeatID=s.SeatID AND a.IsActive=1 AND (b.Status='CONFIRMED' OR (b.Status='HELD' AND b.ExpiresAt>SYSUTCDATETIME())))) CabinAvailable
      FROM dbo.vw_FlightAvailability f JOIN dbo.FlightFares ff ON ff.FlightID=f.FlightID JOIN dbo.FareClasses c ON c.FareClassID=ff.FareClassID
-     WHERE f.Status='SCHEDULED' AND f.DepartureTime>DATEADD(hour,2,SYSUTCDATETIME()) AND f.DepartureTime>=? AND f.DepartureTime<? AND c.Cabin=? ORDER BY f.DepartureTime,Price""",(start,end,cabin))
+     WHERE f.Status='SCHEDULED' AND f.DepartureTime>DATEADD(hour,2,SYSUTCDATETIME()) AND f.DepartureTime>=? AND f.DepartureTime<? AND c.Cabin=? AND (f.OriginID=? OR f.DestinationID=?) ORDER BY f.DepartureTime,Price""",(start,end,cabin,origin,dest))
     flights={}
     for row in rows:
         if row['CabinAvailable']<count:
             continue
-        flight=flights.setdefault(row['FlightID'],{k:row[k] for k in ('FlightID','FlightNumber','OriginID','DestinationID','OriginCode','DestinationCode','OriginCity','DestinationCity','DepartureTime','ArrivalTime','AirlineName','AirlineCode','AircraftID')})
+        flight=flights.setdefault(row['FlightID'],{k:row[k] for k in ('FlightID','FlightNumber','OriginID','DestinationID','OriginCode','DestinationCode','OriginCity','DestinationCity','DepartureTime','ArrivalTime','AirlineName','AirlineCode','AircraftID','OriginTimeZone','DestinationTimeZone','DepartureDate','ArrivalDate')})
         flight.setdefault('Fares',[]).append({k:row[k] for k in ('FareClassID','FareName','Cabin','Bundle','BaggageKg','CabinBaggageKg','RefundPercent','ChangeAllowed','ChangeFee','Price','CabinAvailable')})
     options=[];calendar={}
     def add(parts):
-        local_day=(parts[0]['DepartureTime']+timedelta(hours=7)).date()
+        local_day=parts[0]['DepartureDate']
         if abs((local_day-day).days)>3:
             return
         price=sum(p['Fares'][0]['Price'] for p in parts)*count

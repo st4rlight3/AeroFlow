@@ -1,4 +1,26 @@
-# Bản thuyết trình tháng 11 — lịch tháng 12/2026 và tháng 1/2027
+# AeroFlow trong nước và quốc tế — cập nhật 26/10/2026
+
+Nhánh hiện tại: **feature/presentation-demo-dec-jan**. Bản lịch trình diễn 01/12/2026–31/01/2027 trên database demo sạch có **6.288 chuyến = 2.232 nội địa + 3.936 quốc tế + 120 baseline**, **42 sân bay**, **170 đường bay** và **74.376 dòng giá vé**. Phần quốc tế gồm 32 sân bay tại 20 quốc gia/vùng lãnh thổ ngoài Việt Nam. Đây là dữ liệu mô phỏng; số lượng trên không áp dụng cho database hồi quy có thêm fixtures.
+
+Cài Python/SQL Server/ODBC và cấu hình theo mục **Chạy trên Windows** bên dưới. Database mới cần init baseline rồi migrate; database đã có dữ liệu bỏ qua init. Dừng website, kiểm tra `.env`, sao lưu rồi áp dụng đủ **migrations 001–017** trước khi nhập lịch. Các migration đã ghi trong ledger là bất biến.
+
+```powershell
+.\.venv\Scripts\python.exe scripts\load_demo.py --preview --start-date 2026-12-01 --days 62
+.\.venv\Scripts\python.exe scripts\load_demo.py --apply --start-date 2026-12-01 --days 62
+.\.venv\Scripts\python.exe run.py
+```
+
+`load_demo.py` là lối vào chung, gọi lần lượt hai bộ nhập độc lập. Có thể dùng riêng `seed_ultimate.py --preview/--apply` cho nội địa và `seed_international.py` cho quốc tế; với quốc tế, không có `--apply` là xem trước. Dùng cùng `--start-date 2026-12-01 --days 62` cho cả hai. Mỗi bộ nhập có transaction riêng và chạy lại không nhân đôi; nếu giai đoạn quốc tế thất bại, chạy lại sau khi xử lý nguyên nhân.
+
+Website vẫn đọc dữ liệu trực tiếp từ Microsoft SQL Server qua ODBC/T-SQL. Ngày tìm kiếm/tuổi hành khách theo sân bay đi; giờ khởi hành và đến theo múi giờ từng sân bay, có xử lý DST. SQL lưu UTC. **Màn hình Admin nhập lịch bay vẫn dùng giờ Việt Nam**, đúng nhãn trên biểu mẫu. Các tệp [giá theo đường bay](data/demo_route_prices.csv) và [giá theo chuyến](data/demo_flight_prices.csv) chỉ là ảnh chụp dữ liệu SQL để xem trên GitHub/Excel, không cấp dữ liệu cho ứng dụng. Tái xuất bằng `scripts/export_demo_prices.py`.
+
+Hồi quy quốc tế ban đầu, trước migration 017: **171 PASS, 0 FAIL/ERROR/SKIP, 207,953 giây**, xem `evidence/international-full-regression-20261026.xml`. Kiểm chứng cuối sau migration 017: **173 PASS, 0 FAIL/ERROR/SKIP**, 206.470 giây (`evidence/international-final-regression-20261026.xml`). Cài database mới, nâng cấp đủ 17 migrations, bảo toàn lịch sử, nhập lại không đổi dữ liệu và đối chiếu múi giờ đã đạt; xem `evidence/international-fresh-upgrade-20261026.json`, `evidence/international-final-validation-20261026.json`. Truy vấn SSMS: `sql/demo/verify_demo_catalog.sql` và `sql/demo/verify_international_catalog.sql`. Không chạy fixtures kiểm thử trên database trình diễn. Footer hiện tại đã bỏ nút chuyển động; các ghi chép về nút này dưới đây chỉ thuộc lịch sử.
+
+Hoàn tất và push bản trên nhánh hiện tại trước khi tạo nhánh tiếp theo. **Nhánh mới không có tính năng trợ lý AI.** Không sửa/merge main hoặc tạo thêm slide/báo cáo trong phạm vi này. Các mục mang nhãn **Lịch sử** bên dưới mô tả đúng phiên bản cũ, không thay thế hướng dẫn hiện tại.
+
+---
+
+# Lịch sử 25/10/2026 — bản thuyết trình nội địa tháng 12 và tháng 1
 
 Nhánh: **feature/presentation-demo-dec-jan**. Bản này gồm cập nhật giao diện, sửa hiển thị giá và bộ lịch **2.232 chuyến từ 01/12/2026 đến 31/01/2027**, 10 sân bay, 3 hãng giả lập, 9 máy bay mới × 150 ghế và 26.784 dòng giá. Cài mới có thêm 120 chuyến baseline trong tháng 12. Ngày ở giao diện là giờ Việt Nam; 06:00 ngày 01/12 được lưu dưới dạng UTC 23:00 ngày 30/11 trong SQL Server.
 
@@ -25,12 +47,12 @@ Không chạy pytest trên database dùng để thuyết trình: fixtures cố t
 
 ---
 
-# Giao diện mới — feature/frontend-refresh
+# Lịch sử 23/10/2026 — giao diện feature/frontend-refresh
 
 Bản 23/10/2026, phát triển từ Ultimate commit 648139e. Trang chủ ảnh hàng không/điểm đến, bố cục mới, hiệu ứng chuyển trang/cuộn/hover, sơ đồ ghế và Dashboard đồng bộ. Frontend vẫn gọi Flask/SQL Server hiện có; không cần migration mới nếu đã cài Ultimate 001–014.
 
 ```powershell
-# Nhánh đang dùng cho bản bàn giao này:
+# Nhánh được ghi nhận ở phiên 25/10/2026:
 git clone --branch feature/presentation-demo-dec-jan --single-branch https://github.com/st4rlight3/AeroFlow.git AeroFlow
 cd AeroFlow
 ```
@@ -43,11 +65,11 @@ Kiểm chứng frontend: 76 tests hồi quy PASS trên database thử nghiệm r
 
 ---
 
-# AeroFlow Ultimate
+# AeroFlow — hướng dẫn vận hành hiện tại
 
 Website hàng không mô phỏng: HTML/CSS/JavaScript ↔ Flask ↔ pyodbc ↔ Microsoft SQL Server. Nâng cấp từ AeroFlow trên nhánh `feature/ultimate-upgrade`. Không có SQLite hoặc dữ liệu nghiệp vụ thay thế trong frontend.
 
-Bản bàn giao 14/10/2026. Kết quả và giới hạn: **PROGRESS.md**. Các tài liệu học thuật/slide cũ được giữ nguyên nhưng chưa cập nhật cho Ultimate theo yêu cầu tạm hoãn của người dùng. Ưu tiên README này và MIGRATION_GUIDE.md khi vận hành.
+Nền tảng Ultimate được bàn giao lần đầu ngày 14/10/2026; hướng dẫn vận hành dưới đây đã cập nhật cho migrations 001–017. Kết quả và giới hạn: **PROGRESS.md**. Các tài liệu học thuật/slide cũ được giữ nguyên nhưng chưa cập nhật cho Ultimate theo yêu cầu tạm hoãn của người dùng. Ưu tiên README này và MIGRATION_GUIDE.md khi vận hành.
 
 ## Chạy trên Windows
 
@@ -87,15 +109,15 @@ Cấu hình trên dành cho demo cục bộ. SQL Authentication: đặt `SQL_TRU
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\migrate.py
-.\.venv\Scripts\python.exe scripts\migrate.py --apply --backup-file "C:\SQLBackups\AeroFlow_before_ultimate_20261014.bak"
-.\.venv\Scripts\python.exe scripts\seed_ultimate.py --apply
+.\.venv\Scripts\python.exe scripts\migrate.py --apply --backup-file "C:\SQLBackups\AeroFlow_before_international_20261026.bak"
+.\.venv\Scripts\python.exe scripts\load_demo.py --apply --start-date 2026-12-01 --days 62
 .\.venv\Scripts\python.exe scripts\create_user.py --role ADMIN --email admin@example.com --name "Quan tri AeroFlow"
 .\.venv\Scripts\python.exe run.py
 ```
 
 Backup path là ví dụ: thư mục phải tồn tại trên **máy SQL Server**, tài khoản dịch vụ SQL Server có quyền ghi, file chưa tồn tại. Có thể dùng thư mục Backup mặc định của instance. Lỗi backup sẽ dừng migration; không cấp quyền rộng cho toàn ổ đĩa. Runner dùng COPY_ONLY/CHECKSUM và VERIFYONLY trước migration. Xem MIGRATION_GUIDE.md.
 
-`seed_ultimate.py` nạp bộ lịch thuyết trình tháng 12/tháng 1 và giá vé mới ở đầu README. Chạy khi website đã dừng. Các chuyến UA100–UA203 từ bản seed cũ được giữ; bản mới dùng số chuyến DX… và các máy bay DEMO-AF/LS/BA.
+`load_demo.py` nạp cả lịch nội địa và quốc tế; có thể chạy riêng hai module seed theo phần đầu README. Chạy khi website đã dừng, sau migrations 001–017. Các chuyến cũ được giữ; bộ quốc tế quản lý riêng máy bay DEMO-INT-… và không chuyển lịch hoặc giá vé đã phát hành.
 
 Nhập mật khẩu Admin kín, 12–128 ký tự; **không có mật khẩu mặc định**. Mở **http://127.0.0.1:5000/#ultimate**. Khách đăng ký qua web. Admin đăng nhập → Quản trị. `/api/health` kiểm tra SQL Server. Không chạy `init_db.py` hoặc baseline 02–08 để ghi đè database đã nâng cấp.
 
@@ -110,7 +132,7 @@ Nhập mật khẩu Admin kín, 12–128 ký tự; **không có mật khẩu m�
 - Hủy riêng vé hoặc cả đơn trước giờ lịch ít nhất 24 giờ; hoàn theo snapshot vé/dịch vụ sau phân bổ giảm giá. Hủy riêng cho chọn credit. Hãng hủy một chặng thì hủy toàn PNR và hoàn số đã thu trừ đã hoàn, không hoàn trùng. Phí đổi không hoàn khi khách tự hủy.
 - Điểm mới: 1 điểm/10.000 VND thanh toán; hoàn tiền điều chỉnh điểm; số khả dụng tối thiểu 0. Không cộng hồi tố trước nâng cấp. Hạng thành viên theo điểm tích lũy ròng, độc lập điểm đã dùng.
 - Check-in từng vé/chặng từ 24 giờ đến 1 giờ trước giờ dự kiến. QR DEMO chứa tham chiếu ngẫu nhiên. Admin nhập tham chiếu để xác minh và ghi nhận lên máy bay khi chuyến BOARDING. PDF vé, boarding pass, biên nhận và báo cáo vận hành có nhãn mô phỏng.
-- Admin quản lý danh mục/đường bay/lịch/ghế/giá/dịch vụ/ưu đãi/hạng thành viên, khách/booking/giao dịch/refund, check-in/cửa/chậm chuyến, audit và báo cáo CSV/PDF. Biểu đồ đọc SQL Server. Báo cáo theo UTC; lịch bay hiển thị UTC+7.
+- Admin quản lý danh mục/đường bay/lịch/ghế/giá/dịch vụ/ưu đãi/hạng thành viên, khách/booking/giao dịch/refund, check-in/cửa/chậm chuyến, audit và báo cáo CSV/PDF. Biểu đồ đọc SQL Server. Báo cáo theo UTC; lịch bay công khai hiển thị giờ địa phương của từng sân bay. Biểu mẫu Admin nhập lịch theo giờ Việt Nam.
 
 SQL dùng DECIMAL(14,2); API trả tiền bằng chuỗi, giao diện VND làm tròn đến đồng. Tổng booking sau thanh toán thể hiện tổng các lần thu; khoản hoàn xem trong lịch sử. PDF vé gồm dịch vụ/ưu đãi của vé; phí đổi riêng ở biên nhận. Snapshot hành lý và điều kiện đổi giữ nguyên khi sửa danh mục.
 
@@ -124,7 +146,7 @@ SQL dùng DECIMAL(14,2); API trả tiền bằng chuỗi, giao diện VND làm t
 
 ## SQL và kiểm thử
 
-Baseline: **01 → 02 → 03 → 05 → 06 → 07 → 08 → 04**, vì seed gọi procedure/function/trigger thực. Sau đó migrations **001 → 014** bằng runner ledger/checksum. `09_business_queries.sql` có 18 truy vấn; `10_test_cases.sql` kiểm tra ràng buộc/rollback. SSMS scripts mặc định `USE AeroFlow`; kiểm tra database trước khi chạy. Runner kiểm tra và thay tên database hợp lệ.
+Baseline: **01 → 02 → 03 → 05 → 06 → 07 → 08 → 04**, vì seed gọi procedure/function/trigger thực. Sau đó migrations **001 → 017** bằng runner ledger/checksum; không sửa các file đã được ghi trong ledger. `09_business_queries.sql` có 18 truy vấn; `10_test_cases.sql` kiểm tra ràng buộc/rollback. SSMS scripts mặc định `USE AeroFlow`; kiểm tra database trước khi chạy. Runner kiểm tra và thay tên database hợp lệ.
 
 Tạo database test riêng, không dùng dữ liệu thật:
 
@@ -150,7 +172,7 @@ Inventory dùng applock Exclusive cấp transaction chung + unique filtered inde
 3. `pytest tests/test_itineraries.py -q` chứng minh tranh chấp ghế chặng dùng chung; chỉ một khách thành công.
 4. Đổi ngày/nâng khoang, xem giá chênh lệch/vé cũ VOID; hủy riêng hoàn credit. `tests/test_exchange_wallet.py` kiểm tra chi tiêu credit đồng thời.
 5. Admin mở dashboard, doanh thu, danh mục và khai thác. Demo check-in cần chuyến trong cửa sổ 24–1 giờ; dùng fixture test tạo lịch riêng, không sửa trực tiếp chuyến đã bán của người dùng.
-6. `tests/test_migrations.py`, `sql/10_test_cases.sql` và integration tests minh chứng rollback/ràng buộc. Kết quả mới ở `evidence/ultimate-*`.
+6. `tests/test_migrations.py`, `sql/10_test_cases.sql` và integration tests minh chứng rollback/ràng buộc. Kết quả hồi quy hiện tại ở `evidence/international-full-regression-20261026.xml`; `evidence/ultimate-*` là lịch sử.
 
 Không merge main. Dùng ZIP cập nhật repo đã clone: chuyển nhánh `feature/presentation-demo-dec-jan`, sao lưu thay đổi chưa commit, chép nội dung **bên trong AeroFlow-Ultimate** vào repo (không chép `.git`, không đè `.env`), xem diff, cài requirements, backup/migrate và test. Người dùng tự tạo PR/merge.
 

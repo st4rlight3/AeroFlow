@@ -11,6 +11,9 @@ pytestmark=pytest.mark.integration
 
 def new_flight(flight):
     d=flight['DepartureTime']+timedelta(days=1)
+    # Position the same aircraft back at the origin before its next departure.
+    positioning=flight['DepartureTime']+timedelta(hours=4)
+    query('EXEC dbo.sp_SaveFlight ?,?,?,?,?,?,?',(None,'Z'+uuid.uuid4().hex[:7],flight['AircraftID'],flight['DestinationID'],flight['OriginID'],positioning,positioning+timedelta(hours=2)))
     fid=query('EXEC dbo.sp_SaveFlight ?,?,?,?,?,?,?',(None,'X'+uuid.uuid4().hex[:7],flight['AircraftID'],flight['OriginID'],flight['DestinationID'],d,d+timedelta(hours=2)),one=True)['FlightID']
     query('EXEC dbo.sp_SaveFare ?,?,?,?',(fid,flight['FareClassID'],1200000,.1));return fid
 

@@ -1,0 +1,388 @@
+{
+  "scope": "PRE_FIX_READ_ONLY_AUDIT",
+  "database": "AeroFlow_Test_Presentation_20261025",
+  "started_utc": "2026-10-26T07:32:43.086246+00:00",
+  "mutations": "None: SELECT and diagnostic DBCC only; no repair options.",
+  "tzdata_package_version": "2026.5",
+  "checks": {
+    "dbcc_checkdb": {
+      "status": "PASS",
+      "violations": 0,
+      "details": []
+    },
+    "dbcc_checkconstraints": {
+      "status": "PASS",
+      "violations": 0,
+      "details": []
+    },
+    "enabled_trusted_foreign_keys": {
+      "status": "PASS",
+      "violations": 0,
+      "details": []
+    },
+    "enabled_trusted_checks": {
+      "status": "PASS",
+      "violations": 0,
+      "details": []
+    },
+    "assignment_matches_flight_aircraft": {
+      "status": "PASS",
+      "violations": 0,
+      "details": []
+    },
+    "unique_active_seat_owners": {
+      "status": "PASS",
+      "violations": 0,
+      "details": []
+    },
+    "ticket_assignment_segment_consistency": {
+      "status": "PASS",
+      "violations": 0,
+      "details": []
+    },
+    "ticket_fare_cabin_consistency": {
+      "status": "PASS",
+      "violations": 0,
+      "details": []
+    },
+    "managed_fare_coverage": {
+      "status": "PASS",
+      "violations": 0,
+      "details": []
+    },
+    "managed_positive_fares": {
+      "status": "PASS",
+      "violations": 0,
+      "details": []
+    },
+    "valid_availability_range": {
+      "status": "PASS",
+      "violations": 0,
+      "details": []
+    },
+    "managed_valid_active_catalog": {
+      "status": "PASS",
+      "violations": 0,
+      "details": []
+    },
+    "managed_aircraft_rotation": {
+      "status": "PASS",
+      "violations": 0,
+      "details": {
+        "comparisons": 3872,
+        "min_turn_minutes": 180,
+        "discontinuities": 0,
+        "short_turns": 0
+      }
+    },
+    "managed_matches_62_day_plan": {
+      "status": "PASS",
+      "violations": 0,
+      "details": {
+        "planned": 3936,
+        "actual": 3936,
+        "missing_or_changed": [],
+        "extra": 0,
+        "window_first_vietnam_day": "2026-12-01",
+        "window_last_vietnam_day": "2027-01-31"
+      }
+    },
+    "managed_exact_seat_layout": {
+      "status": "PASS",
+      "violations": 0,
+      "details": {
+        "checked_aircraft": 64,
+        "seats_per_aircraft": 150,
+        "bad": []
+      }
+    },
+    "managed_exact_seed_fares": {
+      "status": "PASS",
+      "violations": 0,
+      "details": {
+        "compared_rows": 47232,
+        "bad_sample": []
+      }
+    },
+    "windows_iana_monthly_offset_parity": {
+      "status": "FAIL",
+      "violations": 6,
+      "details": {
+        "sample_count": 768,
+        "mismatch_codes": {
+          "YVR": 6
+        },
+        "mismatch_sample": [
+          {
+            "code": "YVR",
+            "utc": "2026-11-01 12:00:00",
+            "sql": "2026-11-01 04:00:00 -08:00",
+            "iana": "2026-11-01T05:00:00-07:00"
+          },
+          {
+            "code": "YVR",
+            "utc": "2026-12-01 12:00:00",
+            "sql": "2026-12-01 04:00:00 -08:00",
+            "iana": "2026-12-01T05:00:00-07:00"
+          },
+          {
+            "code": "YVR",
+            "utc": "2027-01-01 12:00:00",
+            "sql": "2027-01-01 04:00:00 -08:00",
+            "iana": "2027-01-01T05:00:00-07:00"
+          },
+          {
+            "code": "YVR",
+            "utc": "2027-02-01 12:00:00",
+            "sql": "2027-02-01 04:00:00 -08:00",
+            "iana": "2027-02-01T05:00:00-07:00"
+          },
+          {
+            "code": "YVR",
+            "utc": "2027-03-01 12:00:00",
+            "sql": "2027-03-01 04:00:00 -08:00",
+            "iana": "2027-03-01T05:00:00-07:00"
+          }
+        ]
+      }
+    },
+    "seeded_view_local_dates_match_iana": {
+      "status": "PASS",
+      "violations": 0,
+      "details": {
+        "flights_compared": 3936,
+        "bad_sample": []
+      }
+    },
+    "snapshot_migration_stable": {
+      "status": "PASS",
+      "violations": 0
+    }
+  },
+  "findings": [
+    {
+      "id": "YVR_WINDOWS_ZONE_2026",
+      "severity": "P1",
+      "status": "CONFIRMED_PRE_FIX",
+      "location": "scripts/international_catalog.py AIRPORTS YVR entry; dbo.Airports YVR metadata",
+      "description": "Vancouver stays UTC-07 after its final 2026 spring-forward; Pacific Standard Time reverts to UTC-08 and differs from America/Vancouver.",
+      "actual": {
+        "Code": "YVR",
+        "TimeZoneName": "Pacific Standard Time",
+        "IanaTimeZone": "America/Vancouver",
+        "SqlLocal": "2026-12-01 00:00:00 -08:00",
+        "DayStartUTC": "2026-12-01 08:00:00",
+        "DayEndUTC": "2026-12-02 08:00:00"
+      },
+      "expected_sql_zone_preferred": "British Columbia Standard Time",
+      "expected_sql_zone_interim": "Yukon Standard Time",
+      "expected_local_at_2026_12_01_08Z": "2026-12-01T01:00:00-07:00",
+      "expected_2026_12_01_day_bounds_utc": [
+        "2026-12-01T07:00:00",
+        "2026-12-02T07:00:00"
+      ],
+      "seeded_yvr_clock_values_affected": 122,
+      "seeded_yvr_date_values_affected": 0,
+      "sources": [
+        "https://devblogs.microsoft.com/azure-sql/canadas-2026-time-zone-updates-guidance-for-microsoft-sql/",
+        "https://archive.news.gov.bc.ca/releases/news_releases_2024-2028/2026AG0013-000209.htm",
+        "https://data.iana.org/time-zones/tzdb-2026e/northamerica"
+      ],
+      "scope_note": "Yukon fallback represents current/future UTC-07 offsets; it does not reproduce all historical Vancouver rules."
+    }
+  ],
+  "migration_version_before": 16,
+  "counts": {
+    "Airports": 42,
+    "Aircraft": 79,
+    "AircraftSeats": 11346,
+    "Flights": 6288,
+    "FlightFares": 74376,
+    "Bookings": 40,
+    "Tickets": 40,
+    "Payments": 48,
+    "FlightSeatAssignments": 40
+  },
+  "managed_counts": {
+    "aircraft": 64,
+    "active_seats": 9600,
+    "flights": 3936,
+    "fares": 47232
+  },
+  "timezone_host_zones": [
+    {
+      "name": "Pacific Standard Time",
+      "current_utc_offset": "-07:00",
+      "is_currently_dst": true
+    },
+    {
+      "name": "Yukon Standard Time",
+      "current_utc_offset": "-07:00",
+      "is_currently_dst": false
+    }
+  ],
+  "timezone_airports": [
+    {
+      "Code": "BKK",
+      "TimeZoneName": "SE Asia Standard Time",
+      "IanaTimeZone": "Asia/Bangkok"
+    },
+    {
+      "Code": "BOM",
+      "TimeZoneName": "India Standard Time",
+      "IanaTimeZone": "Asia/Kolkata"
+    },
+    {
+      "Code": "CDG",
+      "TimeZoneName": "Romance Standard Time",
+      "IanaTimeZone": "Europe/Paris"
+    },
+    {
+      "Code": "CEB",
+      "TimeZoneName": "Singapore Standard Time",
+      "IanaTimeZone": "Asia/Manila"
+    },
+    {
+      "Code": "CGK",
+      "TimeZoneName": "SE Asia Standard Time",
+      "IanaTimeZone": "Asia/Jakarta"
+    },
+    {
+      "Code": "CNX",
+      "TimeZoneName": "SE Asia Standard Time",
+      "IanaTimeZone": "Asia/Bangkok"
+    },
+    {
+      "Code": "DEL",
+      "TimeZoneName": "India Standard Time",
+      "IanaTimeZone": "Asia/Kolkata"
+    },
+    {
+      "Code": "DOH",
+      "TimeZoneName": "Arab Standard Time",
+      "IanaTimeZone": "Asia/Qatar"
+    },
+    {
+      "Code": "DPS",
+      "TimeZoneName": "Singapore Standard Time",
+      "IanaTimeZone": "Asia/Makassar"
+    },
+    {
+      "Code": "DXB",
+      "TimeZoneName": "Arabian Standard Time",
+      "IanaTimeZone": "Asia/Dubai"
+    },
+    {
+      "Code": "FRA",
+      "TimeZoneName": "W. Europe Standard Time",
+      "IanaTimeZone": "Europe/Berlin"
+    },
+    {
+      "Code": "HKG",
+      "TimeZoneName": "China Standard Time",
+      "IanaTimeZone": "Asia/Hong_Kong"
+    },
+    {
+      "Code": "HKT",
+      "TimeZoneName": "SE Asia Standard Time",
+      "IanaTimeZone": "Asia/Bangkok"
+    },
+    {
+      "Code": "ICN",
+      "TimeZoneName": "Korea Standard Time",
+      "IanaTimeZone": "Asia/Seoul"
+    },
+    {
+      "Code": "IST",
+      "TimeZoneName": "Turkey Standard Time",
+      "IanaTimeZone": "Europe/Istanbul"
+    },
+    {
+      "Code": "JFK",
+      "TimeZoneName": "Eastern Standard Time",
+      "IanaTimeZone": "America/New_York"
+    },
+    {
+      "Code": "KIX",
+      "TimeZoneName": "Tokyo Standard Time",
+      "IanaTimeZone": "Asia/Tokyo"
+    },
+    {
+      "Code": "KUL",
+      "TimeZoneName": "Singapore Standard Time",
+      "IanaTimeZone": "Asia/Kuala_Lumpur"
+    },
+    {
+      "Code": "LAX",
+      "TimeZoneName": "Pacific Standard Time",
+      "IanaTimeZone": "America/Los_Angeles"
+    },
+    {
+      "Code": "LHR",
+      "TimeZoneName": "GMT Standard Time",
+      "IanaTimeZone": "Europe/London"
+    },
+    {
+      "Code": "MEL",
+      "TimeZoneName": "AUS Eastern Standard Time",
+      "IanaTimeZone": "Australia/Melbourne"
+    },
+    {
+      "Code": "MNL",
+      "TimeZoneName": "Singapore Standard Time",
+      "IanaTimeZone": "Asia/Manila"
+    },
+    {
+      "Code": "NRT",
+      "TimeZoneName": "Tokyo Standard Time",
+      "IanaTimeZone": "Asia/Tokyo"
+    },
+    {
+      "Code": "PEK",
+      "TimeZoneName": "China Standard Time",
+      "IanaTimeZone": "Asia/Shanghai"
+    },
+    {
+      "Code": "PEN",
+      "TimeZoneName": "Singapore Standard Time",
+      "IanaTimeZone": "Asia/Kuala_Lumpur"
+    },
+    {
+      "Code": "PUS",
+      "TimeZoneName": "Korea Standard Time",
+      "IanaTimeZone": "Asia/Seoul"
+    },
+    {
+      "Code": "PVG",
+      "TimeZoneName": "China Standard Time",
+      "IanaTimeZone": "Asia/Shanghai"
+    },
+    {
+      "Code": "SFO",
+      "TimeZoneName": "Pacific Standard Time",
+      "IanaTimeZone": "America/Los_Angeles"
+    },
+    {
+      "Code": "SIN",
+      "TimeZoneName": "Singapore Standard Time",
+      "IanaTimeZone": "Asia/Singapore"
+    },
+    {
+      "Code": "SYD",
+      "TimeZoneName": "AUS Eastern Standard Time",
+      "IanaTimeZone": "Australia/Sydney"
+    },
+    {
+      "Code": "TPE",
+      "TimeZoneName": "Taipei Standard Time",
+      "IanaTimeZone": "Asia/Taipei"
+    },
+    {
+      "Code": "YVR",
+      "TimeZoneName": "Pacific Standard Time",
+      "IanaTimeZone": "America/Vancouver"
+    }
+  ],
+  "migration_version_after": 16,
+  "completed_utc": "2026-10-26T07:32:46.295278+00:00"
+}

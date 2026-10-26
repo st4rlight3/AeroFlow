@@ -4,6 +4,7 @@ class ApiError(Exception):
         self.message, self.status, self.code = message, status, code
 
 SQL_ERRORS = {
+    51018: ('Lịch máy bay không liên tục giữa các sân bay. Cần bổ sung chặng định vị phù hợp.', 409),
     51001: ('Dữ liệu đang được cập nhật. Vui lòng thử lại.', 409),
     51002: ('Tài khoản không hoạt động.', 403),
     51003: ('Chuyến bay không còn mở bán hoặc cho phép thanh toán.', 409),

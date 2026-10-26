@@ -31,9 +31,9 @@ def ticket_pdf(row,boarding=False):
     style=ParagraphStyle('text',fontName=font,fontSize=11,leading=17,textColor=colors.HexColor('#163f38'))
     title=ParagraphStyle('title',parent=style,fontSize=22,leading=28,spaceAfter=15)
     def p(value,kind=style): return Paragraph(escape(str(value)),kind)
-    def dt(value): return (value+timedelta(hours=7)).strftime('%H:%M %d/%m/%Y')+' (UTC+7)' if value else 'Chưa công bố'
+    def dt(value): return value.strftime('%H:%M %d/%m/%Y') if value else 'Chưa công bố'
     story=[p('AeroFlow Ultimate',title),p('THẺ LÊN MÁY BAY' if boarding else 'VÉ ĐIỆN TỬ',title),p('DEMO — NOT VALID FOR TRAVEL'),p('Mô phỏng học tập • Không có giá trị vận chuyển'),Spacer(1,8*mm)]
-    fields=[('Mã đặt chỗ',row['PNR']),('Số vé',row['TicketNumber']),('Hành khách',row['FullName']),('Hành trình',row['OriginCode']+' → '+row['DestinationCode']),('Chuyến bay',row['FlightNumber']),('Khởi hành theo lịch',dt(row['DepartureTime'])),('Khởi hành dự kiến',dt(row['EstimatedDeparture'] or row['DepartureTime'])),('Đến theo lịch',dt(row['ArrivalTime'])),('Ghế / Hạng vé',row['SeatNumber']+' / '+row['FareName']),('Cửa lên máy bay',row['Gate'] or 'Chưa công bố'),('Trạng thái',row['TicketStatus'])]
+    fields=[('Mã đặt chỗ',row['PNR']),('Số vé',row['TicketNumber']),('Hành khách',row['FullName']),('Hành trình',row['OriginCode']+' → '+row['DestinationCode']),('Chuyến bay',row['FlightNumber']),('Khởi hành theo lịch',dt(row.get('LocalDeparture',row['DepartureTime']+timedelta(hours=7)))+' · '+row.get('OriginTimeZone','Asia/Ho_Chi_Minh')),('Khởi hành dự kiến',dt(row.get('LocalEstimatedDeparture',(row['EstimatedDeparture'] or row['DepartureTime'])+timedelta(hours=7)))),('Đến theo lịch',dt(row.get('LocalArrival',row['ArrivalTime']+timedelta(hours=7)))+' · '+row.get('DestinationTimeZone','Asia/Ho_Chi_Minh')),('Ghế / Hạng vé',row['SeatNumber']+' / '+row['FareName']),('Cửa lên máy bay',row['Gate'] or 'Chưa công bố'),('Trạng thái',row['TicketStatus'])]
     if not boarding:
         if row['BreakdownSource']=='DETAILED': fields.extend((k,f"{row[v]:,.0f} VND") for k,v in [('Giá cơ sở','BaseFare'),('Thuế','TaxAmount'),('Phí ghế','SeatFee')])
         fields.extend([('Dịch vụ bổ sung',f"{row['ExtrasAmount']:,.0f} VND"),('Giảm giá phân bổ',f"{row['DiscountAmount']:,.0f} VND"),('Giá trị vé sau ưu đãi',f"{row['PaidValue']:,.0f} VND")])

@@ -34,7 +34,9 @@ WITH CabinAvailability AS (
  SELECT f.FlightID,f.FlightNumber,f.AircraftID,f.OriginID,f.DestinationID,
   f.OriginCode,f.OriginCity,f.DestinationCode,f.DestinationCity,
   f.DepartureTime,f.ArrivalTime,f.Status,f.Model,f.AirlineName,f.AirlineCode,
-  f.TotalSeats,f.AvailableSeats,
+  f.TotalSeats,f.AvailableSeats,f.OriginCountryCode,f.DestinationCountryCode,
+  f.OriginCountryName,f.DestinationCountryName,f.DestinationRegion,
+  f.OriginTimeZone,f.DestinationTimeZone,f.DepartureDate,f.ArrivalDate,
   (SELECT MIN(p.Price) FROM PricedFares p WHERE p.FlightID=f.FlightID) FromPrice
  FROM dbo.vw_FlightAvailability f
 )
@@ -47,7 +49,7 @@ def health():
 
 @bp.get('/airports')
 def airports():
-    return jsonify(items=query('SELECT AirportID,Code,Name,City FROM dbo.Airports WHERE IsActive=1 ORDER BY City'))
+    return jsonify(items=query('SELECT AirportID,Code,Name,City,CountryCode,CountryName,RegionCode,TimeZoneName,IanaTimeZone FROM dbo.Airports WHERE IsActive=1 ORDER BY City'))
 
 @bp.get('/discovery')
 def discovery():
@@ -62,8 +64,9 @@ def discovery():
  WHERE Status='SCHEDULED' AND DepartureTime>DATEADD(hour,2,SYSUTCDATETIME())
   AND FromPrice IS NOT NULL
 )
-SELECT TOP(6) OriginID,DestinationID,OriginCode,DestinationCode,OriginCity,
- DestinationCity,FromPrice,DepartureTime NextDeparture,FlightCount
+SELECT TOP(120) OriginID,DestinationID,OriginCode,DestinationCode,OriginCity,
+ DestinationCity,FromPrice,DepartureTime NextDeparture,FlightCount,DepartureDate,
+ OriginCountryCode,DestinationCountryCode,DestinationCountryName,DestinationRegion,OriginTimeZone
 FROM RankedRoutes WHERE OfferRank=1
 ORDER BY FlightCount DESC,OriginCode,DestinationCode
 """, (1,)))
@@ -76,14 +79,15 @@ def search():
         raise ApiError('Điểm đi và điểm đến phải khác nhau.')
     date = iso_date(d.get('date'))
     # Vietnamese civil day converted into UTC half-open interval.
-    start = datetime.combine(date, time.min) - timedelta(hours=7)
+    from ..services.timezones import airport_day_bounds
+    start, end = airport_day_bounds(origin, date)
     return jsonify(items=query(BOOKABLE_FLIGHTS + """
 SELECT * FROM PublicFlights
 WHERE OriginID=? AND DestinationID=? AND DepartureTime>=? AND DepartureTime<?
  AND DepartureTime>DATEADD(hour,2,SYSUTCDATETIME()) AND Status='SCHEDULED'
  AND FromPrice IS NOT NULL
 ORDER BY DepartureTime,FlightID
-""", (count, origin, dest, start, start+timedelta(days=1))))
+""", (count, origin, dest, start, end)))
 
 @bp.get('/flights/<int:flight_id>')
 def details(flight_id):
@@ -93,6 +97,21 @@ def details(flight_id):
         raise ApiError('Không tìm thấy chuyến bay.', 404)
     fares = query(BOOKABLE_FLIGHTS + 'SELECT * FROM PricedFares WHERE FlightID=? ORDER BY Price,FareClassID', (count, flight_id))
     return jsonify(flight=f, fares=fares)
+
+@bp.get('/flights/calendar')
+def price_calendar():
+    d=request.args
+    origin,dest,count=integer(d,'origin'),integer(d,'destination'),integer(d,'passengers',1,9)
+    if origin==dest:raise ApiError('Điểm đi và điểm đến phải khác nhau.')
+    day=iso_date(d.get('date'))
+    from ..services.timezones import airport_day_bounds
+    start,_=airport_day_bounds(origin,day-timedelta(days=3))
+    _,end=airport_day_bounds(origin,day+timedelta(days=3))
+    return jsonify(items=query(BOOKABLE_FLIGHTS+'''
+     SELECT DepartureDate [Date],MIN(FromPrice) FromPrice,COUNT(*) FlightCount
+     FROM PublicFlights WHERE OriginID=? AND DestinationID=? AND DepartureTime>=? AND DepartureTime<?
+      AND DepartureTime>DATEADD(hour,2,SYSUTCDATETIME()) AND Status='SCHEDULED' AND FromPrice IS NOT NULL
+     GROUP BY DepartureDate ORDER BY DepartureDate''',(count,origin,dest,start,end)))
 
 @bp.get('/flights/<int:flight_id>/seats')
 def seats(flight_id):

@@ -1,0 +1,31 @@
+{
+  "actual_browser_viewport_width": 319,
+  "airport_options_per_control": 42,
+  "multi_city_selection_preserved": true,
+  "horizontal_overflow": false,
+  "basic_filter_checks": {
+    "airline": "Lotus Sky 1/5 results",
+    "price_max_1000": "0/1 international results",
+    "duration_half_hour": "0/5 domestic results",
+    "reset": "restores5/5",
+    "price_sort_vnd": [
+      1840300,
+      1840300,
+      1879900,
+      1879900,
+      1950300
+    ]
+  },
+  "international_browser_checks": {
+    "SGN_SIN": "07:00 departure;10:05 arrival;2h5 UTC duration",
+    "HAN_NRT": "11:30 departure;19:00 arrival;5h30 UTC duration"
+  },
+  "screenshots": [
+    "international-home-desktop-20261026.png",
+    "international-filters-desktop-20261026.png"
+  ],
+  "limitations": [
+    "Current mobile screenshot could not be saved because of read-only browser filesystem access.",
+    "Requested viewport override was not reflected in actual319px browser, so no new390px claim."
+  ]
+}

@@ -1,4 +1,17 @@
-# Bản thuyết trình — 25/10/2026
+# Trong nước và quốc tế — 26/10/2026
+
+- Giữ nhánh `feature/presentation-demo-dec-jan`; lịch 01/12/2026–31/01/2027 gồm **3.936 chuyến quốc tế + 2.232 nội địa + 120 baseline = 6.288 chuyến**, **42 sân bay**, **170 đường bay**, **74.376 dòng giá** trên database demo sạch. Quốc tế có 32 sân bay tại 20 quốc gia/vùng lãnh thổ ngoài Việt Nam.
+- Bổ sung migrations 015–017, metadata quốc gia/khu vực/múi giờ, tìm kiếm và tuổi theo ngày địa phương, lịch máy bay liên tục. SQL giữ UTC; Admin nhập lịch theo giờ Việt Nam. Không sửa migration đã ghi trong ledger hoặc lịch sử vé đã phát hành.
+- Thêm điểm đến quốc tế, 32 ảnh SVG local, bộ lọc và lịch/giá từ SQL Server. Footer đã bỏ nút chuyển động theo yêu cầu.
+- Giữ hai module nhập nội địa/quốc tế; `scripts/load_demo.py` cung cấp `--preview`/`--apply` chung. CSV tại `data/demo_route_prices.csv` và `data/demo_flight_prices.csv` là ảnh chụp SQL để xem, không phải nguồn runtime.
+- Hồi quy quốc tế ban đầu trước 017: **171 PASS, 0 FAIL/ERROR/SKIP, 207,953 giây**; `evidence/international-full-regression-20261026.xml`. Kiểm chứng migration 017 đang chờ hoàn tất. Đóng gói yêu cầu migrations 001–017, mã/SQL/tests mới, 32 SVG và hai CSV.
+- Hoàn tất và push nhánh hiện tại trước khi tạo nhánh mới; **nhánh mới không có tính năng trợ lý AI**. Không thay main, không tạo thêm slide/báo cáo.
+
+Toàn bộ mục dưới đây là lịch sử theo ngày; các số lượng và hướng dẫn cũ không thay thế phiên bản 26/10/2026.
+
+---
+
+# Lịch sử — bản thuyết trình 25/10/2026
 
 - Chọn mặc định 01/12/2026–31/01/2027: 62 ngày, 2.232 chuyến và 26.784 mức giá; không hết lịch trong buổi thuyết trình tháng 11. Cửa sổ tự lùi tới phần tương lai khi chạy muộn, có tùy chọn ngày/số ngày rõ ràng.
 - Baseline 04 cho cài mới chuyển sang tháng 12, máy bay thực hiện khứ hồi với ít nhất 80 phút quay đầu, thương gia ở đầu cabin; ghế mẫu B4 đúng khoang phổ thông. Database cũ được guard bảo toàn, migrations 001–014 không sửa.
@@ -7,7 +20,7 @@
 
 ---
 
-# Giá và lịch bay — 25/10/2026
+# Lịch sử — giá và lịch bay 25/10/2026
 
 - Thêm lịch 1.080 chuyến/30 ngày, 10 sân bay, 3 hãng, 9 máy bay 150 ghế. Lịch liên tục theo vị trí máy bay, quay về căn cứ mỗi ngày, nghỉ tối thiểu 60 phút.
 - Giá mẫu theo khoảng cách/ngày/hãng/khoang/gói; tham khảo hai trang Vietnam Airlines, không coi giá khuyến mãi là giá cuối cùng cho mọi chuyến. Tiền tính bằng Decimal, tổng preview khớp SQL Server.
@@ -18,7 +31,7 @@
 
 ---
 
-# Frontend refresh — 23/10/2026
+# Lịch sử — frontend refresh 23/10/2026
 
 - Bổ sung nền bầu trời SVG local (1.608 bytes) cho toàn bộ trang, mây trôi/đường bay nhẹ, nền tiêu đề và footer sáng. Lớp trang trí không nhận thao tác và được ẩn khỏi trình đọc màn hình, bản in; tuân theo nút tắt chuyển động và prefers-reduced-motion.
 - Khai báo color-scheme light/only light để ngăn Chromium tự đổi nền sáng thành tối. Extension ép màu của trình duyệt vẫn có thể ghi đè; chưa kiểm chứng trực tiếp Cốc Cốc.
@@ -34,7 +47,7 @@
 
 ---
 
-# Changelog — AeroFlow Ultimate, 14/10/2026
+# Lịch sử — AeroFlow Ultimate, 14/10/2026
 
 Nâng cấp AeroFlow từ base 5c16bed trên feature/ultimate-upgrade. Không thay stack, không tạo repository mới hoặc sửa main.
 
