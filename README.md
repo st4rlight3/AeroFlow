@@ -13,7 +13,7 @@ Mở PowerShell:
 ```powershell
 git clone --branch feature/presentation-demo-dec-jan --single-branch https://github.com/st4rlight3/AeroFlow.git
 cd AeroFlow
-py -3 -m venv .venv
+python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe scripts\configure.py
 ```
