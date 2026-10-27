@@ -6,17 +6,17 @@ from pathlib import Path
 from zipfile import ZipFile, ZIP_DEFLATED
 
 ROOT=Path(__file__).resolve().parents[1]
-EXCLUDE={'.git','.venv','venv','__pycache__','.pytest_cache','node_modules','.env','Thumbs.db'}
+EXCLUDE={'.git','.venv','venv','__pycache__','.pytest_cache','node_modules','.env','Thumbs.db','docs'}
 
 def package(output):
     output=Path(output).resolve(); output.parent.mkdir(parents=True,exist_ok=True)
     files=[]
     for path in sorted(ROOT.rglob('*')):
         rel=path.relative_to(ROOT)
-        if not path.is_file() or any(part in EXCLUDE for part in rel.parts) or path.suffix.lower() in ('.pyc','.bak','.log','.zip') or path.name in ('MANIFEST.sha256','SOURCE_MANIFEST.sha256'): continue
+        if not path.is_file() or any(part in EXCLUDE for part in rel.parts) or path.suffix.lower() in ('.pyc','.bak','.log','.zip','.docx','.pptx','.ppt','.odp','.key') or path.name in ('MANIFEST.sha256','SOURCE_MANIFEST.sha256'): continue
         if path.name.startswith('.env') and path.name!='.env.example': continue
         files.append((rel.as_posix(),path.read_bytes()))
-    required={'README.md','requirements.txt','.env.example','CHANGELOG.md','MIGRATION_GUIDE.md','PROGRESS.md','RESUME_INSTRUCTIONS.md','run.py','app/static/ultimate.js','app/static/customer.js','scripts/migrate.py'}
+    required={'README.md','requirements.txt','.env.example','MIGRATION_GUIDE.md','run.py','app/static/ultimate.js','app/static/customer.js','scripts/migrate.py'}
     required.update({'app/static/app.js','app/static/commerce.js','app/static/manage.js','app/static/ultimate.css','app/templates/index.html','app/routes/itineraries.py','app/routes/customer.py','app/routes/commerce.py','app/routes/operations.py','app/services/exchange.py','app/services/documents.py','scripts/seed_ultimate.py','tests/test_itineraries.py','tests/test_commerce.py','tests/test_exchange_wallet.py','tests/test_customer_operations.py','tests/test_ultimate_operations.py','evidence/ultimate-final-regression.xml','evidence/ultimate-fresh-upgrade-restore.json'})
     required.update({'app/static/frontend.css','app/static/frontend.js','app/static/images/aviation-hero.webp','app/static/images/hanoi.webp','app/static/images/danang.webp','app/static/images/saigon.webp','app/static/images/sky-panorama.svg','scripts/demo_catalog.py','scripts/demo_price_reference.json','tests/test_demo_catalog.py','tests/test_demo_seed_sql.py','tests/test_discovery_pricing.py','sql/demo/verify_demo_catalog.sql','evidence/pricing-regression-20261025.xml','evidence/demo-catalog-validation-20261025.json'})
     required.update({'tests/test_presentation_seed.py','evidence/presentation-regression-20261025.xml','evidence/presentation-validation-20261025.json'})
