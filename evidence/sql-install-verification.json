@@ -1,0 +1,20 @@
+{
+  "database": "AeroFlow_Test_SQLOnly_d50d0cbe76",
+  "business_schema_unchanged": true,
+  "tables": 37,
+  "columns": 231,
+  "sql_modules": 40,
+  "foreign_keys": 51,
+  "indexes": 87,
+  "checks": 69,
+  "initial_data": {
+    "Flights": 120,
+    "FlightFares": 360,
+    "Bookings": 40,
+    "Tickets": 40,
+    "TicketRules": 40
+  },
+  "web_application_logic_unchanged": true,
+  "ui_copy_only": "Rewards description",
+  "sql_reports_and_checks": "PASS"
+}

@@ -1,8 +1,7 @@
 USE AeroFlow;
 GO
 -- 03 - Foreign keys and secondary indexes for the final schema.
--- Consolidated schema through migration 017. For a NEW database only.
--- Existing installations use scripts/migrate.py and the unchanged sql/migrations history.
+-- Complete schema. Install into a new, empty database.
 SET ANSI_NULLS ON;
 SET QUOTED_IDENTIFIER ON;
 GO

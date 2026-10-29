@@ -1,9 +1,9 @@
 """One entry point for the entire domestic + international demo catalogue.
 
 Preview does not open a database. --apply imports each catalogue atomically;
-both are idempotent, so a failed second stage can safely be retried. Apply
-the consolidated SQL with init_db.py for a new database, or migrate.py for an
-older installation. Existing customer/ticket/payment history is retained.
+both are idempotent, so a failed second stage can safely be retried. Create a
+new database with init_db.py first. Existing customer/ticket/payment history
+is retained when importing more sample flights.
 """
 import argparse
 from dataclasses import asdict

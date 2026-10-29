@@ -1,9 +1,0 @@
-APPLIED 01_create_database.sql
-APPLIED 02_create_tables.sql
-APPLIED 03_constraints_indexes.sql
-APPLIED 05_views.sql
-APPLIED 06_functions.sql
-APPLIED 07_stored_procedures.sql
-APPLIED 08_triggers.sql
-APPLIED 04_seed_data.sql
-Database AeroFlow_Final_20261012 ready. Flights: 120. Seed accounts are disabled.

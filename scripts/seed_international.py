@@ -1,7 +1,6 @@
 """Preview/import 32 international destinations, without changing old bookings.
 
-Run after the consolidated init_db.py (or an older database upgrade) and
-seed_ultimate.py. No --apply means no SQL connection.
+Run after init_db.py and seed_ultimate.py. No --apply means no SQL connection.
 All imported flights use sp_SaveFlight and all prices use sp_SaveFare.
 """
 import argparse
@@ -19,6 +18,7 @@ from scripts.seed_ultimate import SeedResult,_catalog,_drain,_identity,resolve_w
 
 def seed_international(days=None,start_date=None):
     from app.db import connection
+    from scripts.database_schema import require_database
     days,start_date=resolve_window(days,start_date)
     if not local_today()<start_date<=local_today()+timedelta(days=365):
         raise ValueError('First date must be tomorrow or later, within the next 365 days.')
@@ -26,8 +26,7 @@ def seed_international(days=None,start_date=None):
     with connection() as conn:
         conn.timeout=120
         conn.execute('SET NOCOUNT ON; SET XACT_ABORT ON;')
-        if conn.execute('SELECT COALESCE(MAX(Version),0) FROM dbo.SchemaMigrations').fetchone()[0]<17:
-            raise ValueError('Schema 017 is required: install a new database with init_db.py, or upgrade an existing database with migrate.py.')
+        require_database(conn)
         lock=conn.execute("DECLARE @r int; EXEC @r=sys.sp_getapplock @Resource='AeroFlow:schedule',@LockMode='Exclusive',@LockOwner='Transaction',@LockTimeout=10000; SELECT @r;").fetchone()[0]
         if lock<0:raise RuntimeError('Timetable is being updated; retry later.')
         _drain(conn.execute('EXEC dbo.sp_LockFlight 0'))

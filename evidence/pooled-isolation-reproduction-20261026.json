@@ -1,6 +1,0 @@
-{
-  "explicit_serializable": 4,
-  "next_raw_pooled_connection": 4,
-  "application_connection_after_fix": 2,
-  "explanation": "ODBC pooling retained SERIALIZABLE. Request entry restores READ COMMITTED; operation-specific stronger isolation remains supported."
-}

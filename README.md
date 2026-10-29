@@ -1,6 +1,6 @@
 # AeroFlow — Hướng dẫn chạy trên Windows
 
-Hướng dẫn cho nhánh `feature/consolidated-sql`. Bạn sẽ chạy website và lưu dữ liệu trong SQL Server trên máy của mình. Các file SQL đã bao gồm toàn bộ cấu trúc và nghiệp vụ đến phiên bản 017.
+Hướng dẫn cho nhánh `feature/consolidated-sql`. Bạn sẽ chạy website và lưu dữ liệu trong SQL Server trên máy của mình. Toàn bộ cấu trúc, nghiệp vụ và các truy vấn kiểm tra được gộp trong **10 file ở thư mục `sql`**.
 
 ## 1. Cài những phần mềm cần dùng
 
@@ -88,11 +88,11 @@ Trong `.env`, đổi `SQL_TRUSTED_CONNECTION=no`, rồi điền `SQL_USERNAME` v
 .\.venv\Scripts\python.exe scripts\init_db.py
 ```
 
-Lệnh này tạo đầy đủ bảng, ràng buộc, chỉ mục, function, view, stored procedure, trigger và dữ liệu nền. **Cài mới không cần chạy riêng các migration 001–017.** Nếu lệnh báo database đã có bảng, chương trình dừng để giữ dữ liệu cũ; xem trường hợp bên dưới.
+Lệnh này tự chạy các file SQL cần thiết để tạo đầy đủ bảng, ràng buộc, chỉ mục, function, view, stored procedure, trigger và dữ liệu nền. Nếu lệnh báo database đã có bảng, chương trình dừng để giữ dữ liệu của bạn.
 
-**Đã có database từ nhánh đặt vé cũ:** bỏ qua `init_db.py`. Làm theo [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) để kiểm tra và nâng cấp khi cần. Nếu trước đó bạn cài nhánh Marketplace, chọn tên database khác cho nhánh đặt vé này.
+**Đã có database và website đang hoạt động:** giữ nguyên `.env`, bỏ qua `init_db.py` và sang bước 6. Nếu muốn cài một bản mới riêng, đổi `SQL_DATABASE` trong `.env` thành tên chưa sử dụng, chẳng hạn `AeroFlow_New`, rồi chạy `init_db.py`. Dữ liệu trong database cũ vẫn được giữ lại. Nếu trước đó bạn cài nhánh Marketplace, cũng chọn một database riêng cho nhánh đặt vé này.
 
-Sau khi cài mới hoặc nâng cấp thành công, nạp bộ chuyến bay và giá vé mẫu:
+Sau khi tạo database thành công, nạp bộ chuyến bay và giá vé mẫu:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\load_demo.py --apply
@@ -103,13 +103,13 @@ Chờ chương trình chạy xong. Phần tạo database và cài thư viện ch
 <details>
 <summary>Nếu muốn tạo database bằng cách mở các file SQL trong SSMS</summary>
 
-Dùng một database mới, rỗng. Các file `sql/01`–`sql/08` chứa định nghĩa cuối cùng; không cần chạy thêm thư mục `sql/migrations` cho lần cài mới.
+Dùng một database mới, rỗng. Thư mục `sql` có đúng 10 file: các file `01`–`08` tạo toàn bộ cấu trúc, nghiệp vụ và dữ liệu nền; `09` và `10` dùng để xem dữ liệu và kiểm tra.
 
 Thứ tự chạy là **01 → 02 → 03 → 06 → 05 → 07 → 08 → 04**. File `06_functions.sql` phải chạy trước view dùng các hàm đó; `04_seed_data.sql` chạy cuối vì tạo đặt chỗ mẫu qua stored procedure. File `09_business_queries.sql` và `10_test_cases.sql` dùng để truy vấn, kiểm tra sau khi cài.
 
 Trong SSMS, các script dùng tên database `AeroFlow`. Nếu bạn chọn tên khác, đổi `AeroFlow` trong file `01` và dòng `USE AeroFlow;` đầu các file. Không chạy bộ cài mới lên database đang có dữ liệu.
 
-`sql/migrations` giữ lịch sử nâng cấp cho database cũ. `sql/demo` là các truy vấn kiểm tra dữ liệu mẫu. `tests/fixtures/legacy_sql` chỉ dùng cho automated tests kiểm chứng nâng cấp, không dùng để cài ứng dụng.
+Sau khi chạy đủ các file tạo database, quay lại PowerShell và chạy lệnh `load_demo.py --apply` ở trên để thêm bộ lịch bay và giá vé mẫu. Bạn chọn một trong hai cách tạo database: dùng `init_db.py` hoặc chạy thủ công trong SSMS.
 
 </details>
 
@@ -190,7 +190,7 @@ git pull
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-Lệnh đầu tải thay đổi mới, lệnh sau cập nhật thư viện nếu cần. Xem [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) để kiểm tra database trước khi mở lại bằng `run.py`.
+Lệnh đầu tải thay đổi mới, lệnh sau cập nhật thư viện nếu cần. Giữ file `.env` và database đang dùng, rồi mở lại bằng `.\.venv\Scripts\python.exe run.py`. Không chạy lại `init_db.py` lên database đã có dữ liệu.
 
 </details>
 

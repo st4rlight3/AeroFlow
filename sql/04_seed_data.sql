@@ -1,6 +1,6 @@
 USE AeroFlow;
 GO
--- Run AFTER 02,03,06,05,07,08. Includes final lookup data and baseline ledger.
+-- Run AFTER 02,03,06,05,07,08. Includes lookup data and sample reservations.
 -- Entire seed is atomic. Seed accounts cannot sign in.
 SET NOCOUNT ON; SET XACT_ABORT ON;
 IF EXISTS(SELECT 1 FROM dbo.Users WHERE Email=N'seed001@aeroflow.example')
@@ -96,25 +96,6 @@ BEGIN TRY
   SET @n+=1;
  END;
  UPDATE dbo.Users SET IsActive=0 WHERE Email LIKE 'seed%@aeroflow.example';
- -- These versions are INCLUDED in this fresh baseline; they were not replayed.
- INSERT dbo.SchemaMigrations(Version,Name,Checksum) VALUES
- (1,N'BASELINE: 001_booking_segments.sql','a6a8df1d7148a6b183df16f77f59e9455f43d8d06621672ea2e4b52668c25833'),
- (2,N'BASELINE: 002_unified_ticket_core.sql','88a2fd19c888e0225ce67189313be597b424c695ded30104efa72329d559597b'),
- (3,N'BASELINE: 003_create_itinerary.sql','7ea4a35c2fb9db8d7f6f2bc69f00d2767fd1bb5734814802abe975267145dcc6'),
- (4,N'BASELINE: 004_assignment_and_summary.sql','7741e8fd62cc793e550d6ada6107b93dd5e26bb5407f34b824adc928e4ad8f5e'),
- (5,N'BASELINE: 005_customer_operations.sql','db18585bd9232516795dc4291a9a4d2e84ec2cb867f5d696779a68f1da8ff0eb'),
- (6,N'BASELINE: 006_assistance_snapshot.sql','c90e2472edc5789ef442ed1a70c3a7b95654b2388f8f1aa67d1462ef982e24d6'),
- (7,N'BASELINE: 007_services_and_partial_refunds.sql','67a492cd2f9b275b2d30873afea8257900daf2891f34c3764d5421970ede7e97'),
- (8,N'BASELINE: 008_pricing_integration.sql','fc4077c9d8b0f4a3ace3b8dbf6f8f755bee1ad419a6ec5a1b666a58ae9cfa1ae'),
- (9,N'BASELINE: 009_exchange_and_wallet_schema.sql','29084347156b8bb7614bbc834ca04ab9c7e4869b140f895b5679bc7e549d4f22'),
- (10,N'BASELINE: 010_exchange_segment.sql','699102a8b80f4f8c09f64b9817ad67202aa22e9f3e0d6305454f7101600d06e3'),
- (11,N'BASELINE: 011_wallet_points_and_pricing.sql','3f26ac94d7c025529a1e6a1d491b5e8184caa8a6a0fabd04b60860a8f4187442'),
- (12,N'BASELINE: 012_operational_controls.sql','4bbea0dc3fb6b77650ec0cc808c86c2f1015d4a293db6d31e168a46100b5fcf8'),
- (13,N'BASELINE: 013_payment_guard_and_routes.sql','e90fed3dfad7eff8f41056946756a5e8c904a2949381532e85564c3779ec382e'),
- (14,N'BASELINE: 014_current_booking_summary.sql','4c4c699f97d34b37329314664eeafe27e7dffffa69071ed5620fb1501dade433'),
- (15,N'BASELINE: 015_airline_consistency.sql','f3a455eb30c58efa0e1a320bf8eb0c6006556f52fd03323400eee4204565eb3d'),
- (16,N'BASELINE: 016_international_airports.sql','8e06284dfd3822383e72c1aac6218e86f6fdb6700da4636ebee606a2e771e9f9'),
- (17,N'BASELINE: 017_vancouver_timezone.sql','31db4059ac0b8b46bb1463f6fed5a46b6cc4c0bf7fe197194c274435e9d4a46a');
  COMMIT;
  PRINT 'Seed complete: 120 flights, 396 seats, 40 sample customers/bookings/passengers/tickets.';
 END TRY BEGIN CATCH IF @@TRANCOUNT>0 ROLLBACK; THROW; END CATCH;

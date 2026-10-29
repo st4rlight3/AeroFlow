@@ -173,6 +173,7 @@ def seed_demo(days=None, start_date=None, *, reprice_legacy=True):
         raise ValueError('--start-date must be within the next 365 days.')
     # Lazy import: --preview and the pure timetable tests need no ODBC package.
     from app.db import connection
+    from scripts.database_schema import require_database
     result = SeedResult()
     with connection() as conn:
         conn.timeout = 120
@@ -180,8 +181,7 @@ def seed_demo(days=None, start_date=None, *, reprice_legacy=True):
         # nests SQL Server's transaction count and can leave work uncommitted
         # when the driver ends its transaction, causing close() to roll it back.
         conn.execute('SET NOCOUNT ON; SET XACT_ABORT ON;')
-        if conn.execute("SELECT COALESCE(MAX(Version),0) FROM dbo.SchemaMigrations").fetchone()[0] < 14:
-            raise ValueError('Schema 014 or later is required: install a new database with init_db.py, or upgrade an existing database with migrate.py.')
+        require_database(conn)
         lock = conn.execute(
             "DECLARE @r int; EXEC @r=sys.sp_getapplock @Resource=?,@LockMode='Exclusive',"
             "@LockOwner='Transaction',@LockTimeout=10000; SELECT @r;", 'AeroFlow:schedule',

@@ -1,14 +1,13 @@
 USE AeroFlow;
 GO
 -- 02 - Final tables, column definitions, primary/unique/check/default constraints.
--- Consolidated schema through migration 017. For a NEW database only.
--- Existing installations use scripts/migrate.py and the unchanged sql/migrations history.
+-- Complete schema. Install into a new, empty database.
 SET ANSI_NULLS ON;
 SET QUOTED_IDENTIFIER ON;
 GO
 SET XACT_ABORT ON;
 IF EXISTS(SELECT 1 FROM sys.tables WHERE schema_id=SCHEMA_ID('dbo'))
- THROW 51980,N'Consolidated SQL requires an empty database. Use migrations for existing data.',1;
+ THROW 51980,N'Database must be empty. Choose a new database name to preserve existing data.',1;
 BEGIN TRANSACTION;
 
 CREATE TABLE dbo.[Aircraft] (
@@ -384,14 +383,6 @@ CREATE TABLE dbo.[SavedTravellers] (
  CONSTRAINT [PK_SavedTravellers] PRIMARY KEY CLUSTERED ([TravellerID] ASC),
  CONSTRAINT [UQ_SavedTraveller] UNIQUE NONCLUSTERED ([UserID] ASC, [DocumentNumber] ASC),
  CONSTRAINT [CK_SavedTraveller] CHECK (len([FullName])>=(2) AND len([DocumentNumber])>=(5) AND ([Assistance]='VISION' OR [Assistance]='HEARING' OR [Assistance]='WHEELCHAIR' OR [Assistance]='NONE'))
-);
-
-CREATE TABLE dbo.[SchemaMigrations] (
- [Version] int NOT NULL,
- [Name] nvarchar(200) NOT NULL,
- [Checksum] char(64) NOT NULL,
- [AppliedAt] datetime2(0) NOT NULL CONSTRAINT [DF_Migrations_Time] DEFAULT (sysutcdatetime()),
- CONSTRAINT [PK_SchemaMigrations] PRIMARY KEY CLUSTERED ([Version] ASC)
 );
 
 CREATE TABLE dbo.[Services] (

@@ -1,8 +1,7 @@
-"""Install the complete schema through version 017 into an empty database.
+"""Install the complete airline database from the ten SQL scripts.
 
 The SQL files already contain the final tables, functions, views, procedures
-and triggers. Historical migrations are only needed when upgrading an older
-installation. Never replay the fresh-install SQL over an existing database.
+and triggers. Run the installer only for a new, empty database.
 """
 import os
 from pathlib import Path
@@ -36,7 +35,7 @@ def main():
         if conn.execute('SELECT DB_ID(?)', name).fetchone()[0] is not None:
             conn.execute(f'USE [{name}]')
             if conn.execute("SELECT COUNT(*) FROM sys.tables WHERE schema_id=SCHEMA_ID('dbo')").fetchone()[0]:
-                raise SystemExit('Database already contains tables. Keep its data and use scripts/migrate.py for upgrades, or choose a new SQL_DATABASE.')
+                raise SystemExit('Database already contains tables. Keep the working database, or choose an unused SQL_DATABASE for a separate installation.')
             conn.execute('USE master')
         conn.timeout = 180
         run_file(conn, directory, ORDER[0], name)
@@ -54,7 +53,7 @@ def main():
         for filename in ORDER:
             print('APPLIED', filename, flush=True)
         count = conn.execute('SELECT COUNT(*) FROM dbo.Flights').fetchone()[0]
-        print(f'Database {name} ready through version 017. Flights: {count}. No separate migration run is needed for this fresh install. Seed accounts are disabled.')
+        print(f'Database {name} ready. Flights: {count}. Seed accounts are disabled. Next: python scripts/load_demo.py --apply')
 
 if __name__=='__main__':
     main()

@@ -9,5 +9,6 @@ if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed.' }
 & .\.venv\Scripts\python.exe scripts\configure.py
 if ($LASTEXITCODE -ne 0) { throw 'Configuration failed.' }
 Write-Host 'Edit .env. NEW database only: run .\.venv\Scripts\python.exe scripts\init_db.py'
-Write-Host 'A new database already includes schema 017. Next run .\.venv\Scripts\python.exe scripts\load_demo.py --apply'
-Write-Host 'Existing database: skip init_db.py. Stop the app, back up and migrate first.'
+Write-Host 'After creating the database, run .\.venv\Scripts\python.exe scripts\load_demo.py --apply'
+Write-Host 'Already working with this database? Keep .env, skip init_db.py and run .\.venv\Scripts\python.exe run.py'
+Write-Host 'For a separate fresh installation, choose an unused SQL_DATABASE in .env first.'

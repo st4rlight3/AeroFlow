@@ -46,3 +46,44 @@ DECLARE @flight int=(SELECT MIN(FlightID) FROM dbo.Flights);
 SELECT s.SeatNumber FROM dbo.AircraftSeats s JOIN dbo.Flights f ON f.AircraftID=s.AircraftID
 WHERE f.FlightID=@flight AND NOT EXISTS(SELECT 1 FROM dbo.FlightSeatAssignments a WHERE a.FlightID=f.FlightID AND a.SeatID=s.SeatID AND a.IsActive=1);
 GO
+
+-- Domestic catalogue: dates, number of flights and adult fares.
+-- SSMS: choose the configured database before executing. Read-only checks.
+SET NOCOUNT ON;
+
+-- Default presentation preset: 2232 managed flights, 62 days, 9 aircraft, 10 airports.
+SELECT COUNT(*) ManagedFlights, COUNT(DISTINCT f.AircraftID) ManagedAircraft,
+ MIN(CONVERT(date, DATEADD(hour,7,f.DepartureTime))) FirstVietnamDate,
+ MAX(CONVERT(date, DATEADD(hour,7,f.DepartureTime))) LastVietnamDate
+FROM dbo.Flights f JOIN dbo.Aircraft a ON a.AircraftID=f.AircraftID
+WHERE a.Registration IN ('DEMO-AF-HAN','DEMO-AF-SGN','DEMO-AF-DAD',
+ 'DEMO-LS-HAN','DEMO-LS-SGN','DEMO-LS-DAD','DEMO-BA-HAN','DEMO-BA-SGN','DEMO-BA-DAD');
+
+-- Per-route adult Economy Basic ticket price, tax included; optional extras excluded.
+SELECT o.Code Origin,d.Code Destination,COUNT(*) Flights,
+ MIN(dbo.fn_CalculateTicketPrice(ff.BasePrice,ff.TaxRate)) LowestAdultTotal,
+ MAX(dbo.fn_CalculateTicketPrice(ff.BasePrice,ff.TaxRate)) HighestAdultTotal
+FROM dbo.Flights f JOIN dbo.Aircraft a ON a.AircraftID=f.AircraftID
+JOIN dbo.Airports o ON o.AirportID=f.OriginID JOIN dbo.Airports d ON d.AirportID=f.DestinationID
+JOIN dbo.FlightFares ff ON ff.FlightID=f.FlightID
+JOIN dbo.FareClasses c ON c.FareClassID=ff.FareClassID
+WHERE a.Model=N'AeroFlow demo 150 • 4 khoang' AND c.Code='UEB'
+GROUP BY o.Code,d.Code ORDER BY o.Code,d.Code;
+GO
+
+-- International catalogue: countries, airports, local days and prices.
+-- SSMS: choose your AeroFlow database before running this read-only script.
+SELECT CountryName,CountryCode,COUNT(*) Airports
+FROM dbo.Airports WHERE IsActive=1 GROUP BY CountryName,CountryCode ORDER BY CountryName;
+
+SELECT a.Code,a.City,a.CountryName,a.TimeZoneName,a.IanaTimeZone,
+ COUNT(f.FlightID) Departures
+FROM dbo.Airports a LEFT JOIN dbo.Flights f ON f.OriginID=a.AirportID
+GROUP BY a.Code,a.City,a.CountryName,a.TimeZoneName,a.IanaTimeZone ORDER BY a.CountryName,a.City;
+
+SELECT TOP(100) f.FlightNumber,f.OriginCode,f.DestinationCode,f.OriginTimeZone,f.DestinationTimeZone,
+ f.DepartureTime DepartureUTC,f.ArrivalTime ArrivalUTC,f.DepartureDate,f.ArrivalDate,
+ DATEDIFF(minute,f.DepartureTime,f.ArrivalTime) DurationMinutes,f.FromPrice
+FROM dbo.vw_FlightAvailability f JOIN dbo.Aircraft a ON a.AircraftID=f.AircraftID
+WHERE a.Registration LIKE 'DEMO-INT-%' ORDER BY f.DepartureTime,f.FlightID;
+GO
