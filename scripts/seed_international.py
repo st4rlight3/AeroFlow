@@ -1,6 +1,7 @@
 """Preview/import 32 international destinations, without changing old bookings.
 
-Run after migrate.py and seed_ultimate.py. No --apply means no SQL connection.
+Run after the consolidated init_db.py (or an older database upgrade) and
+seed_ultimate.py. No --apply means no SQL connection.
 All imported flights use sp_SaveFlight and all prices use sp_SaveFare.
 """
 import argparse
@@ -26,7 +27,7 @@ def seed_international(days=None,start_date=None):
         conn.timeout=120
         conn.execute('SET NOCOUNT ON; SET XACT_ABORT ON;')
         if conn.execute('SELECT COALESCE(MAX(Version),0) FROM dbo.SchemaMigrations').fetchone()[0]<17:
-            raise ValueError('Apply migrations 001–017 before importing international data.')
+            raise ValueError('Schema 017 is required: install a new database with init_db.py, or upgrade an existing database with migrate.py.')
         lock=conn.execute("DECLARE @r int; EXEC @r=sys.sp_getapplock @Resource='AeroFlow:schedule',@LockMode='Exclusive',@LockOwner='Transaction',@LockTimeout=10000; SELECT @r;").fetchone()[0]
         if lock<0:raise RuntimeError('Timetable is being updated; retry later.')
         _drain(conn.execute('EXEC dbo.sp_LockFlight 0'))

@@ -17,6 +17,11 @@ def package(output):
         if path.name.startswith('.env') and path.name!='.env.example': continue
         files.append((rel.as_posix(),path.read_bytes()))
     required={'README.md','requirements.txt','.env.example','MIGRATION_GUIDE.md','run.py','app/static/ultimate.js','app/static/customer.js','scripts/migrate.py'}
+    required.update({'scripts/verify_sql_baseline.py','scripts/init_db.py','tests/test_consolidated_sql.py',
+                     'evidence/consolidated-regression.xml','evidence/consolidated-sql-equivalence.json'})
+    required.update('tests/fixtures/legacy_sql/'+name for name in (
+        '01_create_database.sql','02_create_tables.sql','03_constraints_indexes.sql','04_seed_data.sql',
+        '05_views.sql','06_functions.sql','07_stored_procedures.sql','08_triggers.sql'))
     required.update({'app/static/app.js','app/static/commerce.js','app/static/manage.js','app/static/ultimate.css','app/templates/index.html','app/routes/itineraries.py','app/routes/customer.py','app/routes/commerce.py','app/routes/operations.py','app/services/exchange.py','app/services/documents.py','scripts/seed_ultimate.py','tests/test_itineraries.py','tests/test_commerce.py','tests/test_exchange_wallet.py','tests/test_customer_operations.py','tests/test_ultimate_operations.py','evidence/ultimate-final-regression.xml','evidence/ultimate-fresh-upgrade-restore.json'})
     required.update({'app/static/frontend.css','app/static/frontend.js','app/static/images/aviation-hero.webp','app/static/images/hanoi.webp','app/static/images/danang.webp','app/static/images/saigon.webp','app/static/images/sky-panorama.svg','scripts/demo_catalog.py','scripts/demo_price_reference.json','tests/test_demo_catalog.py','tests/test_demo_seed_sql.py','tests/test_discovery_pricing.py','sql/demo/verify_demo_catalog.sql','evidence/pricing-regression-20261025.xml','evidence/demo-catalog-validation-20261025.json'})
     required.update({'tests/test_presentation_seed.py','evidence/presentation-regression-20261025.xml','evidence/presentation-validation-20261025.json'})

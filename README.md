@@ -1,6 +1,6 @@
 # AeroFlow — Hướng dẫn chạy trên Windows
 
-Hướng dẫn cho nhánh `feature/presentation-demo-dec-jan`. Bạn sẽ chạy website và lưu dữ liệu trong SQL Server trên máy của mình.
+Hướng dẫn cho nhánh `feature/consolidated-sql`. Bạn sẽ chạy website và lưu dữ liệu trong SQL Server trên máy của mình. Các file SQL đã bao gồm toàn bộ cấu trúc và nghiệp vụ đến phiên bản 017.
 
 ## 1. Cài những phần mềm cần dùng
 
@@ -27,7 +27,7 @@ Kết quả cần là `Python 3.11` hoặc phiên bản mới hơn. Nếu máy b
 **Nếu dùng GitHub**, chạy lần lượt hai lệnh:
 
 ```powershell
-git clone --branch feature/presentation-demo-dec-jan --single-branch https://github.com/st4rlight3/AeroFlow.git
+git clone --branch feature/consolidated-sql --single-branch https://github.com/st4rlight3/AeroFlow.git
 cd AeroFlow
 ```
 
@@ -88,15 +88,30 @@ Trong `.env`, đổi `SQL_TRUSTED_CONNECTION=no`, rồi điền `SQL_USERNAME` v
 .\.venv\Scripts\python.exe scripts\init_db.py
 ```
 
-**Đã có database của nhánh này:** bỏ qua lệnh `init_db.py` để giữ dữ liệu đang dùng. Nếu trước đó bạn cài nhánh Marketplace, dùng database khác cho nhánh đặt vé này.
+Lệnh này tạo đầy đủ bảng, ràng buộc, chỉ mục, function, view, stored procedure, trigger và dữ liệu nền. **Cài mới không cần chạy riêng các migration 001–017.** Nếu lệnh báo database đã có bảng, chương trình dừng để giữ dữ liệu cũ; xem trường hợp bên dưới.
 
-Tiếp theo, mở [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) và làm theo các bước cập nhật cấu trúc database. Khi các phiên bản **001–017** đều hiện `APPLIED`, quay lại đây và nạp chuyến bay, giá vé mẫu:
+**Đã có database từ nhánh đặt vé cũ:** bỏ qua `init_db.py`. Làm theo [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) để kiểm tra và nâng cấp khi cần. Nếu trước đó bạn cài nhánh Marketplace, chọn tên database khác cho nhánh đặt vé này.
+
+Sau khi cài mới hoặc nâng cấp thành công, nạp bộ chuyến bay và giá vé mẫu:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\load_demo.py --apply
 ```
 
 Chờ chương trình chạy xong. Phần tạo database và cài thư viện chỉ làm khi cài đặt; những lần mở web sau không cần làm lại.
+
+<details>
+<summary>Nếu muốn tạo database bằng cách mở các file SQL trong SSMS</summary>
+
+Dùng một database mới, rỗng. Các file `sql/01`–`sql/08` chứa định nghĩa cuối cùng; không cần chạy thêm thư mục `sql/migrations` cho lần cài mới.
+
+Thứ tự chạy là **01 → 02 → 03 → 06 → 05 → 07 → 08 → 04**. File `06_functions.sql` phải chạy trước view dùng các hàm đó; `04_seed_data.sql` chạy cuối vì tạo đặt chỗ mẫu qua stored procedure. File `09_business_queries.sql` và `10_test_cases.sql` dùng để truy vấn, kiểm tra sau khi cài.
+
+Trong SSMS, các script dùng tên database `AeroFlow`. Nếu bạn chọn tên khác, đổi `AeroFlow` trong file `01` và dòng `USE AeroFlow;` đầu các file. Không chạy bộ cài mới lên database đang có dữ liệu.
+
+`sql/migrations` giữ lịch sử nâng cấp cho database cũ. `sql/demo` là các truy vấn kiểm tra dữ liệu mẫu. `tests/fixtures/legacy_sql` chỉ dùng cho automated tests kiểm chứng nâng cấp, không dùng để cài ứng dụng.
+
+</details>
 
 ## 6. Khởi động và mở website
 

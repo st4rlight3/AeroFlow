@@ -1,0 +1,28 @@
+{
+  "reference_database": "AeroFlow_Test_ConsolidatedRef_e324939b96",
+  "fresh_database": "AeroFlow_Test_Consolidated_1cc27ff747",
+  "schema_equivalent": true,
+  "tables": 38,
+  "columns": 235,
+  "sql_modules": 40,
+  "foreign_keys": 51,
+  "secondary_and_key_indexes": 88,
+  "checks": 69,
+  "counts": {
+    "Bookings": 40,
+    "BookingSegments": 40,
+    "Tickets": 40,
+    "TicketRules": 40,
+    "Flights": 120,
+    "FlightFares": 360,
+    "Services": 5,
+    "DiscountCodes": 2,
+    "PassengerTypes": 3,
+    "LoyaltyTiers": 3
+  },
+  "migration_replay": "NO_OP",
+  "existing_database_guard": "PASS",
+  "seed_rerun": "NO_OP",
+  "business_queries": "PASS",
+  "sql_constraint_tests": "PASS"
+}

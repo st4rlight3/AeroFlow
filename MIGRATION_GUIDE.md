@@ -1,6 +1,10 @@
-# Tạo và nâng cấp cấu trúc database
+# Nâng cấp database đã có dữ liệu
 
-Hướng dẫn này dành cho nhánh `feature/presentation-demo-dec-jan`, sau khi bạn đã cài thư viện và sửa `.env` theo README.
+Hướng dẫn này dành cho nhánh `feature/consolidated-sql`, sau khi bạn đã cài thư viện và sửa `.env` theo README.
+
+**Cài mới:** chạy `scripts/init_db.py` như README. Các SQL script chính đã bao gồm toàn bộ thay đổi đến phiên bản 017; bạn không cần thực hiện các bước nâng cấp bên dưới.
+
+**Đã có database của nhánh đặt vé trước đây:** giữ database đó và dùng hướng dẫn này. Thư mục `sql/migrations` được giữ nguyên để cập nhật dữ liệu cũ, không phải bước bắt buộc sau mỗi lần cài mới.
 
 **Migration** là các bước cập nhật cấu trúc database đã được dự án chuẩn bị sẵn. Công cụ sẽ chạy những bước còn thiếu; bạn không cần tự sửa file SQL.
 
@@ -19,7 +23,7 @@ Mọi lệnh PowerShell dưới đây chạy trong thư mục có `run.py`.
 .\.venv\Scripts\python.exe scripts\migrate.py
 ```
 
-`APPLIED` nghĩa là bước đó đã chạy; `PENDING` nghĩa là chưa chạy. Nếu toàn bộ **001–017** đều là `APPLIED`, chuyển thẳng đến bước 5 bên dưới.
+`APPLIED` nghĩa là bước đó đã chạy; `IN_BASELINE` nghĩa là thay đổi đã nằm trong bộ SQL gộp khi cài mới; `PENDING` nghĩa là còn thiếu. Nếu toàn bộ **001–017** đều là `APPLIED` hoặc `IN_BASELINE`, chuyển thẳng đến bước 5 bên dưới.
 
 ## 3. Lấy lệnh sao lưu và nâng cấp trong SSMS
 
@@ -55,7 +59,7 @@ Kiểm tra lại:
 .\.venv\Scripts\python.exe scripts\migrate.py
 ```
 
-Khi các phiên bản **001–017** đều hiện `APPLIED`, cấu trúc database đã sẵn sàng cho nhánh này. Nếu báo `CHECKSUM_MISMATCH`, kiểm tra đúng nhánh và file migration; không tự sửa hoặc xóa các file đã áp dụng để bỏ qua lỗi.
+Khi các phiên bản **001–017** đều hiện `APPLIED` hoặc `IN_BASELINE`, cấu trúc database đã sẵn sàng cho nhánh này. Nếu báo `CHECKSUM_MISMATCH`, kiểm tra đúng nhánh và file migration; không tự sửa hoặc xóa các file đã áp dụng để bỏ qua lỗi.
 
 ## 5. Tiếp tục cài đặt hoặc mở lại web
 

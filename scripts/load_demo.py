@@ -2,7 +2,8 @@
 
 Preview does not open a database. --apply imports each catalogue atomically;
 both are idempotent, so a failed second stage can safely be retried. Apply
-migrations 001–017 first. Existing customer/ticket/payment history is retained.
+the consolidated SQL with init_db.py for a new database, or migrate.py for an
+older installation. Existing customer/ticket/payment history is retained.
 """
 import argparse
 from dataclasses import asdict

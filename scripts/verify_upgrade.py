@@ -18,6 +18,22 @@ def snapshot(conn,columns=None):
         result[table]=dict(count=len(rows),sha256=hashlib.sha256('\n'.join(serialized).encode()).hexdigest())
     return columns,result
 
+
+def create_legacy_database(name):
+    """Install the frozen old SQL baseline only into a new disposable database.
+
+    This fixture is for upgrade verification. Normal installations use sql/.
+    """
+    if not re.fullmatch(r'AeroFlow_Test_[A-Za-z0-9_]+',name):
+        raise ValueError('Legacy fixtures only permit a new AeroFlow_Test_* database.')
+    fixture=Path(__file__).resolve().parents[1]/'tests/fixtures/legacy_sql'
+    with pyodbc.connect(connection_string('master'),autocommit=True) as conn:
+        conn.timeout=180
+        if conn.execute('SELECT DB_ID(?)',name).fetchone()[0] is not None:
+            raise ValueError('Legacy fixture target already exists; no overwrite performed.')
+        for filename in init_db.ORDER:
+            init_db.run_file(conn,fixture,filename,name)
+
 def verify():
     original=os.environ.get('SQL_DATABASE');suffix=uuid.uuid4().hex[:10];name='AeroFlow_Test_Fresh_'+suffix;restored='AeroFlow_Test_Restore_'+suffix
     try:
@@ -25,7 +41,7 @@ def verify():
         with pyodbc.connect(connection_string('master'),autocommit=True) as master:
             assert master.execute('SELECT DB_ID(?)',name).fetchone()[0] is None
             backup_dir=master.execute("SELECT CONVERT(nvarchar(500),SERVERPROPERTY('InstanceDefaultBackupPath'))").fetchone()[0]
-        init_db.main()
+        create_legacy_database(name)
         with pyodbc.connect(connection_string(),autocommit=True) as conn:
             conn.timeout=180
             columns,before=snapshot(conn)

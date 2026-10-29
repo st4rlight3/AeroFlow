@@ -1,0 +1,27 @@
+{
+  "database": "AeroFlow_Test_Consolidated_59daaf88ba",
+  "counts": {
+    "Airports": 42,
+    "Flights": 6288,
+    "FlightFares": 74376
+  },
+  "duplicate_active_seats": 0,
+  "api_checks": [
+    {
+      "path": "/",
+      "status": 200
+    },
+    {
+      "path": "/api/airports",
+      "status": 200
+    },
+    {
+      "path": "/api/discovery",
+      "status": 200
+    },
+    {
+      "path": "/api/flights?origin=1&destination=2&date=2026-12-01&passengers=1",
+      "status": 200
+    }
+  ]
+}

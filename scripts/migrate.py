@@ -103,10 +103,11 @@ def main():
                 print('APPLIED', name, flush=True)
         else:
             exists = conn.execute("SELECT OBJECT_ID('dbo.SchemaMigrations')").fetchone()[0]
-            applied = dict(conn.execute('SELECT Version,Checksum FROM dbo.SchemaMigrations').fetchall()) if exists else {}
+            applied = {r[0]:(r[1],r[2]) for r in conn.execute('SELECT Version,Checksum,Name FROM dbo.SchemaMigrations').fetchall()} if exists else {}
             for file in files:
                 value = applied.get(int(file.name.split('_')[0]))
-                print('PENDING' if value is None else ('APPLIED' if value == digest(file) else 'CHECKSUM_MISMATCH'), file.name)
+                status = 'PENDING' if value is None else 'CHECKSUM_MISMATCH' if value[0] != digest(file) else 'IN_BASELINE' if value[1].startswith('BASELINE: ') else 'APPLIED'
+                print(status, file.name)
 
 
 if __name__ == '__main__':

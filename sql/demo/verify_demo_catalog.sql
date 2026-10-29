@@ -1,5 +1,5 @@
 -- SSMS: choose the configured database before executing. Read-only checks.
--- Baseline 04 uses future presentation dates on fresh installs; migrations 001-014 are immutable.
+-- The fresh baseline already contains schema 017. This file only inspects data.
 USE AeroFlow;
 GO
 SET NOCOUNT ON;
