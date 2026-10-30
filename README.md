@@ -26,7 +26,7 @@ Liên kết chính thức: [Python Windows](https://www.python.org/downloads/win
 Giải nén ZIP. Mở PowerShell tại thư mục `AeroFlow` có `run.py`:
 
 ```powershell
-py -3 -m venv .venv
+python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe scripts\configure.py
 notepad .env
