@@ -1,12 +1,8 @@
 USE AeroFlow;
 GO
 SET XACT_ABORT ON;
-IF OBJECT_ID(N'dbo.Roles') IS NOT NULL
-BEGIN
-    PRINT 'Schema exists. No destructive reset performed.';
-    RETURN;
-END;
-BEGIN TRANSACTION;
+IF EXISTS(SELECT 1 FROM sys.tables WHERE is_ms_shipped=0)
+ THROW 51000,N'Cơ sở dữ liệu đã có bảng. Hãy chọn một cơ sở dữ liệu trống.',1;
 CREATE TABLE dbo.Roles (
  RoleID int IDENTITY CONSTRAINT PK_Roles PRIMARY KEY,
  Name varchar(20) NOT NULL CONSTRAINT UQ_Roles_Name UNIQUE,
@@ -30,6 +26,8 @@ CREATE TABLE dbo.Airports (
  Code char(3) NOT NULL CONSTRAINT UQ_Airports_Code UNIQUE,
  Name nvarchar(120) NOT NULL,
  City nvarchar(80) NOT NULL,
+ CountryName nvarchar(80) NOT NULL CONSTRAINT DF_Airports_Country DEFAULT N'Việt Nam',
+ IanaTimeZone nvarchar(64) NOT NULL CONSTRAINT DF_Airports_TimeZone DEFAULT N'Asia/Ho_Chi_Minh',
  IsActive bit NOT NULL CONSTRAINT DF_Airports_Active DEFAULT 1,
  CONSTRAINT CK_Airports_Code CHECK(Code NOT LIKE '%[^A-Z]%')
 );
@@ -52,7 +50,7 @@ CREATE TABLE dbo.FareClasses (
  Cabin varchar(12) NOT NULL,
  BaggageKg int NOT NULL,
  RefundPercent decimal(5,2) NOT NULL,
- CONSTRAINT CK_FareClasses_Cabin CHECK(Cabin IN ('ECONOMY','BUSINESS')),
+ CONSTRAINT CK_FareClasses_Cabin CHECK(Cabin IN ('ECONOMY','PREMIUM','BUSINESS','FIRST')),
  CONSTRAINT CK_FareClasses_Baggage CHECK(BaggageKg BETWEEN 0 AND 60),
  CONSTRAINT CK_FareClasses_Refund CHECK(RefundPercent BETWEEN 0 AND 100)
 );
@@ -64,13 +62,16 @@ CREATE TABLE dbo.AircraftSeats (
  ColumnLetter char(1) NOT NULL,
  Cabin varchar(12) NOT NULL,
  IsActive bit NOT NULL CONSTRAINT DF_Seats_Active DEFAULT 1,
+ SeatFee decimal(14,2) NOT NULL CONSTRAINT DF_Seats_Fee DEFAULT 0,
+ IsPriority bit NOT NULL CONSTRAINT DF_Seats_Priority DEFAULT 0,
  CONSTRAINT UQ_Seats_Number UNIQUE(AircraftID,SeatNumber),
  CONSTRAINT UQ_Seats_Position UNIQUE(AircraftID,RowNumber,ColumnLetter),
  CONSTRAINT UQ_Seats_AircraftKey UNIQUE(SeatID,AircraftID),
  CONSTRAINT CK_Seats_Row CHECK(RowNumber BETWEEN 1 AND 80),
+ CONSTRAINT CK_Seats_Fee CHECK(SeatFee>=0),
  CONSTRAINT CK_Seats_Column CHECK(ColumnLetter IN ('A','B','C','D','E','F')),
  CONSTRAINT CK_Seats_Number CHECK(SeatNumber=ColumnLetter+CONVERT(varchar(3),RowNumber)),
- CONSTRAINT CK_Seats_Cabin CHECK(Cabin IN ('ECONOMY','BUSINESS'))
+ CONSTRAINT CK_Seats_Cabin CHECK(Cabin IN ('ECONOMY','PREMIUM','BUSINESS','FIRST'))
 );
 CREATE TABLE dbo.Flights (
  FlightID int IDENTITY CONSTRAINT PK_Flights PRIMARY KEY,
@@ -108,19 +109,25 @@ CREATE TABLE dbo.Bookings (
  BookingID int IDENTITY CONSTRAINT PK_Bookings PRIMARY KEY,
  PNR char(8) NOT NULL CONSTRAINT UQ_Bookings_PNR UNIQUE,
  UserID int NOT NULL CONSTRAINT FK_Bookings_User REFERENCES dbo.Users,
- FlightID int NOT NULL CONSTRAINT FK_Bookings_Flight REFERENCES dbo.Flights,
  Status varchar(12) NOT NULL CONSTRAINT DF_Bookings_Status DEFAULT 'HELD',
  CreatedAt datetime2(0) NOT NULL CONSTRAINT DF_Bookings_Created DEFAULT SYSUTCDATETIME(),
  ExpiresAt datetime2(0) NOT NULL,
- CONSTRAINT UQ_Bookings_FlightKey UNIQUE(BookingID,FlightID),
  CONSTRAINT CK_Bookings_Status CHECK(Status IN ('HELD','CONFIRMED','CANCELLED','EXPIRED')),
  CONSTRAINT CK_Bookings_Expiry CHECK(ExpiresAt>=CreatedAt)
+);
+CREATE TABLE dbo.BookingSegments (
+ BookingSegmentID int IDENTITY CONSTRAINT PK_BookingSegments PRIMARY KEY,
+ BookingID int NOT NULL CONSTRAINT FK_Segments_Booking REFERENCES dbo.Bookings,
+ FlightID int NOT NULL CONSTRAINT FK_Segments_Flight REFERENCES dbo.Flights,
+ SegmentOrder tinyint NOT NULL,
+ CONSTRAINT UQ_Segments_Order UNIQUE(BookingID,SegmentOrder),
+ CONSTRAINT UQ_Segments_Flight UNIQUE(BookingID,FlightID),
+ CONSTRAINT CK_Segments_Order CHECK(SegmentOrder IN (1,2))
 );
 CREATE TABLE dbo.BookingPassengers (
  BookingPassengerID int IDENTITY CONSTRAINT PK_BookingPassengers PRIMARY KEY,
  BookingID int NOT NULL CONSTRAINT FK_BP_Booking REFERENCES dbo.Bookings,
  PassengerID int NOT NULL CONSTRAINT FK_BP_Passenger REFERENCES dbo.Passengers,
- FareClassID int NOT NULL CONSTRAINT FK_BP_Class REFERENCES dbo.FareClasses,
  CONSTRAINT UQ_BP_Passenger UNIQUE(BookingID,PassengerID),
  CONSTRAINT UQ_BP_BookingKey UNIQUE(BookingPassengerID,BookingID)
 );
@@ -134,12 +141,21 @@ CREATE TABLE dbo.Tickets (
  TicketID int IDENTITY CONSTRAINT PK_Tickets PRIMARY KEY,
  AssignmentID int NOT NULL CONSTRAINT UQ_Tickets_Assignment UNIQUE CONSTRAINT FK_Tickets_Assignment REFERENCES dbo.FlightSeatAssignments,
  TicketNumber varchar(20) NOT NULL CONSTRAINT UQ_Tickets_Number UNIQUE,
- BookingPassengerID int NOT NULL CONSTRAINT UQ_Tickets_BP UNIQUE
+ BookingPassengerID int NOT NULL
    CONSTRAINT FK_Tickets_BP REFERENCES dbo.BookingPassengers,
+ BookingSegmentID int NOT NULL CONSTRAINT FK_Tickets_Segment REFERENCES dbo.BookingSegments,
+ FareClassID int NOT NULL CONSTRAINT FK_Tickets_Class REFERENCES dbo.FareClasses,
+ BaseFare decimal(14,2) NOT NULL,
+ TaxAmount decimal(14,2) NOT NULL,
+ SeatFee decimal(14,2) NOT NULL,
+ BaggageKg int NOT NULL,
  Amount decimal(14,2) NOT NULL,
  RefundPercent decimal(5,2) NOT NULL,
  Status varchar(12) NOT NULL CONSTRAINT DF_Tickets_Status DEFAULT 'PENDING',
  CONSTRAINT CK_Tickets_Amount CHECK(Amount>0),
+ CONSTRAINT UQ_Tickets_PassengerSegment UNIQUE(BookingPassengerID,BookingSegmentID),
+ CONSTRAINT CK_Tickets_Price CHECK(BaseFare>0 AND TaxAmount>=0 AND SeatFee>=0 AND Amount=BaseFare+TaxAmount+SeatFee),
+ CONSTRAINT CK_Tickets_Baggage CHECK(BaggageKg BETWEEN 0 AND 60),
  CONSTRAINT CK_Tickets_Refund CHECK(RefundPercent BETWEEN 0 AND 100),
  CONSTRAINT CK_Tickets_Status CHECK(Status IN ('PENDING','VALID','VOID'))
 );
@@ -165,5 +181,4 @@ CREATE TABLE dbo.AuditLogs (
  Details nvarchar(1000) NULL,
  CreatedAt datetime2(0) NOT NULL CONSTRAINT DF_Audit_Created DEFAULT SYSUTCDATETIME()
 );
-COMMIT;
 GO

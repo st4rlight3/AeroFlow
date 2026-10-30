@@ -10,6 +10,7 @@ def connection(database=None, autocommit=False):
     conn = pyodbc.connect(connection_string(database), timeout=5, autocommit=autocommit)
     conn.timeout = 15
     try:
+        conn.execute('SET TRANSACTION ISOLATION LEVEL READ COMMITTED')
         actor = getattr(g, 'user', None) if has_request_context() else None
         conn.execute("EXEC sys.sp_set_session_context @key=N'ActorID',@value=?", actor['UserID'] if actor else None)
         yield conn

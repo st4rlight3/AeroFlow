@@ -16,4 +16,6 @@ SQL_ERRORS = {
     51010: ('Trạng thái hiện tại không cho phép thao tác này.', 409),
     51011: ('Dữ liệu đã có lịch sử sử dụng. Hãy tạo bản ghi mới để giữ nguyên lịch sử.', 409),
     51012: ('Máy bay có lịch trùng hoặc chưa đủ 45 phút quay đầu.', 409),
+    51013: ('Giá hoặc phí ghế đã thay đổi. Vui lòng kiểm tra lại tổng tiền.', 409),
+    51018: ('Lịch máy bay chưa liên tục giữa các sân bay.', 409),
 }

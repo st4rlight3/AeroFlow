@@ -3,40 +3,55 @@ from ..db import query
 from ..security import authenticated
 from ..validation import body, text
 from ..errors import ApiError
-from ..services.booking_service import create_booking, owned_booking
+from ..services.booking_service import create_booking, owned_booking, quote_booking
+from ..services.flight_service import decorate_flights
 
 bp = Blueprint('bookings', __name__, url_prefix='/api/bookings')
+
+
+@bp.post('/quote')
+@authenticated()
+def quote():
+    return jsonify(quote=quote_booking(body()))
+
 
 @bp.post('')
 @authenticated()
 def create():
     return jsonify(booking=create_booking(body(), g.user['UserID'])), 201
 
+
 @bp.get('')
 @authenticated()
 def history():
-    # Cleanup only this customer's flights, with the same SQL lock discipline.
-    ids = query("SELECT DISTINCT FlightID FROM dbo.Bookings WHERE UserID=? AND Status='HELD' AND ExpiresAt<=SYSUTCDATETIME()", (g.user['UserID'],))
+    ids = query("SELECT DISTINCT s.FlightID FROM dbo.Bookings b JOIN dbo.BookingSegments s ON s.BookingID=b.BookingID WHERE b.UserID=? AND b.Status='HELD' AND b.ExpiresAt<=SYSUTCDATETIME()", (g.user['UserID'],))
     for row in ids:
         query('EXEC dbo.sp_ExpireFlightHolds ?', (row['FlightID'],))
-    return jsonify(items=query('SELECT * FROM dbo.vw_BookingDetails WHERE UserID=? ORDER BY CreatedAt DESC', (g.user['UserID'],)))
+    return jsonify(items=decorate_flights(query('SELECT * FROM dbo.vw_BookingDetails WHERE UserID=? ORDER BY CreatedAt DESC', (g.user['UserID'],))))
+
 
 @bp.get('/<int:booking_id>')
 @authenticated()
 def detail(booking_id):
-    b = owned_booking(booking_id, g.user)
-    tickets = query('SELECT t.TicketID,t.TicketNumber,t.Amount,t.Status,t.RefundPercent,p.FullName,p.DateOfBirth,RIGHT(p.DocumentNumber,4) DocumentLast4,c.Name FareName,c.BaggageKg,s.SeatNumber FROM dbo.BookingPassengers bp JOIN dbo.Passengers p ON p.PassengerID=bp.PassengerID JOIN dbo.Tickets t ON t.BookingPassengerID=bp.BookingPassengerID JOIN dbo.FareClasses c ON c.FareClassID=bp.FareClassID JOIN dbo.FlightSeatAssignments a ON a.AssignmentID=t.AssignmentID JOIN dbo.AircraftSeats s ON s.SeatID=a.SeatID WHERE bp.BookingID=? ORDER BY t.TicketID', (booking_id,))
+    booking = owned_booking(booking_id, g.user)
+    segments = query('SELECT s.BookingSegmentID,s.SegmentOrder,f.* FROM dbo.BookingSegments s JOIN dbo.vw_FlightAvailability f ON f.FlightID=s.FlightID WHERE s.BookingID=? ORDER BY s.SegmentOrder', (booking_id,))
+    decorate_flights(segments)
+    tickets = query('SELECT t.TicketID,t.TicketNumber,t.Amount,t.Status,t.RefundPercent,t.BaseFare,t.TaxAmount,t.SeatFee,t.BaggageKg,t.FareClassID,p.FullName,p.DateOfBirth,RIGHT(p.DocumentNumber,4) DocumentLast4,c.Name FareName,a.SeatID,se.SeatNumber,bs.BookingSegmentID,bs.SegmentOrder,f.FlightID,f.FlightNumber,f.OriginID,f.DestinationID,o.Code OriginCode,d.Code DestinationCode,o.City OriginCity,d.City DestinationCity,f.DepartureTime,f.ArrivalTime,o.IanaTimeZone OriginTimeZone,d.IanaTimeZone DestinationTimeZone FROM dbo.BookingPassengers bp JOIN dbo.Passengers p ON p.PassengerID=bp.PassengerID JOIN dbo.Tickets t ON t.BookingPassengerID=bp.BookingPassengerID JOIN dbo.FareClasses c ON c.FareClassID=t.FareClassID JOIN dbo.FlightSeatAssignments a ON a.AssignmentID=t.AssignmentID JOIN dbo.AircraftSeats se ON se.SeatID=a.SeatID JOIN dbo.BookingSegments bs ON bs.BookingSegmentID=t.BookingSegmentID JOIN dbo.Flights f ON f.FlightID=bs.FlightID JOIN dbo.Airports o ON o.AirportID=f.OriginID JOIN dbo.Airports d ON d.AirportID=f.DestinationID WHERE bp.BookingID=? ORDER BY bs.SegmentOrder,t.TicketID', (booking_id,))
+    decorate_flights(tickets)
+    decorate_flights([booking])
     payments = query('SELECT PaymentID,Amount,Kind,Status,CreatedAt FROM dbo.Payments WHERE BookingID=? ORDER BY PaymentID', (booking_id,))
-    return jsonify(booking=b, tickets=tickets, payments=payments)
+    return jsonify(booking=booking, tickets=tickets, payments=payments, segments=segments)
+
 
 @bp.post('/<int:booking_id>/payments')
 @authenticated()
 def pay(booking_id):
     owned_booking(booking_id, g.user)
-    d = body()
-    if type(d.get('Success')) is not bool:
+    data = body()
+    if type(data.get('Success')) is not bool:
         raise ApiError('Success phải là true hoặc false cho thanh toán giả lập.')
-    return jsonify(payment=query('EXEC dbo.sp_ConfirmPayment ?,?,?,?', (g.user['UserID'], booking_id, text(d, 'IdempotencyKey', 16, 80), d['Success']), one=True))
+    return jsonify(payment=query('EXEC dbo.sp_ConfirmPayment ?,?,?,?', (g.user['UserID'], booking_id, text(data, 'IdempotencyKey', 16, 80), data['Success']), one=True))
+
 
 @bp.post('/<int:booking_id>/cancel')
 @authenticated()

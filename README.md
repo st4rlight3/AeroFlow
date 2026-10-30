@@ -1,150 +1,135 @@
-# AeroFlow — Intelligent Airline Reservation & Management System
+# AeroFlow — Hướng dẫn chạy dự án
 
-Ứng dụng bài tập lớn DBMS, giao diện tiếng Việt, HTML/CSS/JavaScript + Flask + pyodbc + Microsoft SQL Server. **Không có chế độ SQLite, dữ liệu giả trong frontend hoặc thanh toán ngân hàng thật.**
+Website đặt vé máy bay một chiều và khứ hồi, sử dụng Python Flask và SQL Server. Thanh toán trên website là mô phỏng.
 
-## Trạng thái bàn giao
+## 1. Chuẩn bị
 
-- Đã tạo và chạy trên SQL Server 2022 Express 16.0.1000.6, Python 3.12, ODBC Driver 18, Windows.
-- 16 bảng (15 bảng nghiệp vụ + AuditLogs), 4 view, 2 function, 10 procedure, 6 trigger.
-- Bộ seed: 120 chuyến, 396 ghế, 40 khách mẫu, 40 booking, 40 hành khách, 40 vé, 48 giao dịch.
-- Kết quả kiểm thử thực tế và giới hạn: xem `TESTING.md`, `evidence/pytest-results.xml`, `evidence/sql-checks.json`.
-- `docs/BAO_CAO.pdf` để in; `docs/AeroFlow_Slides.pptx` để thuyết trình; `DEMO.md` cho demo 10–15 phút.
-- Tài khoản mẫu đều bị khóa. Không có mật khẩu quản trị mặc định. Người cài tự tạo tài khoản.
+| Phần mềm | Dùng để làm gì? |
+| --- | --- |
+| [Python 3.11 trở lên, bản 64-bit](https://www.python.org/downloads/windows/) | Chạy website. Khi cài, chọn **Add Python to PATH**. |
+| [SQL Server Express](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) | Lưu dữ liệu của dự án. |
+| [SQL Server Management Studio — SSMS](https://learn.microsoft.com/en-us/ssms/install/install) | Kết nối SQL Server, xem bảng và chạy truy vấn. SSMS và SQL Server là hai phần mềm riêng. |
+| [ODBC Driver 18 for SQL Server](https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server) | Kết nối Python với SQL Server. |
 
-## 1. Điều kiện trên Windows
-
-1. Python 3.11 trở lên và Python Launcher (`py`). Bản kiểm thử dùng Python 3.12.
-2. Microsoft SQL Server 2019+ hoặc 2022 Express, dịch vụ `SQL Server (SQLEXPRESS)` đang chạy. SQL Server 2022 Express là bản đã kiểm chứng.
-3. Microsoft ODBC Driver 18 for SQL Server đúng kiến trúc với Python (khuyến nghị cả hai 64-bit).
-4. SSMS để quan sát DB và chạy các truy vấn trong demo. SSMS không bắt buộc để ứng dụng chạy.
-5. Windows account có quyền tạo database cho bước khởi tạo. Phần mềm không tự cài hoặc đổi cấu hình SQL Server.
-
-Liên kết chính thức: [Python Windows](https://www.python.org/downloads/windows/), [SQL Server Express](https://www.microsoft.com/en-us/sql-server/sql-server-downloads), [ODBC Driver](https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server), [SSMS](https://learn.microsoft.com/en-us/ssms/install/install).
-
-## 2. Cài đặt và chạy
-
-Giải nén ZIP. Mở PowerShell tại thư mục `AeroFlow` có `run.py`:
+Mở PowerShell từ menu Start, nhập:
 
 ```powershell
-py -3 -m venv .venv
+python --version
+```
+
+Nếu chưa hiện phiên bản Python, hoàn tất cài Python rồi mở lại PowerShell.
+
+## 2. Mở thư mục dự án
+
+Tải mã nguồn bằng **Code → Download ZIP**, giải nén, rồi mở thư mục có `run.py`, `requirements.txt` và thư mục `app`.
+
+Bấm thanh địa chỉ của File Explorer, gõ `powershell` rồi nhấn Enter. Những lệnh dưới đây đều chạy trong cửa sổ này. Mỗi dòng là một lệnh riêng; chờ chạy xong rồi nhập dòng tiếp theo.
+
+## 3. Cài thư viện và tạo cấu hình
+
+```powershell
+python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe scripts\configure.py
+```
+
+- Dòng 1 tạo môi trường Python riêng trong `.venv`.
+- Dòng 2 cài thư viện cần dùng.
+- Dòng 3 tạo file `.env` và khóa bảo vệ phiên đăng nhập. Nếu file đã có, chương trình giữ nguyên.
+
+## 4. Kết nối SQL Server
+
+Mở SSMS, chọn **Database Engine → Windows Authentication**, rồi kết nối bằng tên SQL Server trên máy bạn. Với bản Express cài mặc định, tên thường là `.\SQLEXPRESS`.
+
+Sau khi SSMS kết nối được, quay về PowerShell và mở cấu hình:
+
+```powershell
 notepad .env
 ```
 
-Không cần kích hoạt môi trường ảo hoặc đổi ExecutionPolicy. Có thể dùng `scripts/setup.ps1` nếu máy cho phép chạy PowerShell script; các lệnh trên có tác dụng tương đương.
-
-Trong `.env`, kiểm tra ít nhất:
+Kiểm tra các dòng sau, lưu bằng `Ctrl+S`:
 
 ```dotenv
 SQL_SERVER=.\SQLEXPRESS
 SQL_DATABASE=AeroFlow
 SQL_DRIVER=ODBC Driver 18 for SQL Server
 SQL_TRUSTED_CONNECTION=yes
-SQL_ENCRYPT=no
-SQL_TRUST_SERVER_CERTIFICATE=yes
+HOST=127.0.0.1
+PORT=5000
 ```
 
-`configure.py` sinh SECRET_KEY ngẫu nhiên. Giữ `.env` riêng trên máy, không commit hoặc gửi cùng ZIP. Dùng SQL Authentication thì đặt `SQL_TRUSTED_CONNECTION=no`, điền `SQL_USERNAME` và `SQL_PASSWORD`. Tên instance phải đúng máy cài, ví dụ `localhost` cho default instance. Cấu hình TLS trên dành cho demo cục bộ; xem `SECURITY.md` nếu triển khai ngoài localhost.
+`SQL_SERVER` phải giống **Server name** bạn vừa dùng trong SSMS. `SQL_DATABASE` là tên database sẽ tạo. Nếu tên đó đã có dữ liệu, chọn một tên chưa sử dụng, chẳng hạn `AeroFlow_HocTap`. Giữ các dòng khác, đặc biệt `SECRET_KEY`. Không đổi tên file thành `.env.txt`.
+
+Nếu SSMS dùng **SQL Server Authentication**, đặt `SQL_TRUSTED_CONNECTION=no`, điền `SQL_USERNAME` và `SQL_PASSWORD` trong `.env` bằng tài khoản đang sử dụng.
+
+## 5. Tạo database và nạp chuyến bay
+
+Chỉ chạy bước này khi cài đặt vào một database mới:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\init_db.py
-.\.venv\Scripts\python.exe scripts\create_user.py --role ADMIN --email admin@example.com --name "Quan tri AeroFlow"
+.\.venv\Scripts\python.exe scripts\load_demo.py --apply
+```
+
+Lệnh đầu chạy bộ SQL để tạo bảng, ràng buộc, view, function, procedure, trigger và dữ liệu nền. Lệnh sau bổ sung lịch bay trong nước, quốc tế và giá vé mẫu. Chờ cả hai lệnh chạy xong. Nếu database đã có bảng, bộ cài dừng để giữ dữ liệu của bạn.
+
+### Nếu muốn chạy SQL bằng SSMS
+
+Mở một database mới và chạy các file trong `sql` theo thứ tự:
+
+**01 → 02 → 03 → 06 → 05 → 07 → 08 → 04**.
+
+File `06` tạo hàm tính giá trước khi view ở file `05` sử dụng hàm đó. File `04` chạy sau các đối tượng nghiệp vụ vì dữ liệu đặt vé mẫu được tạo thông qua procedure. Nếu dùng tên database khác `AeroFlow`, sửa tên trong file `01` và dòng `USE AeroFlow;` đầu mỗi file cho khớp.
+
+Sau đó chạy `load_demo.py --apply` bằng PowerShell như trên. Bạn chỉ cần chọn **một** cách tạo database: dùng `init_db.py` hoặc mở từng file trong SSMS.
+
+File `09_business_queries.sql` chứa các truy vấn để xem dữ liệu; `10_test_cases.sql` kiểm tra ràng buộc và tính nhất quán. ERD nằm trong [`docs/ERD.svg`](docs/ERD.svg), phần mô tả nằm trong [`docs/ERD.md`](docs/ERD.md).
+
+## 6. Bật website
+
+```powershell
 .\.venv\Scripts\python.exe run.py
 ```
 
-Nhập mật khẩu quản trị từ 12 ký tự khi được hỏi; công cụ không hiển thị mật khẩu. Mở **http://127.0.0.1:5000**. Tạo tài khoản Customer ở trang Đăng ký hoặc dùng `create_user.py --role CUSTOMER`. Email trong lệnh là ví dụ do người cài lựa chọn, không phải thông tin đăng nhập có sẵn.
-
-Trang chủ tự đọc ngày bay đầu tiên và các tuyến đang mở bán từ SQL Server. Bộ seed sinh chuyến từ ngày UTC hiện tại + 2 đến + 31. Sau hơn 30 ngày, dùng quản trị tạo lịch mới hoặc tạo một database demo mới để sinh lịch mới. Không tự động xóa dữ liệu cũ.
-
-## 3. Trình tự script SQL
-
-Chạy tự động bằng `scripts/init_db.py` hoặc trong SSMS theo đúng thứ tự sau:
-
-1. `01_create_database.sql`
-2. `02_create_tables.sql`
-3. `03_constraints_indexes.sql`
-4. `05_views.sql`
-5. `06_functions.sql`
-6. `07_stored_procedures.sql`
-7. `08_triggers.sql`
-8. `04_seed_data.sql`
-9. `09_business_queries.sql` để xem truy vấn
-10. `10_test_cases.sql` để kiểm tra CHECK, UNIQUE, FK, ROLLBACK và các bất biến
-
-**Lý do 04 chạy sau 08:** seed thật sự gọi procedure đặt vé/thanh toán/hủy, sử dụng function/view và tạo log qua trigger. File 05 không phụ thuộc function; file 06 có function đọc view. Không chạy theo thứ tự tên file một cách máy móc.
-
-Khởi tạo không DROP DATABASE, không DROP TABLE. DDL bỏ qua schema đã có; indexes kiểm tra tồn tại; objects dùng CREATE OR ALTER; seed dùng marker `seed001@aeroflow.example` và transaction toàn bộ. Chạy lại trên cùng phiên bản không nhân đôi dữ liệu. Đây không phải hệ thống migration cho schema đã bị sửa hoặc phiên bản cũ: nếu schema khác, tạo database mới `AeroFlow_<suffix>` và cập nhật `.env`. `init_db.py` chỉ nhận tên `AeroFlow` hoặc `AeroFlow_<letters_digits_underscores>`.
-
-Scripts SSMS mặc định `USE AeroFlow`. Runner tự thay tên DB đã kiểm tra hợp lệ. Không tự sửa script thành một database đang phục vụ hệ thống khác.
-
-## 4. Chức năng
-
-Khách hàng: đăng ký/đăng nhập/đăng xuất, tìm chuyến theo tuyến/ngày/số khách, chi tiết và hạng vé, sơ đồ ghế theo máy bay, nhập hành khách, xác nhận/giữ ghế, mô phỏng thanh toán thành công/thất bại, in vé điện tử, lịch sử đặt vé/giao dịch, hồ sơ, hủy cả booking.
-
-Quản trị: dashboard từ view và function, tạo/sửa chuyến chưa có lịch sử booking, cập nhật trạng thái, giá từng hạng, quản lý sân bay/hãng bay/máy bay/sơ đồ ghế/hạng vé, tra cứu booking, khóa/kích hoạt khách hàng, doanh thu theo ngày và CSV, giao dịch, nhật ký. Tạo máy bay tự sinh sơ đồ 6 cột A–F, số hàng do admin nhập. Sơ đồ đã có chuyến bay không được sửa để bảo toàn lịch sử.
-
-Quy tắc: một chiều, tối đa 9 khách/booking, mọi khách có ghế riêng, đóng bán trước 2 giờ, giữ ghế 10 phút theo thời gian SQL Server UTC, hủy sau thanh toán trước khởi hành ít nhất 24 giờ, hoàn theo điều kiện chốt trên vé. Khi hãng hủy chuyến, hoàn đủ giá vé đã thanh toán. Không hỗ trợ đổi vé, khứ hồi/nối chuyến, infant-on-lap hoặc tiền tệ khác VND trong phạm vi này.
-
-Giá hiển thị là giá đã gồm thuế. Backend không sử dụng giá tiền do client gửi. Điểm dữ liệu duy nhất là SQL Server. Mất DB trả lỗi 503, không thay bằng bộ dữ liệu frontend.
-
-## 5. Giữ ghế và tác vụ định kỳ
-
-Truy vấn ghế, chi tiết/lịch sử booking, đặt vé và thanh toán đều dọn giữ ghế hết hạn bằng procedure chung. Chạy thêm tác vụ sau mỗi phút qua Windows Task Scheduler nếu muốn giải phóng ngay cả khi không có truy cập:
-
-```powershell
-.\.venv\Scripts\python.exe scripts\expire_holds.py
-```
-
-Task Scheduler: Program là đường dẫn tuyệt đối tới `.venv\Scripts\python.exe`; Arguments là đường dẫn `scripts\expire_holds.py`; Start in là thư mục dự án. Dùng account Windows có quyền kết nối DB. Không cần SQL Server Agent (Express không có Agent chạy lịch).
-
-## 6. Kiểm thử lại
-
-```powershell
-.\.venv\Scripts\python.exe -m pytest tests\test_unit.py -q
-$env:SQL_DATABASE="AeroFlow_Test_Local"
-.\.venv\Scripts\python.exe scripts\init_db.py
-$env:RUN_SQL_TESTS="1"
-.\.venv\Scripts\python.exe -m pytest -q --junitxml=evidence\pytest-results.xml
-Remove-Item Env:RUN_SQL_TESTS
-Remove-Item Env:SQL_DATABASE
-.\.venv\Scripts\python.exe scripts\verify_database.py
-```
-
-Integration suite tạo thêm dữ liệu và trigger lỗi tạm thời trong DB test, tự gỡ trigger ở `finally`. Không chạy suite này trên DB demo/production. Biến `SQL_DATABASE` trong phiên shell ưu tiên `.env`; đóng shell hoặc gỡ biến sau kiểm thử. DB test chỉ chấp nhận tên bắt đầu `AeroFlow_Test_`. Giữ database test để kiểm tra bằng chứng hoặc tự xóa sau khi không còn cần.
-
-## 7. Tổ chức mã nguồn
+PowerShell sẽ in địa chỉ, ví dụ:
 
 ```text
-AeroFlow/
-  app/                 Flask factory, configuration, security, validation, database
-    routes/            auth, flights, bookings, admin
-    services/          booking orchestration and ownership
-    templates/         HTML shell
-    static/            CSS, JavaScript and original SVG logo
-  sql/                 10 required T-SQL scripts
-  scripts/             configure, init_db, create_user, expire_holds, verify_database
-  tests/               unit/security and real SQL integration tests
-  docs/                source assignment, report PDF/source, ERD, slide PPTX
-  evidence/            actual test results, SQL inventory, browser evidence
-  .env.example         configuration template, no real secrets
-  requirements.txt
-  run.py               Waitress localhost entrypoint
+AeroFlow: http://127.0.0.1:5000
 ```
 
-`SOURCE_MANIFEST.sha256` đối chiếu các file được đóng gói. Git snapshot/history đi kèm trong `source-history.bundle`, không chứa `.env`, deps, dữ liệu runtime hoặc tài khoản thử. Có thể khôi phục bằng `git clone source-history.bundle AeroFlow-history`, hoặc `git init` ngay trong thư mục giải nén để phát triển tiếp.
+Mở Chrome, Edge hoặc Cốc Cốc rồi dán **đúng địa chỉ được in ra** vào thanh địa chỉ. `127.0.0.1` là máy tính bạn đang dùng; `5000` là số cổng để trình duyệt kết nối với chương trình.
 
-## 8. Khắc phục lỗi
+Giữ PowerShell mở trong lúc dùng website. Nhấn `Ctrl+C` trong PowerShell khi muốn dừng. Nếu chương trình báo cổng đang được sử dụng, đổi `PORT` trong `.env` sang một số khác, chạy lại và mở địa chỉ mới được in ra.
 
-| Hiện tượng | Kiểm tra |
-|---|---|
-| ODBC driver not found | Cài ODBC Driver 18 64-bit, Python 64-bit; kiểm tra tên SQL_DRIVER |
-| Không kết nối database / 503 | Kiểm tra dịch vụ SQL Server, đúng instance, `.env`, Windows login có quyền DB |
-| Login failed for user | Kiểm tra Windows Authentication hoặc SQL user; không đưa mật khẩu vào lỗi API |
-| Certificate verify failed | Demo localhost có thể dùng TrustServerCertificate=yes; triển khai thật dùng chứng chỉ tin cậy |
-| SECRET_KEY chưa cấu hình | Chạy configure.py, không dùng placeholder trong .env.example |
-| Không có chuyến | Kiểm tra ngày, tuyến, giá vé và số ghế; seed chỉ có cửa sổ 30 ngày từ lúc khởi tạo |
-| Không sửa được sơ đồ/lịch | Dữ liệu đã có lịch sử: tạo máy bay/chuyến mới theo quy tắc bảo toàn vé |
-| Ghế vừa bị giữ | Tải lại sơ đồ. SQL Server quyết định quyền sở hữu ghế, giao diện chỉ tham khảo |
+## 7. Đăng ký tài khoản
 
-Không in mật khẩu, chuỗi kết nối hoặc stack trace trong phản hồi. Mã request có trong thông báo lỗi để đối chiếu log an toàn.
+Trên website, chọn **Đăng nhập → Đăng ký**. Điền họ tên, email và mật khẩu ít nhất **12 ký tự**. Sau đó đăng nhập để đặt vé. Các tài khoản mẫu trong database bị khóa; bạn tự tạo tài khoản của mình.
+
+Nếu cần quản trị chuyến bay và xem báo cáo, mở PowerShell tại thư mục dự án và chạy:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\create_user.py --role ADMIN --email admin@example.test --name "Quản trị AeroFlow"
+```
+
+Nhập mật khẩu từ 12 ký tự khi được hỏi, rồi nhập lại để xác nhận. Mật khẩu không hiện ký tự khi gõ. Khi thấy `Account created.`, đăng nhập bằng email và mật khẩu vừa tạo. Menu quản trị chỉ hiện cho tài khoản quản trị.
+
+## 8. Những lần mở tiếp theo
+
+Mở PowerShell trong thư mục có `run.py`, chạy:
+
+```powershell
+.\.venv\Scripts\python.exe run.py
+```
+
+Mở địa chỉ chương trình in ra. Không cần cài lại thư viện, tạo database hoặc nạp dữ liệu mỗi lần mở web.
+
+## Khi chưa chạy được
+
+| Hiện tượng | Cách xử lý |
+| --- | --- |
+| Không tìm thấy `requirements.txt` hoặc `run.py` | Mở PowerShell đúng thư mục có các file này. |
+| Không tìm thấy `.venv\Scripts\python.exe` | Kiểm tra lệnh tạo `.venv` ở bước 3 đã chạy thành công. |
+| Thiếu ODBC Driver | Cài Driver 18 bản 64-bit và so lại `SQL_DRIVER` trong `.env`. |
+| Không kết nối được SQL Server | Kết nối bằng SSMS trước; so lại tên server, database và cách đăng nhập. |
+| Trình duyệt không mở được web | Kiểm tra PowerShell vẫn chạy và địa chỉ trình duyệt đúng dòng chương trình in ra. |
+| Tìm chuyến không có kết quả | Dùng ngày và tuyến có trong dữ liệu mẫu; kiểm tra lệnh nạp dữ liệu ở bước 5 đã chạy xong. |

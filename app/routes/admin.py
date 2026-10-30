@@ -5,15 +5,16 @@ from ..db import connection, query
 from ..errors import ApiError
 from ..security import authenticated
 from ..validation import body, text, integer, decimal_value, iso_date, utc_datetime
+from ..services.flight_service import zone
 
 bp = Blueprint('admin', __name__, url_prefix='/api/admin')
 
 # Identifiers come exclusively from this allowlist, never from client SQL fragments.
 CATALOGS = {
- 'airports': ('Airports', 'AirportID', {'Code': ('text', 3), 'Name': ('text', 120), 'City': ('text', 80), 'IsActive': ('bool', 0)}),
+ 'airports': ('Airports', 'AirportID', {'Code': ('text', 3), 'Name': ('text', 120), 'City': ('text', 80), 'CountryName': ('text', 80), 'IanaTimeZone': ('text', 64), 'IsActive': ('bool', 0)}),
  'airlines': ('Airlines', 'AirlineID', {'Code': ('text', 2), 'Name': ('text', 100)}),
  'aircraft': ('Aircraft', 'AircraftID', {'AirlineID': ('int', 0), 'Registration': ('text', 20), 'Model': ('text', 80), 'IsActive': ('bool', 0)}),
- 'seats': ('AircraftSeats', 'SeatID', {'AircraftID': ('int', 0), 'RowNumber': ('int', 80), 'ColumnLetter': ('text', 1), 'Cabin': ('text', 12), 'IsActive': ('bool', 0)}),
+ 'seats': ('AircraftSeats', 'SeatID', {'AircraftID': ('int', 0), 'RowNumber': ('int', 80), 'ColumnLetter': ('text', 1), 'Cabin': ('text', 12), 'SeatFee': ('decimal', 10000000), 'IsPriority': ('bool', 0), 'IsActive': ('bool', 0)}),
  'fare-classes': ('FareClasses', 'FareClassID', {'Code': ('text', 10), 'Name': ('text', 60), 'Cabin': ('text', 12), 'BaggageKg': ('int0', 60), 'RefundPercent': ('decimal', 100)})
 }
 
@@ -67,7 +68,12 @@ def save_catalog(entity, item_id=None):
         raise ApiError('Không tìm thấy danh mục.', 404)
     table, pk, fields = CATALOGS[entity]
     d, values = body(), {}
+    defaults = {'SeatFee': 0, 'IsPriority': False} if entity == 'seats' else {'CountryName': 'Việt Nam', 'IanaTimeZone': 'Asia/Ho_Chi_Minh'} if entity == 'airports' else {}
     for key, (kind, limit) in fields.items():
+        if key in defaults and key not in d:
+            if item_id:
+                continue
+            d[key] = defaults[key]
         if kind == 'text':
             values[key] = text(d, key, 1, limit)
         elif kind == 'bool':
@@ -80,8 +86,10 @@ def save_catalog(entity, item_id=None):
             values[key] = decimal_value(d, key, 0, limit)
     if 'Code' in values:
         values['Code'] = values['Code'].upper()
-    if 'Cabin' in values and values['Cabin'] not in ('ECONOMY', 'BUSINESS'):
-        raise ApiError('Cabin cần là ECONOMY hoặc BUSINESS.')
+    if 'Cabin' in values and values['Cabin'] not in ('ECONOMY', 'PREMIUM', 'BUSINESS', 'FIRST'):
+        raise ApiError('Khoang cần là ECONOMY, PREMIUM, BUSINESS hoặc FIRST.')
+    if 'IanaTimeZone' in values:
+        zone(values['IanaTimeZone'], status=400)
     if entity == 'seats':
         values['ColumnLetter'] = values['ColumnLetter'].upper()
         values['SeatNumber'] = f"{values['ColumnLetter']}{values['RowNumber']}"
