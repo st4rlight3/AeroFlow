@@ -2,16 +2,15 @@ from datetime import datetime, time, timedelta, timezone
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from ..db import query
 from ..errors import ApiError
+from .airport_metadata import AIRPORT_REGIONS
 
 
 def airport_metadata():
-    from scripts.international_catalog import AIRPORTS
-    world = {a[0]: (a[2], a[4]) for a in AIRPORTS}
     rows = query('SELECT AirportID,Code,Name,City,CountryName,IanaTimeZone,IsActive FROM dbo.Airports')
     for row in rows:
         code = row['Code'].strip()
         row['Code'] = code
-        row['CountryCode'], row['RegionCode'] = world.get(code, ('VN', 'VIETNAM') if row['CountryName'] == 'Việt Nam' else ('', 'OTHER'))
+        row['CountryCode'], row['RegionCode'] = AIRPORT_REGIONS.get(code, ('VN', 'VIETNAM') if row['CountryName'] == 'Việt Nam' else ('', 'OTHER'))
     return {row['AirportID']: row for row in rows}
 
 

@@ -62,26 +62,29 @@ PORT=5000
 
 Nếu SSMS dùng **SQL Server Authentication**, đặt `SQL_TRUSTED_CONNECTION=no`, điền `SQL_USERNAME` và `SQL_PASSWORD` trong `.env` bằng tài khoản đang sử dụng.
 
-## 5. Tạo database và nạp chuyến bay
+## 5. Tạo database và nạp dữ liệu mẫu
 
 Chỉ chạy bước này khi cài đặt vào một database mới:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\init_db.py
-.\.venv\Scripts\python.exe scripts\load_demo.py --apply
 ```
 
-Lệnh đầu chạy bộ SQL để tạo bảng, ràng buộc, view, function, procedure, trigger và dữ liệu nền. Lệnh sau bổ sung lịch bay trong nước, quốc tế và giá vé mẫu. Chờ cả hai lệnh chạy xong. Nếu database đã có bảng, bộ cài dừng để giữ dữ liệu của bạn.
+Lệnh này chạy bộ SQL để tạo bảng, ràng buộc, view, function, procedure, trigger và nạp đầy đủ dữ liệu mẫu. Chờ đến khi chương trình báo database đã sẵn sàng. Nếu database đã có bảng, bộ cài dừng để giữ dữ liệu của bạn.
+
+Toàn bộ dữ liệu mẫu nằm trong `sql/04_seed_data.sql`, dưới dạng `INSERT INTO ... VALUES` với ID, tên, ngày giờ và giá vé được ghi sẵn. Không cần chạy thêm script sinh dữ liệu. Bộ dữ liệu gồm **42 sân bay, 6.288 chuyến bay và 74.376 dòng giá vé**, cùng danh mục máy bay, ghế và các đơn mẫu. Các bản ghi liên quan giữ đúng ID của nhau.
+
+Muốn xem điểm đi, điểm đến và giá trong SSMS, mở `sql/09_business_queries.sql`. Muốn xem toàn bộ giá đã lưu, chạy `SELECT * FROM dbo.FlightFares;`. `BasePrice` là giá cơ sở, `TaxRate` là tỷ lệ thuế; phí của ghế cụ thể nằm trong `AircraftSeats.SeatFee`.
 
 ### Nếu muốn chạy SQL bằng SSMS
 
 Mở một database mới và chạy các file trong `sql` theo thứ tự:
 
-**01 → 02 → 03 → 06 → 05 → 07 → 08 → 04**.
+**01 → 02 → 03 → 04 → 06 → 05 → 07 → 08**.
 
-File `06` tạo hàm tính giá trước khi view ở file `05` sử dụng hàm đó. File `04` chạy sau các đối tượng nghiệp vụ vì dữ liệu đặt vé mẫu được tạo thông qua procedure. Nếu dùng tên database khác `AeroFlow`, sửa tên trong file `01` và dòng `USE AeroFlow;` đầu mỗi file cho khớp.
+File `04` nạp dữ liệu vào các bảng trống trước khi tạo trigger ở file `08`, để giữ nguyên cả lịch sử giao dịch và nhật ký mẫu. File `06` tạo hàm tính giá trước khi view ở file `05` sử dụng hàm đó. Nếu dùng tên database khác `AeroFlow`, sửa tên trong file `01` và dòng `USE AeroFlow;` đầu mỗi file cho khớp.
 
-Sau đó chạy `load_demo.py --apply` bằng PowerShell như trên. Bạn chỉ cần chọn **một** cách tạo database: dùng `init_db.py` hoặc mở từng file trong SSMS.
+Bạn chỉ cần chọn **một** cách tạo database: dùng `init_db.py` hoặc mở từng file trong SSMS. Cả hai cách đều nạp cùng bộ dữ liệu. File `04` chỉ nạp vào bảng trống, không ghi đè dữ liệu đã có; không cần chạy lại mỗi lần mở web.
 
 File `09_business_queries.sql` chứa các truy vấn để xem dữ liệu; `10_test_cases.sql` kiểm tra ràng buộc và tính nhất quán. ERD nằm trong [`docs/ERD.svg`](docs/ERD.svg), phần mô tả nằm trong [`docs/ERD.md`](docs/ERD.md).
 
@@ -132,4 +135,4 @@ Mở địa chỉ chương trình in ra. Không cần cài lại thư viện, t�
 | Thiếu ODBC Driver | Cài Driver 18 bản 64-bit và so lại `SQL_DRIVER` trong `.env`. |
 | Không kết nối được SQL Server | Kết nối bằng SSMS trước; so lại tên server, database và cách đăng nhập. |
 | Trình duyệt không mở được web | Kiểm tra PowerShell vẫn chạy và địa chỉ trình duyệt đúng dòng chương trình in ra. |
-| Tìm chuyến không có kết quả | Dùng ngày và tuyến có trong dữ liệu mẫu; kiểm tra lệnh nạp dữ liệu ở bước 5 đã chạy xong. |
+| Tìm chuyến không có kết quả | Dùng ngày và tuyến có trong `Flights`; kiểm tra bước 5 đã chạy xong hoặc xóa bộ lọc trên web. |

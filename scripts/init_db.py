@@ -9,8 +9,8 @@ from app.config import connection_string
 import pyodbc
 
 ORDER = [
-    '02_create_tables.sql', '03_constraints_indexes.sql', '06_functions.sql',
-    '05_views.sql', '07_stored_procedures.sql', '08_triggers.sql', '04_seed_data.sql',
+    '02_create_tables.sql', '03_constraints_indexes.sql', '04_seed_data.sql',
+    '06_functions.sql', '05_views.sql', '07_stored_procedures.sql', '08_triggers.sql',
 ]
 
 
