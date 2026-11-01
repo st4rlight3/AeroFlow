@@ -24,15 +24,17 @@ CREATE OR ALTER VIEW dbo.vw_FlightAvailability AS
 GO
 CREATE OR ALTER VIEW dbo.vw_BookingDetails AS
  SELECT b.BookingID,b.PNR,b.UserID,s.FlightID,b.Status,b.CreatedAt,b.ExpiresAt,
- u.FullName CustomerName,u.Email,f.FlightNumber,f.OriginCode,f.DestinationCode,f.DepartureTime,f.ArrivalTime,
- f.OriginTimeZone,f.DestinationTimeZone,
+ u.FullName CustomerName,u.Email,f.FlightNumber,o.Code OriginCode,d.Code DestinationCode,f.DepartureTime,f.ArrivalTime,
+ o.IanaTimeZone OriginTimeZone,d.IanaTimeZone DestinationTimeZone,
  (SELECT COUNT(*) FROM dbo.BookingSegments x WHERE x.BookingID=b.BookingID) SegmentCount,
  r.FlightNumber ReturnFlightNumber,r.DepartureTime ReturnDepartureTime,r.ArrivalTime ReturnArrivalTime,
  COALESCE((SELECT SUM(t.Amount) FROM dbo.Tickets t JOIN dbo.BookingPassengers p ON p.BookingPassengerID=t.BookingPassengerID WHERE p.BookingID=b.BookingID),0) TotalAmount,
  (SELECT COUNT(*) FROM dbo.BookingPassengers p WHERE p.BookingID=b.BookingID) PassengerCount
  FROM dbo.Bookings b JOIN dbo.Users u ON u.UserID=b.UserID
  JOIN dbo.BookingSegments s ON s.BookingID=b.BookingID AND s.SegmentOrder=1
- JOIN dbo.vw_FlightAvailability f ON f.FlightID=s.FlightID
+ JOIN dbo.Flights f ON f.FlightID=s.FlightID
+ JOIN dbo.Airports o ON o.AirportID=f.OriginID
+ JOIN dbo.Airports d ON d.AirportID=f.DestinationID
  LEFT JOIN dbo.BookingSegments rs ON rs.BookingID=b.BookingID AND rs.SegmentOrder=2
  LEFT JOIN dbo.Flights r ON r.FlightID=rs.FlightID;
 GO
@@ -45,8 +47,9 @@ CREATE OR ALTER VIEW dbo.vw_MonthlyRevenue AS
  FROM dbo.Payments WHERE Status='SUCCESS' GROUP BY YEAR(CreatedAt),MONTH(CreatedAt);
 GO
 CREATE OR ALTER VIEW dbo.vw_FlightOccupancy AS
- SELECT f.FlightID,f.FlightNumber,f.DepartureTime,f.TotalSeats,
+ SELECT f.FlightID,f.FlightNumber,f.DepartureTime,
+ (SELECT COUNT(*) FROM dbo.AircraftSeats s WHERE s.AircraftID=f.AircraftID AND s.IsActive=1) TotalSeats,
  (SELECT COUNT(*) FROM dbo.FlightSeatAssignments x JOIN dbo.Tickets t ON t.AssignmentID=x.AssignmentID
   WHERE x.FlightID=f.FlightID AND x.IsActive=1 AND t.Status='VALID') SoldSeats
- FROM dbo.vw_FlightAvailability f;
+ FROM dbo.Flights f;
 GO

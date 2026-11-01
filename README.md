@@ -72,7 +72,7 @@ Chỉ chạy bước này khi cài đặt vào một database mới:
 
 Lệnh này chạy bộ SQL để tạo bảng, ràng buộc, view, function, procedure, trigger và nạp đầy đủ dữ liệu mẫu. Chờ đến khi chương trình báo database đã sẵn sàng. Nếu database đã có bảng, bộ cài dừng để giữ dữ liệu của bạn.
 
-Toàn bộ dữ liệu mẫu nằm trong `sql/04_seed_data.sql`, dưới dạng `INSERT INTO ... VALUES` với ID, tên, ngày giờ và giá vé được ghi sẵn. Không cần chạy thêm script sinh dữ liệu. Bộ dữ liệu gồm **42 sân bay, 6.288 chuyến bay và 74.376 dòng giá vé**, cùng danh mục máy bay, ghế và các đơn mẫu. Các bản ghi liên quan giữ đúng ID của nhau.
+Toàn bộ dữ liệu mẫu nằm trong `sql/04_seed_data.sql`, dưới dạng `INSERT INTO ... VALUES` với ID, tên, ngày giờ và giá vé được ghi sẵn. Không cần chạy thêm script sinh dữ liệu. Bộ dữ liệu gồm **42 sân bay, 100 chuyến bay và 200 dòng giá vé**, cùng danh mục máy bay, ghế và các đơn mẫu. Các bản ghi liên quan giữ đúng ID của nhau.
 
 Muốn xem điểm đi, điểm đến và giá trong SSMS, mở `sql/09_business_queries.sql`. Muốn xem toàn bộ giá đã lưu, chạy `SELECT * FROM dbo.FlightFares;`. `BasePrice` là giá cơ sở, `TaxRate` là tỷ lệ thuế; phí của ghế cụ thể nằm trong `AircraftSeats.SeatFee`.
 
